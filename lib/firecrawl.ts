@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import FirecrawlApp from '@mendable/firecrawl-js';
 
-const app = new FirecrawlApp({
-    apiKey: process.env.FIRECRAWL_API_KEY || ""
-});
+const apiKey = process.env.FIRECRAWL_API_KEY || "";
+
+// Log API key status at startup (masked for security)
+console.log(`[Firecrawl] API Key status: ${apiKey ? `SET (${apiKey.substring(0, 8)}...)` : "⚠️ MISSING! Set FIRECRAWL_API_KEY in .env.local"}`);
+
+const app = new FirecrawlApp({ apiKey });
 
 export const firecrawl = app;
 
@@ -32,8 +35,12 @@ export async function searchDiscussions(query: string) {
                     snippet: (item.markdown || item.content || '').substring(0, 500)
                 }));
             }
-        } catch (e) {
-            console.warn("[Firecrawl] Search API failed, trying fallback...", e);
+        } catch (e: any) {
+            console.error("[Firecrawl] Search API failed with error:");
+            console.error("  - Message:", e?.message);
+            console.error("  - Status:", e?.response?.status || e?.statusCode || "unknown");
+            console.error("  - Response:", JSON.stringify(e?.response?.data || e?.body || e, null, 2));
+            console.warn("[Firecrawl] Trying fallback...");
         }
 
         // Strategy 2: Fallback to scraping Reddit Search Page directly
@@ -53,8 +60,11 @@ export async function searchDiscussions(query: string) {
                     snippet: raw.markdown.substring(0, 500)
                 }];
             }
-        } catch (fallbackError) {
-            console.error("[Firecrawl] Fallback failed:", fallbackError);
+        } catch (fallbackError: any) {
+            console.error("[Firecrawl] Fallback failed:");
+            console.error("  - Message:", fallbackError?.message);
+            console.error("  - Status:", fallbackError?.response?.status || fallbackError?.statusCode || "unknown");
+            console.error("  - Response:", JSON.stringify(fallbackError?.response?.data || fallbackError?.body || fallbackError, null, 2));
         }
 
         return [];

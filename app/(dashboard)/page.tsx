@@ -37,13 +37,18 @@ export default function Home() {
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
+      let buffer = '';
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+
+        // If the last character isn't a newline, the last element of the split 
+        // will be a partial JSON string. Pop it and keep it in the buffer.
+        buffer = lines.pop() || '';
 
         for (const line of lines) {
           if (!line.trim()) continue;
@@ -65,7 +70,6 @@ export default function Home() {
             if (update.type === 'error') {
               console.error("Stream Error:", update.error);
               setSearchSteps(prev => [...prev, { id: 'err', label: `Error: ${update.error}`, status: 'completed' }]);
-              // Don't close loading yet, let user see error
               return;
             }
 
@@ -75,7 +79,7 @@ export default function Home() {
               setData(update.data);
             }
           } catch (e) {
-            console.error("Error parsing stream line", e);
+            console.error("Error parsing stream line:", line, e);
           }
         }
       }

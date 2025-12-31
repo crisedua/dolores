@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 // Import the granular agentic functions
 import { planResearch, extractSignals, synthesizePatterns } from '@/lib/openai';
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
@@ -35,9 +35,8 @@ export async function POST(req: NextRequest) {
                 sendUpdate(`[DEBUG] Planner output: ${JSON.stringify(researchPlan)}`, 'completed');
 
                 // --------------------------------------------------------------------------
-                // STEP 2: MULTI-SOURCE SEARCH (Firecrawl)
-                // --------------------------------------------------------------------------
-                sendUpdate(`Searching Reddit for ${researchPlan.length} queries...`, 'active');
+                sendUpdate(`Searching Reddit for ${researchPlan.length} queries...`, 'completed');
+                sendUpdate(`Searching parallel (${researchPlan.length} queries)...`, 'active');
 
                 // execute searches in parallel for the generated queries
                 const searchPromises = researchPlan.map(async (subQuery: string) => {
@@ -77,8 +76,8 @@ export async function POST(req: NextRequest) {
                     }
                 });
 
-                sendUpdate(`Searching parallel (${researchPlan.length} queries)...`, 'active');
                 const searchResults = await Promise.all(searchPromises);
+                sendUpdate(`Searching parallel (${researchPlan.length} queries)...`, 'completed');
 
                 let allSearchResults: any[] = [];
                 searchResults.forEach(res => {
@@ -142,12 +141,14 @@ export async function POST(req: NextRequest) {
                     Content: ${(r.markdown || r.content || '').substring(0, 10000)}
                 `).join("\n\n");
 
-                sendUpdate(`Analyzing ${uniqueResults.length} discussions with Market Research Analyst...`, 'active');
+                const analysisLabel = `Analyzing ${uniqueResults.length} discussions with Market Research Analyst...`;
+                sendUpdate(analysisLabel, 'active');
 
                 // Pass RAW content to Analyst (Pipeline V2 bypasses signal extraction)
                 // sending top 30k chars to context window
                 const result = await synthesizePatterns(combinedMarkdown);
 
+                sendUpdate(analysisLabel, 'completed');
                 sendUpdate("Analysis complete. Generating report...", 'completed');
 
                 // Final Result

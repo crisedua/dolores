@@ -13,7 +13,7 @@ export async function perplexitySearch(topic: string) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            model: "sonar-reasoning-pro",
+            model: "sonar-pro",
             messages: [
                 {
                     role: "system",

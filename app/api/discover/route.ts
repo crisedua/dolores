@@ -35,17 +35,33 @@ export async function POST(req: NextRequest) {
                     const { perplexitySearch } = await import('@/lib/perplexity');
 
                     sendUpdate("Initializing Global AI Research Engine...", 'completed');
-                    sendUpdate(`Analyzing the web for "${query}" pain points...`, 'active');
+                    const researchLabel = `Analyzing the web for "${query}" pain points...`;
+                    sendUpdate(researchLabel, 'active');
 
-                    const result = await perplexitySearch(query);
+                    console.log(`[API] Starting Perplexity search for: ${query}`);
 
-                    sendUpdate(`Analyzing the web for "${query}" pain points...`, 'completed');
-                    sendUpdate("Analysis complete. Generating report...", 'completed');
+                    // Start heartbeat to keep connection alive and show activity
+                    const heartbeat = setInterval(() => {
+                        console.log("[API] Sending heartbeat...");
+                        sendUpdate(researchLabel, 'active'); // Re-sending active status keeps UI alive
+                    }, 10000);
 
-                    const finalPayload = JSON.stringify({ type: 'result', data: result });
-                    controller.enqueue(encoder.encode(finalPayload + '\n'));
-                    controller.close();
-                    return;
+                    try {
+                        const result = await perplexitySearch(query);
+                        clearInterval(heartbeat);
+
+                        console.log("[API] Perplexity search completed successfully");
+                        sendUpdate(researchLabel, 'completed');
+                        sendUpdate("Analysis complete. Generating report...", 'completed');
+
+                        const finalPayload = JSON.stringify({ type: 'result', data: result });
+                        controller.enqueue(encoder.encode(finalPayload + '\n'));
+                        controller.close();
+                        return;
+                    } catch (err: any) {
+                        clearInterval(heartbeat);
+                        throw err;
+                    }
 
                 } else {
                     // --------------------------------------------------------------------------

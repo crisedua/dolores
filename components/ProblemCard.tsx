@@ -38,12 +38,12 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                 <div className="flex justify-between items-start mb-6">
                     <div className="flex items-center gap-3">
                         <span className="bg-[#1A1A1A] text-gray-400 text-xs font-bold px-3 py-1.5 rounded-lg tracking-wider">
-                            #{problem.rank} PAIN POINT IDENTIFIED
+                            #{problem.rank} PUNTO DE DOLOR IDENTIFICADO
                         </span>
                     </div>
 
                     <div className="bg-[#151515] border border-[#222] rounded-xl px-5 py-3 text-center">
-                        <div className="text-[10px] text-gray-500 font-bold tracking-widest uppercase mb-1">Signal Score</div>
+                        <div className="text-[10px] text-gray-500 font-bold tracking-widest uppercase mb-1">Puntuación de Señal</div>
                         <div className="text-3xl font-bold text-[#FF5A36]">
                             {problem.signalScore}<span className="text-gray-600 text-base">/10</span>
                         </div>
@@ -57,10 +57,10 @@ export function ProblemCard({ problem }: { problem: Problem }) {
 
                 {/* Metrics Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                    <MetricBar label="FREQUENCY" value={problem.metrics.frequency} color="bg-blue-500" />
-                    <MetricBar label="INTENSITY" value={problem.metrics.intensity} color="bg-red-500" />
-                    <MetricBar label="SOLVABILITY" value={problem.metrics.solvability} color="bg-green-500" />
-                    <MetricBar label="MONETIZABILITY" value={problem.metrics.monetizability} color="bg-amber-500" />
+                    <MetricBar label="FRECUENCIA" value={problem.metrics.frequency} color="bg-blue-500" />
+                    <MetricBar label="INTENSIDAD" value={problem.metrics.intensity} color="bg-red-500" />
+                    <MetricBar label="RESOLUBILIDAD" value={problem.metrics.solvability} color="bg-green-500" />
+                    <MetricBar label="MONETIZACIÓN" value={problem.metrics.monetizability} color="bg-amber-500" />
                 </div>
 
                 {/* Recommendation Box */}
@@ -72,7 +72,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                             <ArrowRight className="text-white" size={20} />
                         </div>
                         <div>
-                            <h4 className="text-blue-400 text-xs font-bold tracking-widest uppercase mb-2">Recommended Next Step</h4>
+                            <h4 className="text-blue-400 text-xs font-bold tracking-widest uppercase mb-2">Próximo Paso Recomendado</h4>
                             <p className="text-gray-300 leading-relaxed text-sm md:text-base">
                                 {problem.recommendation}
                             </p>
@@ -87,7 +87,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                     {/* Sources */}
                     {problem.sources && problem.sources.length > 0 && (
                         <div>
-                            <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">Data Sources</h3>
+                            <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">Fuentes de Datos</h3>
                             <div className="space-y-3">
                                 {problem.sources.map((source, idx) => (
                                     <a
@@ -117,7 +117,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                     {/* Quotes */}
                     {problem.quotes && problem.quotes.length > 0 && (
                         <div>
-                            <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">Key Quotes</h3>
+                            <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">Citas Clave</h3>
                             <div className="space-y-3">
                                 {problem.quotes.map((quote, idx) => (
                                     <div key={idx} className="bg-[#111] border-l-2 border-blue-500 pl-4 py-3 italic text-gray-300 text-sm">
@@ -131,7 +131,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                     {/* Existing Solutions */}
                     {problem.existingSolutions && problem.existingSolutions.length > 0 && (
                         <div>
-                            <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">Existing Solutions</h3>
+                            <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">Soluciones Existentes</h3>
                             <ul className="space-y-2">
                                 {problem.existingSolutions.map((solution, idx) => (
                                     <li key={idx} className="text-sm text-gray-400 flex items-start gap-2">
@@ -146,7 +146,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                     {/* Gaps */}
                     {problem.gaps && problem.gaps.length > 0 && (
                         <div>
-                            <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">Market Gaps</h3>
+                            <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">Brechas del Mercado</h3>
                             <ul className="space-y-2">
                                 {problem.gaps.map((gap, idx) => (
                                     <li key={idx} className="text-sm text-gray-400 flex items-start gap-2">
@@ -164,7 +164,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                         (!problem.existingSolutions || problem.existingSolutions.length === 0) &&
                         (!problem.gaps || problem.gaps.length === 0) && (
                             <div className="text-center py-8 text-gray-500 text-sm">
-                                <p>Detailed evidence and analysis will be available once the AI processes more data sources.</p>
+                                <p>La evidencia detallada y el análisis estarán disponibles una vez que la IA procese más fuentes de datos.</p>
                             </div>
                         )}
                 </div>
@@ -179,7 +179,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                     size={14}
                     className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
                 />
-                {isExpanded ? 'HIDE' : 'SHOW'} EVIDENCE & ANALYSIS
+                {isExpanded ? 'OCULTAR' : 'MOSTRAR'} EVIDENCIA Y ANÁLISIS
             </button>
         </div>
     )

@@ -21,12 +21,12 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-purple-600/20 blur-[100px] rounded-full pointer-events-none -z-10" />
 
             <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 tracking-tight">
-                Find Problems <br />
-                <span className="text-gray-400">Worth Solving</span>
+                Encuentra Problemas <br />
+                <span className="text-gray-400">Que Valgan la Pena</span>
             </h1>
 
             <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-                Stop guessing. Analyze real complaints, frustrations, and emerging patterns from across the web. Get validated proof for your next venture.
+                Deja de adivinar. Analiza quejas reales, frustraciones y patrones emergentes de toda la web. Obtén pruebas validadas para tu próximo emprendimiento.
             </p>
 
             <form onSubmit={handleSubmit} className="relative max-w-2xl mx-auto">
@@ -40,7 +40,7 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
                             type="text"
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
-                            placeholder="e.g. ai tools"
+                            placeholder="ej. herramientas ia"
                             className="flex-1 bg-transparent border-none outline-none text-white text-lg placeholder:text-gray-600 h-12"
                             disabled={isLoading}
                         />
@@ -53,10 +53,10 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
                             {isLoading ? (
                                 <>
                                     <Loader2 className="animate-spin text-purple-500" size={18} />
-                                    <span>Analyzing...</span>
+                                    <span>Analizando...</span>
                                 </>
                             ) : (
-                                <span>Analyze</span>
+                                <span>Analizar</span>
                             )}
                         </button>
                     </div>
@@ -66,9 +66,9 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
             {/* Popular Tags */}
             <div className="mt-8 flex items-center justify-center gap-4 text-sm text-gray-500 font-medium">
                 <span className="tracking-widest text-[10px] uppercase text-gray-600">Popular:</span>
-                <button onClick={() => setQuery("Shopify Apps")} className="hover:text-purple-400 transition-colors">Shopify Apps</button>
+                <button onClick={() => setQuery("Apps de Shopify")} className="hover:text-purple-400 transition-colors">Apps de Shopify</button>
                 <span className="text-gray-700">•</span>
-                <button onClick={() => setQuery("Real Estate")} className="hover:text-purple-400 transition-colors">Real Estate</button>
+                <button onClick={() => setQuery("Inmobiliario")} className="hover:text-purple-400 transition-colors">Inmobiliario</button>
                 <span className="text-gray-700">•</span>
                 <button onClick={() => setQuery("Legal Tech")} className="hover:text-purple-400 transition-colors">Legal Tech</button>
             </div>

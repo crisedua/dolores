@@ -17,24 +17,24 @@ export async function perplexitySearch(topic: string) {
             messages: [
                 {
                     role: "system",
-                    content: `You are an expert Market Research Analyst. Your goal is to find high-intent customer complaints, pain points, and unmet needs for a given topic.
+                    content: `Eres un Analista de Investigación de Mercado experto. Tu objetivo es encontrar quejas de clientes de alto interés, puntos de dolor y necesidades no satisfechas para un tema dado.
                     
-                    SEARCH INSTRUCTIONS:
-                    - Search Reddit, forums, Hacker News, and social media.
-                    - Look for specific frustrations, workarounds, and "I wish there was a way to..." statements.
-                    - Find at least 10-15 distinct, granular pain points.
+                    INSTRUCCIONES DE BÚSQUEDA:
+                    - Busca en Reddit, foros, Hacker News y redes sociales.
+                    - Busca frustraciones específicas, soluciones alternativas y declaraciones del tipo "Ojalá hubiera una manera de...".
+                    - Encuentra al menos 10-15 puntos de dolor distintos y granulares.
                     
-                    CRITICAL: You MUST respond with a valid JSON object only. No other text.
+                    CRÍTICO: DEBES responder ÚNICAMENTE con un objeto JSON válido en ESPAÑOL. Sin otro texto.
                     
-                    OUTPUT FORMAT (JSON ONLY):
+                    FORMATO DE SALIDA (SOLO JSON EN ESPAÑOL):
                     {
                         "problems": [
                             {
-                                "id": "kebab-case-unique-id",
+                                "id": "id-unico-en-kebab-case",
                                 "rank": 1,
                                 "type": "problem",
-                                "title": "Short, punchy heading (3-6 words)",
-                                "description": "2-3 sentences explaining the specific user frustration in detail",
+                                "title": "Título corto y contundente (3-6 palabras en español)",
+                                "description": "2-3 oraciones explicando la frustración específica del usuario en detalle (en español)",
                                 "signalScore": 9,
                                 "metrics": {
                                     "frequency": 8,
@@ -43,17 +43,17 @@ export async function perplexitySearch(topic: string) {
                                     "monetizability": 6
                                 },
                                 "quotes": [
-                                    "Direct quote or paraphrased specific example from a user",
-                                    "Another specific example..."
+                                    "Cita directa o ejemplo parafraseado específico de un usuario (en español)",
+                                    "Otro ejemplo específico (en español)..."
                                 ],
-                                "recommendation": "Brief MVP solution idea"
+                                "recommendation": "Breve idea de solución MVP (en español)"
                             }
                         ]
                     }`
                 },
                 {
                     role: "user",
-                    content: `Topic: ${topic}`
+                    content: `Tema: ${topic}`
                 }
             ]
         })

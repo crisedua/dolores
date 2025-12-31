@@ -114,9 +114,9 @@ export default function Home() {
         <header className="flex justify-between items-center mb-8 pt-8 px-4 animate-in fade-in slide-in-from-top-4 duration-500">
           <div>
             <h1 className="text-2xl font-bold text-white mb-1">
-              Welcome back, {user?.email?.split('@')[0] || 'Guest'} 👋
+              Bienvenido de nuevo, {user?.email?.split('@')[0] || 'Invitado'} 👋
             </h1>
-            <p className="text-gray-500 text-sm">Here is your problem discovery dashboard.</p>
+            <p className="text-gray-500 text-sm">Aquí está tu panel de descubrimiento de problemas.</p>
           </div>
 
           <div className="flex items-center gap-4 text-gray-400">
@@ -125,7 +125,7 @@ export default function Home() {
 
             <div className="flex items-center gap-2 text-sm text-gray-500 border-l border-[#333] pl-4">
               <Calendar size={16} />
-              <span>Dec 2025</span>
+              <span>Dic 2025</span>
             </div>
 
             <div className="w-8 h-8 rounded-full bg-gray-700 overflow-hidden border border-[#555]">
@@ -142,11 +142,11 @@ export default function Home() {
             <HeroInput onSearch={handleSearch} isLoading={false} />
           ) : (
             <div className="w-full">
-              <h2 className="text-center text-2xl font-bold text-white mb-6">Discovery in Progress</h2>
+              <h2 className="text-center text-2xl font-bold text-white mb-6">Descubrimiento en Progreso</h2>
               <SearchProgress steps={searchSteps} />
               {/* Add a reset button if stuck */}
               <div className="text-center mt-8">
-                <button onClick={() => setIsLoading(false)} className="text-xs text-gray-500 underline hover:text-white">Cancel / Reset</button>
+                <button onClick={() => setIsLoading(false)} className="text-xs text-gray-500 underline hover:text-white">Cancelar / Reiniciar</button>
               </div>
             </div>
           )}
@@ -160,15 +160,15 @@ export default function Home() {
           {/* Validated Header */}
           <div className="flex justify-between items-end mb-8 border-b border-[#333] pb-6">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">Validated Opportunities</h2>
+              <h2 className="text-3xl font-bold text-white mb-2">Oportunidades Validadas</h2>
               <p className="text-[#666] text-xs font-bold tracking-widest uppercase">
-                Ranked by Signal Strength & Commercial Potential
+                Ordenadas por Fuerza de Señal y Potencial Comercial
               </p>
             </div>
             <div className="bg-[#1A1A1A] border border-[#333] px-4 py-2 rounded-full flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
               <span className="text-xs font-bold text-gray-300">
-                {data.problems.length} PROBLEMS FOUND
+                {data.problems.length} PROBLEMAS ENCONTRADOS
               </span>
             </div>
           </div>
@@ -180,7 +180,7 @@ export default function Home() {
                 onClick={() => { setData(null); setSearchSteps([]); setIsLoading(false); }}
                 className="text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest"
               >
-                ← NEW SEARCH
+                ← NUEVA BÚSQUEDA
               </button>
             </div>
             <div className="space-y-6">

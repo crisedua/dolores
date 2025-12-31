@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
                 console.log(`[API] Key preview: ${keyPreview}`);
 
                 // Send visible debug info to frontend
-                sendUpdate(`[DEBUG] Perplexity: ${hasPerplexity ? '✓ ENABLED' : '✗ DISABLED (using Reddit fallback)'}`, 'completed');
+                sendUpdate(`[DEBUG] Perplexity: ${hasPerplexity ? '✓ HABILITADO' : '✗ DESHABILITADO (usando respaldo de Reddit)'}`, 'completed');
 
                 if (hasPerplexity) {
                     // --------------------------------------------------------------------------
@@ -42,8 +42,8 @@ export async function POST(req: NextRequest) {
                     // --------------------------------------------------------------------------
                     const { perplexitySearch } = await import('@/lib/perplexity');
 
-                    sendUpdate("Initializing Global AI Research Engine...", 'completed');
-                    const researchLabel = `Analyzing the web for "${query}" pain points...`;
+                    sendUpdate("Inicializando Motor de Investigación Global...", 'completed');
+                    const researchLabel = `Analizando la web en busca de puntos de dolor sobre "${query}"...`;
                     sendUpdate(researchLabel, 'active');
 
                     console.log(`[API] Starting Perplexity search for: ${query}`);
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
 
                         console.log("[API] Perplexity search completed successfully");
                         sendUpdate(researchLabel, 'completed');
-                        sendUpdate("Analysis complete. Generating report...", 'completed');
+                        sendUpdate("Análisis completo. Generando reporte...", 'completed');
 
                         const finalPayload = JSON.stringify({ type: 'result', data: result });
                         controller.enqueue(encoder.encode(finalPayload + '\n'));

@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 
 export const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || 'mock-key',
+    apiKey: process.env.OPENAI_API_KEY || "",
     dangerouslyAllowBrowser: true // NOT RECOMMENDED for production, but using here for MVP/server mix check
 });
 
@@ -39,7 +39,11 @@ export async function analyzeProblem(content: string) {
                           "frequency": number (1-100, mapped from frequency * 10),
                           "economicIntent": number (1-100, mapped from monetizability * 10),
                           "trend": "GROWING" | "STABLE" | "DECLINING",
-                          "competition": "HIGH" | "MED" | "LOW"
+                          "competition": "HIGH" | "MED" | "LOW",
+                          "sources": [ { "url": "string", "title": "string", "snippet": "string" } ],
+                          "quotes": [ "string" ],
+                          "existingSolutions": [ "string" ],
+                          "gaps": [ "string" ]
                         }
                       ]
                     }`

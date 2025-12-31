@@ -3,7 +3,6 @@ import {
     LayoutGrid,
     Folder,
     CheckSquare,
-    Settings,
     Search,
     BarChart3,
     LogOut

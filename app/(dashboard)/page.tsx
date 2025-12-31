@@ -2,25 +2,73 @@
 'use client';
 import { useState } from 'react';
 import { HeroInput } from '@/components/HeroInput';
-
+import { SearchProgress, ProgressStep } from '@/components/SearchProgress';
 import { ProblemCard } from '@/components/ProblemCard';
 import { Bell, Search, Calendar } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any>(null);
+  const [searchSteps, setSearchSteps] = useState<ProgressStep[]>([]);
+  const { user } = useAuth();
 
   const handleSearch = async (query: string) => {
     setIsLoading(true);
+    setSearchSteps([]);
+    setData(null);
+
     try {
-      const res = await fetch('/api/discover', {
+      const response = await fetch('/api/discover', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query })
       });
-      const json = await res.json();
-      setData(json);
+
+      if (!response.body) return;
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+
+          try {
+            const update = JSON.parse(line);
+
+            if (update.type === 'progress') {
+              setSearchSteps(prev => {
+                // If step exists, update it. Else add it.
+                // We keep history proper.
+                const exists = prev.find(p => p.label === update.step);
+                if (exists) {
+                  return prev.map(p => p.label === update.step ? { ...p, status: update.status } : p);
+                }
+                return [...prev, { id: Math.random().toString(), label: update.step, status: update.status }];
+              });
+            }
+
+            if (update.type === 'result') {
+              // Add a small delay so user sees the final checkmark
+              await new Promise(r => setTimeout(r, 500));
+              setData(update.data);
+            }
+          } catch (e) {
+            console.error("Error parsing stream line", e);
+          }
+        }
+      }
+
     } catch (e) {
       console.error(e);
+      setSearchSteps(prev => [...prev, { id: 'err', label: 'Search failed', status: 'completed' }]);
     } finally {
       setIsLoading(false);
     }
@@ -34,7 +82,7 @@ export default function Home() {
         <header className="flex justify-between items-center mb-8 pt-8 px-4 animate-in fade-in slide-in-from-top-4 duration-500">
           <div>
             <h1 className="text-2xl font-bold text-white mb-1">
-              Welcome back, Vincent 👋
+              Welcome back, {user?.email?.split('@')[0] || 'Guest'} 👋
             </h1>
             <p className="text-gray-500 text-sm">Here is your problem discovery dashboard.</p>
           </div>
@@ -45,7 +93,7 @@ export default function Home() {
 
             <div className="flex items-center gap-2 text-sm text-gray-500 border-l border-[#333] pl-4">
               <Calendar size={16} />
-              <span>19 Dec 2025</span>
+              <span>Dec 2025</span>
             </div>
 
             <div className="w-8 h-8 rounded-full bg-gray-700 overflow-hidden border border-[#555]">
@@ -55,15 +103,22 @@ export default function Home() {
         </header>
       )}
 
-      {/* Main Action Area - Centered when no data */}
+      {/* Main Action Area - Centered when no data AND not loading */}
       {!data && (
-        <div className="flex-1 flex flex-col items-center justify-center -mt-20">
-          <HeroInput onSearch={handleSearch} isLoading={isLoading} />
+        <div className={`flex-1 flex flex-col items-center justify-center transition-all duration-500 ${isLoading ? '-mt-40' : '-mt-20'}`}>
+          {!isLoading ? (
+            <HeroInput onSearch={handleSearch} isLoading={false} />
+          ) : (
+            <div className="w-full">
+              {/* We can hide HeroInput or just show Progress */}
+              <h2 className="text-center text-2xl font-bold text-white mb-6">Discovery in Progress</h2>
+              <SearchProgress steps={searchSteps} />
+            </div>
+          )}
         </div>
       )}
 
-      {/* Results View - Matches "Board View" from image but for our context */}
-
+      {/* Results View */}
       {data && (
         <div className="animate-in fade-in slide-in-from-bottom-5 duration-500 px-4 pb-8 max-w-7xl mx-auto">
 
@@ -83,8 +138,16 @@ export default function Home() {
             </div>
           </div>
 
-          {/* List Only - No Map/Matrix */}
+          {/* List Only */}
           <div className="max-w-4xl mx-auto">
+            <div className="flex justify-start mb-4">
+              <button
+                onClick={() => { setData(null); setSearchSteps([]); }}
+                className="text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest"
+              >
+                ← NEW SEARCH
+              </button>
+            </div>
             <div className="space-y-6">
               {data.problems
                 .sort((a: any, b: any) => b.economicIntent - a.economicIntent)

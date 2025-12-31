@@ -26,15 +26,21 @@ export function AuthForm() {
                 if (error) throw error;
                 router.push('/');
             } else {
-                const { error } = await supabase.auth.signUp({
+                const { data, error } = await supabase.auth.signUp({
                     email,
                     password,
                 });
                 if (error) throw error;
-                // Typically Supabase requires email verification by default, 
-                // we might want to warn the user or just auto-login if disabled.
-                alert('Check your email for the confirmation link!');
+
+                // If email confirmation is disabled, we get a session immediately
+                if (data.session) {
+                    router.push('/');
+                } else {
+                    // Otherwise, we still need to verify
+                    alert('Check your email for the confirmation link!');
+                }
             }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             setError(err.message);
         } finally {

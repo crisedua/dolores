@@ -121,7 +121,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                             <div className="space-y-3">
                                 {problem.quotes.map((quote, idx) => (
                                     <div key={idx} className="bg-[#111] border-l-2 border-blue-500 pl-4 py-3 italic text-gray-300 text-sm">
-                                        "{quote}"
+                                        &quot;{quote}&quot;
                                     </div>
                                 ))}
                             </div>

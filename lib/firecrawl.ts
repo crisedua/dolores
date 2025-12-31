@@ -2,7 +2,7 @@
 import FirecrawlApp from '@mendable/firecrawl-js';
 
 const app = new FirecrawlApp({
-    apiKey: process.env.FIRECRAWL_API_KEY || "fc-e928be9cd75c41c2b42912e37210c1a1"
+    apiKey: process.env.FIRECRAWL_API_KEY || ""
 });
 
 export const firecrawl = app;

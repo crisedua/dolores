@@ -28,12 +28,15 @@ export async function searchDiscussions(query: string) {
                     formats: ['markdown']
                 });
 
-                if (response && response.success && response.markdown) {
+                // Cast to any to avoid "Property 'success' does not exist" type error during build
+                const rawResponse = response as any;
+
+                if (rawResponse && rawResponse.success && rawResponse.markdown) {
                     results.push({
                         url: url,
                         title: url.includes('reddit') ? 'Reddit Search Results' : 'Hacker News Search Results',
-                        content: response.markdown,
-                        snippet: response.markdown.substring(0, 500)
+                        content: rawResponse.markdown,
+                        snippet: rawResponse.markdown.substring(0, 500)
                     });
                     console.log(`[Firecrawl] Successfully scraped ${url}`);
                 }

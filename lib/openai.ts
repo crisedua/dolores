@@ -129,7 +129,7 @@ JSON OUTPUT STRUCTURE:
         },
         {
           role: "user",
-          content: `Analyze these Reddit/Forum conversations:\n\n${content.substring(0, 110000)}`
+          content: `Analyze these Reddit/Forum conversations:\n\n${content.substring(0, 150000)}`
         }
       ],
       response_format: { type: "json_object" },

@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
                             let content = p.selftext ? `${p.title}\n\n${p.selftext}` : p.title;
 
                             if (idx < 3 && p.num_comments > 0) {
-                                const comments = await getRedditComments(p.url, 10);
+                                const comments = await getRedditComments(p.url, 25);
                                 if (comments.length > 0) {
                                     const commentText = comments.map((c: any) => `[Comment by ${c.author}]: ${c.body}`).join("\n");
                                     content += `\n\n--- TOP COMMENTS ---\n${commentText}`;
@@ -139,7 +139,7 @@ export async function POST(req: NextRequest) {
                 const combinedMarkdown = uniqueResults.map((r: any) => `
                     Source: ${r.url}
                     Title: ${r.title}
-                    Content: ${(r.markdown || r.content || '').substring(0, 5000)}
+                    Content: ${(r.markdown || r.content || '').substring(0, 10000)}
                 `).join("\n\n");
 
                 sendUpdate(`Analyzing ${uniqueResults.length} discussions with Market Research Analyst...`, 'active');

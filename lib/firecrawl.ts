@@ -11,42 +11,37 @@ export async function searchDiscussions(query: string) {
     try {
         console.log(`[Firecrawl] Searching for: "${query}"`);
 
-        // Generate search URLs for Reddit and HN
-        const searchQuery = encodeURIComponent(query);
-        const urls = [
-            `https://www.reddit.com/search/?q=${searchQuery}&sort=relevance&t=month`,
-            `https://hn.algolia.com/?q=${searchQuery}&sort=byPopularity&type=story`
-        ];
+        // Use Firecrawl's SEARCH method instead of scraping search result pages manually.
+        // This is much more reliable as Firecrawl handles the search logic.
 
-        console.log(`[Firecrawl] Scraping URLs:`, urls);
-
-        // Scrape the search result pages
-        const results = [];
-        for (const url of urls) {
-            try {
-                const response = await app.scrape(url, {
+        try {
+            // Force search on Reddit
+            const searchResponse = await app.search(`${query} site:reddit.com`, {
+                limit: 5,
+                scrapeOptions: {
                     formats: ['markdown']
-                });
-
-                // Cast to any to avoid "Property 'success' does not exist" type error during build
-                const rawResponse = response as any;
-
-                if (rawResponse && rawResponse.success && rawResponse.markdown) {
-                    results.push({
-                        url: url,
-                        title: url.includes('reddit') ? 'Reddit Search Results' : 'Hacker News Search Results',
-                        content: rawResponse.markdown,
-                        snippet: rawResponse.markdown.substring(0, 500)
-                    });
-                    console.log(`[Firecrawl] Successfully scraped ${url}`);
                 }
-            } catch (scrapeError) {
-                console.error(`[Firecrawl] Error scraping ${url}:`, scrapeError);
+            });
+
+            // Firecrawl search response structure
+            const rawResponse = searchResponse as any;
+
+            if (rawResponse && rawResponse.success && rawResponse.data) {
+                console.log(`[Firecrawl] Search successful. Found ${rawResponse.data.length} results.`);
+                return rawResponse.data.map((item: any) => ({
+                    url: item.url,
+                    title: item.title || 'Discussion',
+                    content: item.markdown || item.content || '',
+                    snippet: (item.markdown || item.content || '').substring(0, 500)
+                }));
             }
+        } catch (searchError) {
+            console.error(`[Firecrawl] Search API Error:`, searchError);
         }
 
-        console.log(`[Firecrawl] Total results: ${results.length}`);
-        return results;
+        return [];
+
+
     } catch (error) {
         console.error("[Firecrawl] Search Error:", error);
         return [];

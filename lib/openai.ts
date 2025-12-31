@@ -18,8 +18,14 @@ export async function analyzeProblem(content: string) {
             messages: [
                 {
                     role: "system",
-                    content: `You are an expert product analyst. specific detailed analysis of business problems found in online discussions (Reddit, HN, Forums).
-                    Extract 3-5 distinct, high-value problems mentioned in the text.
+                    content: `You are an expert product analyst specialized in Micro-SaaS and B2B Software opportunities.
+                    Your goal is to identify lucrative problems in online discussions that can be solved with software.
+                    Follow these strict rules:
+                    1. Focus ONLY on problems solvable by SaaS, automation, or digital tools.
+                    2. Ignore complaints about physical products, politics, or general life advice.
+                    3. Look for "spreadsheet fatigue", "manual data entry", "fragmented workflows", or "expensive enterprise tools".
+                    
+                    Extract at least 10 distinct, high-value problems mentioned in the text.
                     For each problem, estimate:
                     - frequency (1-10): How often it appears?
                     - intensity (1-10): How painful is it?

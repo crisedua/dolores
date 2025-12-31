@@ -37,7 +37,6 @@ JSON OUTPUT FORMAT:
       response_format: { type: "json_object" }
     });
     const data = JSON.parse(response.choices[0].message.content || "{}");
-    // Fallback queries if empty
     const fallback = [`${topic} reddit`, `${topic} problems reddit`, `${topic} reddit alternatives`, `${topic} complaints`];
     return (data.queries && data.queries.length > 0) ? data.queries : fallback;
   } catch (e) {
@@ -47,114 +46,132 @@ JSON OUTPUT FORMAT:
 }
 
 /* -------------------------------------------------------------------------- */
-/*                     PROMPT B: EXTRACTION AGENT                             */
+/*                     PROMPT C: MARKET RESEARCH ANALYST                      */
 /* -------------------------------------------------------------------------- */
-export async function extractSignals(content: string) {
+export async function synthesizePatterns(content: string) {
+  // If no content, return mock
+  if (!content || content.length < 100) return mockAnalysis();
+
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         {
           role: "system",
-          content: `You are a Data Miner. Your job is to extract raw "Complaint Signals" from the provided forum discussions.
+          content: `You are an expert Market Research Analyst specializing in analyzing conversational data to identify pain points, frustrations, and unmet needs expressed by real users.
+Your expertise is in distilling lengthy Reddit threads into clear, actionable insights while preserving the authentic language users employ to describe their problems.
 
-DEFINITION of SIGNAL:
-A specific problem, pain point, struggle, expensive workaround, or unmet desire expressed by a user.
-IGNORE: Generic praise, marketing copy, or off-topic chatter.
+YOUR MISSION:
+Carefully analyze provided Reddit conversations and comments.
+Identify distinct pain points, problems, and frustrations mentioned by users.
+Extract and organize these pain points into clear categories.
+For each pain point, include all direct quotes from users that best illustrate this specific problem.
+Extract EVERY valuable pain point - thoroughness is crucial.
 
-RULES:
-1. Extract verbatim quotes where possible.
-2. Context must explain *why* it's a problem in 1 sentence.
-3. If no signals are found, return empty list.
+ANALYSIS CRITERIA:
+INCLUDE:
+- Specific problems users are experiencing
+- Frustrations with existing solutions
+- Unmet needs and desires
+- Workarounds users have created
+- Specific usage scenarios where problems occur
+- Emotional impact of problems
 
-JSON OUTPUT FORMAT:
+DO NOT INCLUDE:
+- General discussion not related to problems
+- Simple questions asking for advice
+- Generic complaints without details
+- Positive experiences (unless contrasting)
+
+CRITICAL OUTPUT INSTRUCTION:
+You must output your analysis in specific JSON format for our dashboard. Do NOT produce a markdown report.
+Map your "Pain Point Analysis" to the following schema:
+- Heading -> title
+- Summary -> description
+- Direct Quotes -> evidence (array of strings)
+- Priority Ranking -> signalScore (1-10)
+- Frequency/Intensity -> metrics (1-10)
+
+JSON OUTPUT STRUCTURE:
 {
-  "signals": [
-    { 
-      "quote": "I spend 3 hours a day copying data manually...", 
-      "context": "User complaining about lack of integration", 
-      "source_url": "URL where this came from (if available in text)" 
+  "problems": [
+    {
+      "id": "kebab-case-title",
+      "type": "problem",
+      "title": "Clear, Descriptive Heading",
+      "description": "Brief 1-2 sentence summary of the pain point",
+      "signalScore": 9, // Priority Rank (1-10) based on freq * intensity
+      "metrics": {
+        "frequency": 8, // 1-10
+        "intensity": 9, // 1-10 (emotional impact)
+        "solvability": 7, // 1-10
+        "monetizability": 6 // 1-10
+      },
+      "evidence": [
+        "Quote 1...",
+        "Quote 2..."
+      ],
+      "recommendation": "Brief MVP Solution Idea or Opportunity based on this need"
     }
   ]
 }`
         },
-        { role: "user", content: `Extract signals from this raw text (max 20k chars): \n\n${content.substring(0, 20000)}` }
+        {
+          role: "user",
+          content: `Analyze these Reddit/Forum conversations:\n\n${content.substring(0, 35000)}`
+        }
       ],
       response_format: { type: "json_object" }
     });
+
     const data = JSON.parse(response.choices[0].message.content || "{}");
-    return data.signals || [];
+    const problems = data.problems || [];
+
+    // Ensure strictly match TS interface
+    return problems.map((p: any, i: number) => ({
+      id: p.id || `problem-${i}`,
+      type: 'problem',
+      title: p.title || "Untitled Pain Point",
+      description: p.description || "No description",
+      signalScore: p.signalScore || 5,
+      metrics: {
+        frequency: p.metrics?.frequency || 5,
+        intensity: p.metrics?.intensity || 5,
+        solvability: p.metrics?.solvability || 5,
+        monetizability: p.metrics?.monetizability || 5
+      },
+      evidence: p.evidence || [],
+      recommendation: p.recommendation || "Investigate further"
+    }));
+
   } catch (e) {
-    console.error("Extract Signals Error", e);
-    return [];
+    console.error("Synthesis Error", e);
+    return mockAnalysis();
   }
 }
 
 /* -------------------------------------------------------------------------- */
-/*               PROMPT C/D/E: SYNTHESIS, SCORING & BRIEF                     */
+/*                     HELPER: MOCK DATA                                      */
 /* -------------------------------------------------------------------------- */
-export async function synthesizePatterns(signals: any[]) {
-  if (!signals || signals.length === 0) return { problems: [] };
-
-  try {
-    // We combine Clustering, Scoring, and Briefing into one call to save time/tokens
-    const signalsText = JSON.stringify(signals.slice(0, 60));
-
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: `You are a Senior Product Manager. Your goal is to Identify, Score, and Brief the top opportunities.
-
-INPUT:
-A list of raw "Complaint Signals" from a specific market.
-
-TASK 1: CLUSTERING (Prompt C)
-Group signals into specific "Problem Patterns".
-- A pattern must represent a solved problem (e.g., "Users hate manual data entry")
-- Merge duplicates.
-
-TASK 2: SCORING (Prompt D)
-Score each pattern (1-10 points per dimension for UI compatibility):
-1. PAIN (Intensity): How angry/desperate are they? (1=Mild, 10=Furious)
-2. FREQUENCY: How common is this complaint in the dataset? (1=Rare, 10=Constant)
-3. WILLINGNESS TO PAY (Monetizability): Is this a business problem? (1=Hobby, 10=Enterprise)
-4. SOLVABILITY: Can an MVP solve this? (1=Hard, 10=Easy)
-5. RECURRENCE: Is this a recurring task? (Optional internal score)
-
-JSON OUTPUT FORMAT:
-{
-  "problems": [
+function mockAnalysis() {
+  return [
     {
-      "id": "unique_id",
-      "rank": 1,
-      "description": "2-sentence problem definition",
-      "signalScore": 8.5,
-      "metrics": { "frequency": 8, "intensity": 9, "solvability": 7, "monetizability": 10 },
-      "recommendation": "Specific Micro-SaaS idea...",
-      "brief": { ... },
-      "signal_class": "High Signal" | "Noise",
-      "brief": {
-        "solution_idea": "...",
-        "validation_steps": ["..."],
-        "gaps_in_market": "..."
-      },
-      "evidence": [
-        { "quote": "...", "source_url": "..." }
-      ]
+      id: 'mock-error',
+      type: 'problem',
+      title: 'Analysis Failed',
+      description: 'We could not identify patterns in the retrieved data. Please try a different topic.',
+      signalScore: 1,
+      metrics: { frequency: 1, intensity: 1, solvability: 1, monetizability: 1 },
+      evidence: [],
+      recommendation: 'Try broadening your search terms.'
     }
-  ]
-}`
-        },
-        { role: "user", content: `Analyze these signals and produce the PRD data: ${signalsText}` }
-      ],
-      response_format: { type: "json_object" }
-    });
+  ];
+}
 
-    return JSON.parse(response.choices[0].message.content || "{}");
-  } catch (e) {
-    console.error("Synthesize Error", e);
-    return { problems: [] };
-  }
+/* -------------------------------------------------------------------------- */
+/*                     PROMPT B: EXTRACTION AGENT (Deprecated)                */
+/* -------------------------------------------------------------------------- */
+export async function extractSignals(content: string) {
+  // Kept for legacy compatibility if needed, but Pipeline V2 skips this.
+  return [];
 }

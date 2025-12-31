@@ -157,25 +157,24 @@ export async function POST(req: NextRequest) {
                 sendUpdate(`Found ${uniqueResults.length} unique discussion threads`, 'completed');
 
                 // --------------------------------------------------------------------------
-                // STEP 3: SIGNAL EXTRACTION (Data Mining Agent)
                 // --------------------------------------------------------------------------
-                sendUpdate(`Extracting raw complaint signals from ${uniqueResults.length} threads...`, 'active');
+                // STEP 3: ANALYST SYNTHESIS (Market Research Analyst)
+                // --------------------------------------------------------------------------
 
-                // Combine content for extraction (chunk processing if needed, but for MVP send top 20k chars)
+                // Combine content for analysis (Chunking limits applied inside prompt logic usually, but here we truncate)
                 const combinedMarkdown = uniqueResults.map((r: any) => `
                     Source: ${r.url}
                     Title: ${r.title}
                     Content: ${(r.markdown || r.content || '').substring(0, 3000)}
                 `).join("\n\n");
 
-                const signals = await extractSignals(combinedMarkdown);
-                sendUpdate(`Identified ${signals.length} distinct pain points & workarounds`, 'completed');
+                sendUpdate(`Analyzing ${uniqueResults.length} discussions with Market Research Analyst...`, 'active');
 
-                // --------------------------------------------------------------------------
-                // STEP 4: SYNTHESIS & SCORE (Analyst Agent)
-                // --------------------------------------------------------------------------
-                sendUpdate("Clustering patterns, scoring intensity, and generating briefs...", 'active');
-                const result = await synthesizePatterns(signals);
+                // Pass RAW content to Analyst (Pipeline V2 bypasses signal extraction)
+                // sending top 30k chars to context window
+                const result = await synthesizePatterns(combinedMarkdown);
+
+                sendUpdate("Analysis complete. Generating report...", 'completed');
 
                 // Final Result
                 const finalPayload = JSON.stringify({ type: 'result', data: result });

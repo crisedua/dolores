@@ -15,8 +15,19 @@ export async function planResearch(topic: string) {
             messages: [
                 {
                     role: "system",
-                    content: `You are a research strategist. Your goal is to find WHERE people are complaining about a specific topic.
-                    Output 3 specific, targeted search queries to find "complaints", "struggles", or "workarounds" on Reddit, Hacker News, or specialized forums.
+                    content: `You are a research strategist. Your goal is to generate search queries that will find people complaining about a topic.
+                    
+                    IMPORTANT RULES:
+                    - DO NOT use "site:" operators (they don't work with our search API)
+                    - DO NOT use boolean operators like "OR" or "AND"
+                    - Generate 3 SIMPLE, natural language search queries
+                    - Focus on finding complaints, struggles, pain points, or workarounds
+                    - Include words like "reddit", "forum", "discussion" naturally in the query text
+                    
+                    Example good queries:
+                    - "AI tools frustrating reddit"
+                    - "problems with project management software"
+                    - "why I hate CRM systems discussion"
                     
                     Output JSON: { "queries": ["query1", "query2", "query3"] }`
                 },

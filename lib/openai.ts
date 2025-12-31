@@ -18,15 +18,14 @@ export async function planResearch(topic: string) {
           content: `You are a Research Strategist. Your goal is to plan a search strategy to find high-intent customer complaints.
 
 OBJECTIVE:
-Turn the user's topic into specific search queries that will uncover "problems", "workarounds", and "pain points" on tech forums and communities.
+Turn the user's topic into specific search queries that will uncover "problems", "workarounds", and "pain points" on Reddit and forums.
 
 RULES:
 1. Generate 4 distinct search queries.
 2. Queries must be short (2-5 words) and natural.
-3. INCLUDE words like "hacker news", "stackoverflow", "forum", "vs", "alternatives", "problems", "issues".
-4. Target: Hacker News, StackOverflow, Product Hunt, IndieHackers, general tech forums.
-5. AVOID: "reddit" (blocked), boolean operators, "site:" operators.
-6. Focus on finding *discussions* not marketing pages.
+3. INCLUDE words like "reddit", "forum", "vs", "alternatives", "problems".
+4. Target: Reddit (Primary), Hacker News, IndieHackers.
+5. Use format: "topic reddit", "topic problems reddit", "topic alternatives".
 
 JSON OUTPUT FORMAT:
 {
@@ -38,12 +37,12 @@ JSON OUTPUT FORMAT:
       response_format: { type: "json_object" }
     });
     const data = JSON.parse(response.choices[0].message.content || "{}");
-    // Fallback queries if empty - use sources Firecrawl supports
-    const fallback = [`${topic} hacker news`, `${topic} problems stackoverflow`, `${topic} alternatives`, `${topic} issues forum`];
+    // Fallback queries if empty
+    const fallback = [`${topic} reddit`, `${topic} problems reddit`, `${topic} reddit alternatives`, `${topic} complaints`];
     return (data.queries && data.queries.length > 0) ? data.queries : fallback;
   } catch (e) {
     console.error("Plan Research Error", e);
-    return [`${topic} hacker news`, `${topic} problems`];
+    return [`${topic} reddit`, `${topic} problems`];
   }
 }
 

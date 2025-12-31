@@ -47,6 +47,24 @@ export async function POST(req: NextRequest) {
                 const searchPromises = researchPlan.map(async (subQuery: string) => {
                     try {
                         console.log(`[DEBUG] Searching: "${subQuery}"`);
+                        // STRATEGY: Use Reddit JSON API for reddit queries (Option 3)
+                        if (subQuery.toLowerCase().includes('reddit')) {
+                            const { searchReddit } = await import('@/lib/reddit');
+                            console.log(`[DEBUG] Using Direct JSON Search for: "${subQuery}"`);
+                            try {
+                                const redditPosts = await searchReddit(subQuery, 5);
+                                const mappedResults = redditPosts.map((p: any) => ({
+                                    url: p.url,
+                                    title: p.title,
+                                    content: p.selftext ? `${p.title}\n\n${p.selftext}` : p.title,
+                                    snippet: p.title
+                                }));
+                                return { query: subQuery, results: mappedResults, success: true };
+                            } catch (e) {
+                                console.error("Reddit JSON search failed", e);
+                            }
+                        }
+
                         // Set a strict 5s timeout for each search to avoid hanging
                         const searchRes = await Promise.race([
                             firecrawl.search(subQuery, { limit: 5, scrapeOptions: { formats: ['markdown'] } }),

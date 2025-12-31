@@ -6,13 +6,18 @@ export async function perplexitySearch(topic: string) {
         throw new Error("PERPLEXITY_API_KEY is not set in environment variables");
     }
 
-    const response = await fetch("https://api.perplexity.ai/chat/completions", {
-        method: "POST",
-        headers: {
-            "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
+    console.log('[Perplexity] Starting search for:', topic);
+    console.log('[Perplexity] API Key preview:', `${apiKey.substring(0, 8)}...`);
+
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+        console.error('[Perplexity] Request timed out after 90 seconds');
+        controller.abort();
+    }, 90000);
+
+    try {
+        const requestBody = {
             model: "sonar-pro",
             messages: [
                 {
@@ -56,21 +61,53 @@ export async function perplexitySearch(topic: string) {
                     content: `Tema: ${topic}`
                 }
             ]
-        })
-    });
+        };
 
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Perplexity API error (${response.status}): ${errorText}`);
-    }
+        console.log('[Perplexity] Sending request...');
 
-    const data = await response.json();
-    const content = data.choices[0].message.content;
+        const response = await fetch("https://api.perplexity.ai/chat/completions", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${apiKey}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestBody),
+            signal: controller.signal
+        });
 
-    try {
-        return JSON.parse(content);
-    } catch (e) {
-        console.error("Failed to parse Perplexity JSON:", content);
-        throw new Error("Perplexity returned invalid JSON format");
+        clearTimeout(timeoutId);
+
+        console.log('[Perplexity] Response status:', response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('[Perplexity] API error response:', errorText);
+            throw new Error(`Perplexity API error (${response.status}): ${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('[Perplexity] Response received, parsing content...');
+
+        const content = data.choices[0].message.content;
+        console.log('[Perplexity] Content preview:', content.substring(0, 200));
+
+        try {
+            const parsed = JSON.parse(content);
+            console.log('[Perplexity] Successfully parsed JSON with', parsed.problems?.length || 0, 'problems');
+            return parsed;
+        } catch (e) {
+            console.error("[Perplexity] Failed to parse JSON:", content);
+            throw new Error("Perplexity returned invalid JSON format");
+        }
+    } catch (error: any) {
+        clearTimeout(timeoutId);
+
+        if (error.name === 'AbortError') {
+            console.error('[Perplexity] Request aborted due to timeout');
+            throw new Error('Perplexity API request timed out after 90 seconds');
+        }
+
+        console.error('[Perplexity] Unexpected error:', error);
+        throw error;
     }
 }

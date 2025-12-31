@@ -24,35 +24,38 @@ export async function perplexitySearch(topic: string) {
                     - Look for specific frustrations, workarounds, and "I wish there was a way to..." statements.
                     - Find at least 10-15 distinct, granular pain points.
                     
-                    OUTPUT FORMAT:
-                    You must output a JSON object with a single key "problems" containing an array of objects. 
-                    Each object MUST follow this exact schema:
+                    CRITICAL: You MUST respond with a valid JSON object only. No other text.
+                    
+                    OUTPUT FORMAT (JSON ONLY):
                     {
-                        "id": "kebab-case-unique-id",
-                        "rank": number (1-15),
-                        "type": "problem",
-                        "title": "Short, punchy heading (3-6 words)",
-                        "description": "2-3 sentences explaining the specific user frustration in detail",
-                        "signalScore": number (1-10),
-                        "metrics": {
-                            "frequency": number (1-10),
-                            "intensity": number (1-10),
-                            "solvability": number (1-10),
-                            "monetizability": number (1-10)
-                        },
-                        "quotes": [
-                            "Direct quote or paraphrased specific example from a user",
-                            "Another specific example..."
-                        ],
-                        "recommendation": "Brief MVP solution idea"
+                        "problems": [
+                            {
+                                "id": "kebab-case-unique-id",
+                                "rank": 1,
+                                "type": "problem",
+                                "title": "Short, punchy heading (3-6 words)",
+                                "description": "2-3 sentences explaining the specific user frustration in detail",
+                                "signalScore": 9,
+                                "metrics": {
+                                    "frequency": 8,
+                                    "intensity": 9,
+                                    "solvability": 7,
+                                    "monetizability": 6
+                                },
+                                "quotes": [
+                                    "Direct quote or paraphrased specific example from a user",
+                                    "Another specific example..."
+                                ],
+                                "recommendation": "Brief MVP solution idea"
+                            }
+                        ]
                     }`
                 },
                 {
                     role: "user",
                     content: `Topic: ${topic}`
                 }
-            ],
-            response_format: { type: "json_object" }
+            ]
         })
     });
 

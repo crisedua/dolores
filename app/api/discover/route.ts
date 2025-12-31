@@ -49,16 +49,31 @@ export async function POST(req: NextRequest) {
                         console.log(`[DEBUG] Searching: "${subQuery}"`);
                         // STRATEGY: Use Reddit JSON API for reddit queries (Option 3)
                         if (subQuery.toLowerCase().includes('reddit')) {
-                            const { searchReddit } = await import('@/lib/reddit');
+                            const { searchReddit, getRedditComments } = await import('@/lib/reddit');
                             console.log(`[DEBUG] Using Direct JSON Search for: "${subQuery}"`);
                             try {
                                 const redditPosts = await searchReddit(subQuery, 10);
-                                const mappedResults = redditPosts.map((p: any) => ({
-                                    url: p.url,
-                                    title: p.title,
-                                    content: p.selftext ? `${p.title}\n\n${p.selftext}` : p.title,
-                                    snippet: p.title
+
+                                // Fetch comments for the top 3 posts in each sub-query to get deep discussion data
+                                const mappedResults = await Promise.all(redditPosts.map(async (p: any, idx: number) => {
+                                    let content = p.selftext ? `${p.title}\n\n${p.selftext}` : p.title;
+
+                                    if (idx < 3 && p.num_comments > 0) {
+                                        const comments = await getRedditComments(p.url, 10);
+                                        if (comments.length > 0) {
+                                            const commentText = comments.map((c: any) => `[Comment by ${c.author}]: ${c.body}`).join("\n");
+                                            content += `\n\n--- TOP COMMENTS ---\n${commentText}`;
+                                        }
+                                    }
+
+                                    return {
+                                        url: p.url,
+                                        title: p.title,
+                                        content: content,
+                                        snippet: p.title
+                                    };
                                 }));
+
                                 return { query: subQuery, results: mappedResults, success: true };
                             } catch (e) {
                                 console.error("Reddit JSON search failed", e);
@@ -165,7 +180,7 @@ export async function POST(req: NextRequest) {
                 const combinedMarkdown = uniqueResults.map((r: any) => `
                     Source: ${r.url}
                     Title: ${r.title}
-                    Content: ${(r.markdown || r.content || '').substring(0, 3000)}
+                    Content: ${(r.markdown || r.content || '').substring(0, 5000)}
                 `).join("\n\n");
 
                 sendUpdate(`Analyzing ${uniqueResults.length} discussions with Market Research Analyst...`, 'active');

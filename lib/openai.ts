@@ -69,12 +69,14 @@ export async function synthesizePatterns(content: string) {
 Your expertise is in distilling lengthy Reddit threads into clear, actionable insights while preserving the authentic language users employ to describe their problems.
 
 YOUR MISSION:
-Carefully analyze provided Reddit conversations and comments.
-Identify distinct pain points, problems, and frustrations mentioned by users.
-Extract and organize these pain points into clear categories.
+Identify EVERY distinct pain point, problem, and frustration mentioned by users.
+Extract and organize these pain points into granular categories.
 For each pain point, include all direct quotes from users that best illustrate this specific problem.
-Extract EVERY valuable pain point - thoroughness is crucial.
-AIM FOR MAXIMUM VOLUME: comprehensive list of 10-20 distinct pain points if data supports it. Do not over-cluster if it hides specific nuances.
+
+VOLUME REQUIREMENT: 
+- Aim for MINIMUM 12-15 distinct pain points if data supports it. 
+- DO NOT generalize or bucket into 3-4 groups. I want to see the long tail of friction.
+- Even minor or niche problems are valuable if they are recurring.
 
 ANALYSIS CRITERIA:
 INCLUDE:
@@ -94,8 +96,8 @@ DO NOT INCLUDE:
 CRITICAL OUTPUT INSTRUCTION:
 You must output your analysis in specific JSON format for our dashboard. Do NOT produce a markdown report.
 Map your "Pain Point Analysis" to the following schema:
-- Heading -> title
-- Summary -> description
+- Heading -> title (This should be a punchy 1-sentence headline)
+- Summary -> description (The UI uses this field as the MAIN HEADING, so make it descriptive)
 - Direct Quotes -> evidence (array of strings)
 - Priority Ranking -> signalScore (1-10)
 - Frequency/Intensity -> metrics (1-10)
@@ -104,16 +106,17 @@ JSON OUTPUT STRUCTURE:
 {
   "problems": [
     {
+      "rank": 1,
       "id": "kebab-case-title",
       "type": "problem",
-      "title": "Clear, Descriptive Heading",
-      "description": "Brief 1-2 sentence summary of the pain point",
-      "signalScore": 9, // Priority Rank (1-10) based on freq * intensity
+      "title": "Short Heading",
+      "description": "The detailed heading that appears on the card",
+      "signalScore": 9, 
       "metrics": {
-        "frequency": 8, // 1-10
-        "intensity": 9, // 1-10 (emotional impact)
-        "solvability": 7, // 1-10
-        "monetizability": 6 // 1-10
+        "frequency": 8, 
+        "intensity": 9, 
+        "solvability": 7, 
+        "monetizability": 6 
       },
       "evidence": [
         "Quote 1...",
@@ -129,7 +132,9 @@ JSON OUTPUT STRUCTURE:
           content: `Analyze these Reddit/Forum conversations:\n\n${content.substring(0, 110000)}`
         }
       ],
-      response_format: { type: "json_object" }
+      response_format: { type: "json_object" },
+      max_tokens: 4000,
+      temperature: 0.7
     });
 
     const data = JSON.parse(response.choices[0].message.content || "{}");
@@ -138,9 +143,10 @@ JSON OUTPUT STRUCTURE:
     // Ensure strictly match TS interface
     const mappedProblems = problems.map((p: any, i: number) => ({
       id: p.id || `problem-${i}`,
+      rank: i + 1,
       type: 'problem',
       title: p.title || "Untitled Pain Point",
-      description: p.description || "No description",
+      description: p.description || p.title || "No description", // Mapping for UI compatibility
       signalScore: p.signalScore || 5,
       metrics: {
         frequency: p.metrics?.frequency || 5,
@@ -168,12 +174,13 @@ function mockAnalysis() {
     problems: [
       {
         id: 'mock-error',
+        rank: 1,
         type: 'problem',
         title: 'Analysis Failed',
         description: 'We could not identify patterns in the retrieved data. Please try a different topic.',
         signalScore: 1,
         metrics: { frequency: 1, intensity: 1, solvability: 1, monetizability: 1 },
-        evidence: [],
+        quotes: [],
         recommendation: 'Try broadening your search terms.'
       }
     ]
@@ -184,6 +191,5 @@ function mockAnalysis() {
 /*                     PROMPT B: EXTRACTION AGENT (Deprecated)                */
 /* -------------------------------------------------------------------------- */
 export async function extractSignals(content: string) {
-  // Kept for legacy compatibility if needed, but Pipeline V2 skips this.
   return [];
 }

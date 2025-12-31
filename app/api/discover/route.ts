@@ -31,30 +31,38 @@ export async function POST(req: NextRequest) {
                 // --------------------------------------------------------------------------
                 sendUpdate(`Generating research strategy for "${query}"...`, 'active');
                 const researchPlan = await planResearch(query); // Returns array of queries
-                sendUpdate(`Strategy: Searching for ${researchPlan.slice(0, 2).join(", ")}...`, 'completed');
+                console.log("[DEBUG] Research Plan Generated:", researchPlan);
+                sendUpdate(`[DEBUG] Planner output: ${JSON.stringify(researchPlan)}`, 'completed');
 
                 // --------------------------------------------------------------------------
                 // STEP 2: MULTI-SOURCE SEARCH (Firecrawl)
                 // --------------------------------------------------------------------------
-                sendUpdate(`Scraping Reddit & HN with ${researchPlan.length} agents...`, 'active');
+                sendUpdate(`Scraping with ${researchPlan.length} agents...`, 'active');
 
                 // Dynamic import
-                const { scrapeDiscussions } = await import('@/lib/firecrawl');
                 const { firecrawl } = await import('@/lib/firecrawl');
 
                 // execute searches in parallel for the generated queries
                 let allSearchResults: any[] = [];
                 for (const subQuery of researchPlan) {
+                    console.log(`[DEBUG] Executing firecrawl.search for: "${subQuery}"`);
+                    sendUpdate(`[DEBUG] Searching: "${subQuery}"...`, 'active');
                     try {
-                        // Search "subQuery site:reddit.com" etc.
                         const searchRes = await firecrawl.search(subQuery, { limit: 2, scrapeOptions: { formats: ['markdown'] } });
-                        if ((searchRes as any).success && (searchRes as any).data) {
-                            allSearchResults = [...allSearchResults, ...(searchRes as any).data];
+                        const resData = (searchRes as any).data || [];
+                        console.log(`[DEBUG] Result for "${subQuery}": ${resData.length} items`);
+                        sendUpdate(`[DEBUG] Found ${resData.length} results for "${subQuery}"`, 'completed');
+                        if ((searchRes as any).success && resData.length > 0) {
+                            allSearchResults = [...allSearchResults, ...resData];
                         }
-                    } catch (err) {
-                        console.error("Sub-search failed", err);
+                    } catch (err: any) {
+                        console.error(`[DEBUG] Sub-search FAILED for "${subQuery}":`, err);
+                        sendUpdate(`[DEBUG] FAILED: ${subQuery} - ${err.message}`, 'completed');
                     }
                 }
+
+                console.log(`[DEBUG] Total raw results before dedup: ${allSearchResults.length}`);
+                sendUpdate(`[DEBUG] Total raw results: ${allSearchResults.length}`, 'completed');
 
                 // Deduplicate by URL
                 let uniqueResults = Array.from(new Map(allSearchResults.map(item => [item.url, item])).values());

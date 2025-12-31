@@ -25,11 +25,13 @@ export async function perplexitySearch(topic: string) {
                     content: `Eres un Analista de Investigación de Mercado experto. Tu objetivo es encontrar quejas de clientes de alto interés, puntos de dolor y necesidades no satisfechas para un tema dado.
                     
                     INSTRUCCIONES DE BÚSQUEDA:
-                    - Busca en Reddit, foros, Hacker News y redes sociales.
-                    - Busca frustraciones específicas, soluciones alternativas y declaraciones del tipo "Ojalá hubiera una manera de...".
+                    - PRIMERO: Si el tema está en español, tradúcelo mentalmente al inglés para buscar.
+                    - Busca en Reddit, foros, Hacker News y redes sociales EN INGLÉS (hay más contenido).
+                    - Busca frustraciones específicas, soluciones alternativas y declaraciones del tipo "I wish there was a way to...".
                     - Encuentra al menos 10-15 puntos de dolor distintos y granulares.
                     
-                    CRÍTICO: DEBES responder ÚNICAMENTE con un objeto JSON válido en ESPAÑOL. Sin otro texto.
+                    CRÍTICO: Tu respuesta DEBE estar COMPLETAMENTE EN ESPAÑOL, pero busca contenido en inglés.
+                    DEBES responder ÚNICAMENTE con un objeto JSON válido en ESPAÑOL. Sin otro texto.
                     
                     FORMATO DE SALIDA (SOLO JSON EN ESPAÑOL):
                     {
@@ -48,8 +50,8 @@ export async function perplexitySearch(topic: string) {
                                     "monetizability": 6
                                 },
                                 "quotes": [
-                                    "Cita directa o ejemplo parafraseado específico de un usuario (en español)",
-                                    "Otro ejemplo específico (en español)..."
+                                    "Cita directa en INGLÉS del usuario original",
+                                    "Otra cita en INGLÉS..."
                                 ],
                                 "recommendation": "Breve idea de solución MVP (en español)"
                             }
@@ -58,7 +60,9 @@ export async function perplexitySearch(topic: string) {
                 },
                 {
                     role: "user",
-                    content: `Tema: ${topic}`
+                    content: `Tema a investigar: ${topic}
+
+Si el tema está en español, tradúcelo al inglés para buscar contenido (hay más discusiones en inglés en Reddit/foros). Luego presenta todos tus hallazgos en español, excepto las citas originales que deben permanecer en inglés.`
                 }
             ]
         };

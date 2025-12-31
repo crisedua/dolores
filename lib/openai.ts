@@ -24,8 +24,8 @@ RULES:
 1. Generate 6 distinct search queries.
 2. Queries must be short (2-5 words) and natural.
 3. INCLUDE words like "reddit", "forum", "vs", "alternatives", "problems".
-4. Target: Reddit (Primary), Hacker News, IndieHackers.
-5. Use format: "topic reddit", "topic problems reddit", "topic alternatives".
+4. Target: Reddit (Specific community discussions).
+5. Use format: "topic reddit", "topic problems reddit", "topic alternatives reddit".
 
 JSON OUTPUT FORMAT:
 {

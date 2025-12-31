@@ -37,59 +37,42 @@ export async function POST(req: NextRequest) {
                 // --------------------------------------------------------------------------
                 // STEP 2: MULTI-SOURCE SEARCH (Firecrawl)
                 // --------------------------------------------------------------------------
-                sendUpdate(`Scraping with ${researchPlan.length} agents...`, 'active');
-
-                // Dynamic import
-                const { firecrawl } = await import('@/lib/firecrawl');
+                sendUpdate(`Searching Reddit for ${researchPlan.length} queries...`, 'active');
 
                 // execute searches in parallel for the generated queries
-                // Execute searches in parallel to save time (Netlify Function Timeout is 10s)
                 const searchPromises = researchPlan.map(async (subQuery: string) => {
                     try {
-                        console.log(`[DEBUG] Searching: "${subQuery}"`);
-                        // STRATEGY: Use Reddit JSON API for reddit queries (Option 3)
-                        if (subQuery.toLowerCase().includes('reddit')) {
-                            const { searchReddit, getRedditComments } = await import('@/lib/reddit');
-                            console.log(`[DEBUG] Using Direct JSON Search for: "${subQuery}"`);
-                            try {
-                                const redditPosts = await searchReddit(subQuery, 10);
+                        console.log(`[DEBUG] Searching Reddit: "${subQuery}"`);
+                        const { searchReddit, getRedditComments } = await import('@/lib/reddit');
 
-                                // Fetch comments for the top 3 posts in each sub-query to get deep discussion data
-                                const mappedResults = await Promise.all(redditPosts.map(async (p: any, idx: number) => {
-                                    let content = p.selftext ? `${p.title}\n\n${p.selftext}` : p.title;
+                        // Ensure we target reddit specifically
+                        const redditQuery = subQuery.toLowerCase().includes('reddit') ? subQuery : `${subQuery} reddit`;
 
-                                    if (idx < 3 && p.num_comments > 0) {
-                                        const comments = await getRedditComments(p.url, 10);
-                                        if (comments.length > 0) {
-                                            const commentText = comments.map((c: any) => `[Comment by ${c.author}]: ${c.body}`).join("\n");
-                                            content += `\n\n--- TOP COMMENTS ---\n${commentText}`;
-                                        }
-                                    }
+                        const redditPosts = await searchReddit(redditQuery, 10);
 
-                                    return {
-                                        url: p.url,
-                                        title: p.title,
-                                        content: content,
-                                        snippet: p.title
-                                    };
-                                }));
+                        // Fetch comments for the top 3 posts in each sub-query to get deep discussion data
+                        const mappedResults = await Promise.all(redditPosts.map(async (p: any, idx: number) => {
+                            let content = p.selftext ? `${p.title}\n\n${p.selftext}` : p.title;
 
-                                return { query: subQuery, results: mappedResults, success: true };
-                            } catch (e) {
-                                console.error("Reddit JSON search failed", e);
+                            if (idx < 3 && p.num_comments > 0) {
+                                const comments = await getRedditComments(p.url, 10);
+                                if (comments.length > 0) {
+                                    const commentText = comments.map((c: any) => `[Comment by ${c.author}]: ${c.body}`).join("\n");
+                                    content += `\n\n--- TOP COMMENTS ---\n${commentText}`;
+                                }
                             }
-                        }
 
-                        // Set a strict 5s timeout for each search to avoid hanging
-                        const searchRes = await Promise.race([
-                            firecrawl.search(subQuery, { limit: 7, scrapeOptions: { formats: ['markdown'] } }),
-                            new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000))
-                        ]);
+                            return {
+                                url: p.url,
+                                title: p.title,
+                                content: content,
+                                snippet: p.title
+                            };
+                        }));
 
-                        const resData = (searchRes as any).data || [];
-                        return { query: subQuery, results: resData, success: (searchRes as any).success };
+                        return { query: subQuery, results: mappedResults, success: true };
                     } catch (err: any) {
-                        console.error(`[DEBUG] Search failed for "${subQuery}":`, err.message);
+                        console.error(`[DEBUG] Reddit search failed for "${subQuery}":`, err.message);
                         return { query: subQuery, results: [], success: false, error: err.message };
                     }
                 });
@@ -110,31 +93,7 @@ export async function POST(req: NextRequest) {
                 // Deduplicate by URL
                 let uniqueResults = Array.from(new Map(allSearchResults.map(item => [item.url, item])).values());
 
-                // FALLBACK 1: Broad Search API
-                if (uniqueResults.length === 0) {
-                    sendUpdate("[FALLBACK] 0 results. Trying broad search...", 'active');
-                    console.log("[DEBUG] Triggering broad search fallback...");
-                    try {
-                        const broadQuery = `${query} reddit discussion`;
-                        // TIMEOUT PROTECTION: 10s
-                        const fallbackRes = await Promise.race([
-                            firecrawl.search(broadQuery, { limit: 5, scrapeOptions: { formats: ['markdown'] } }),
-                            new Promise((_, reject) => setTimeout(() => reject(new Error("Broad Search Timeout")), 10000))
-                        ]);
-
-                        const fallbackData = (fallbackRes as any).data || [];
-                        if (fallbackData.length > 0) {
-                            uniqueResults = fallbackData;
-                            sendUpdate(`[FALLBACK] Found ${fallbackData.length} results via broad search.`, 'completed');
-                        }
-                    } catch (e: any) {
-                        console.error("Broad fallback failed", e);
-                        sendUpdate(`[FALLBACK] Broad search failed: ${e.message}`, 'active');
-                    }
-                }
-
-                // FALLBACK 2: Hacker News Search (Last Resort)
-                // Reddit is blocked by Firecrawl. Use HN Algolia search instead.
+                // FALLBACK: Hacker News Search (Last Resort)
                 if (uniqueResults.length === 0) {
                     sendUpdate("[LAST RESORT] Trying Hacker News search...", 'active');
                     try {

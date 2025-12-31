@@ -69,16 +69,21 @@ export async function POST(req: NextRequest) {
 
                 // FALLBACK STRATEGY: If API search fails, try scraping Reddit Search page directly
                 if (uniqueResults.length === 0) {
-                    sendUpdate("Primary search yielded no results, attempting fallback scrape...", 'active');
+                    sendUpdate("[FALLBACK] Primary search returned 0 results. Attempting direct scrape...", 'active');
+                    console.log("[DEBUG] Triggering fallback scrape...");
 
                     // Construct a direct Reddit search URL based on the original query
                     const fallbackQuery = encodeURIComponent(query);
                     const fallbackUrl = `https://www.reddit.com/search/?q=${fallbackQuery}&type=link`;
+                    sendUpdate(`[FALLBACK] Scraping: ${fallbackUrl}`, 'active');
 
                     try {
                         const { firecrawl } = await import('@/lib/firecrawl');
                         const scrapeRes = await firecrawl.scrape(fallbackUrl, { formats: ['markdown'] });
                         const raw = scrapeRes as any;
+
+                        console.log("[DEBUG] Fallback scrape response:", JSON.stringify(raw).substring(0, 500));
+                        sendUpdate(`[FALLBACK] Scrape success: ${raw.success}, Has markdown: ${!!raw.markdown}`, 'completed');
 
                         if (raw.success && raw.markdown) {
                             uniqueResults.push({
@@ -87,9 +92,11 @@ export async function POST(req: NextRequest) {
                                 content: raw.markdown,
                                 snippet: raw.markdown.substring(0, 500)
                             });
+                            sendUpdate(`[FALLBACK] Scraped ${raw.markdown.length} chars from Reddit!`, 'completed');
                         }
-                    } catch (fallbackErr) {
+                    } catch (fallbackErr: any) {
                         console.error("Fallback scrape failed", fallbackErr);
+                        sendUpdate(`[FALLBACK] FAILED: ${fallbackErr.message}`, 'completed');
                     }
                 }
 

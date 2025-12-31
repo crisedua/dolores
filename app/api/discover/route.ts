@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
                             const { searchReddit } = await import('@/lib/reddit');
                             console.log(`[DEBUG] Using Direct JSON Search for: "${subQuery}"`);
                             try {
-                                const redditPosts = await searchReddit(subQuery, 5);
+                                const redditPosts = await searchReddit(subQuery, 10);
                                 const mappedResults = redditPosts.map((p: any) => ({
                                     url: p.url,
                                     title: p.title,
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
 
                         // Set a strict 5s timeout for each search to avoid hanging
                         const searchRes = await Promise.race([
-                            firecrawl.search(subQuery, { limit: 5, scrapeOptions: { formats: ['markdown'] } }),
+                            firecrawl.search(subQuery, { limit: 7, scrapeOptions: { formats: ['markdown'] } }),
                             new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000))
                         ]);
 

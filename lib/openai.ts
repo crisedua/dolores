@@ -2,113 +2,124 @@ import OpenAI from 'openai';
 
 export const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY || "",
-    dangerouslyAllowBrowser: true // NOT RECOMMENDED for production, but using here for MVP/server mix check
+    dangerouslyAllowBrowser: true
 });
 
-// Helper for structured extraction
-export async function analyzeProblem(content: string) {
-    if (!process.env.OPENAI_API_KEY) {
-        console.warn("No OpenAI Key provided, returning mock data.");
-        return mockAnalysis();
-    }
-
+/* -------------------------------------------------------------------------- */
+/*                                1. PLAN RESEARCH                            */
+/* -------------------------------------------------------------------------- */
+export async function planResearch(topic: string) {
     try {
-        const completion = await openai.chat.completions.create({
+        const response = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
                 {
                     role: "system",
-                    content: `You are an expert product analyst specialized in Micro-SaaS and B2B Software opportunities.
-                    Your goal is to identify lucrative problems in online discussions that can be solved with software.
-                    Follow these strict rules:
-                    1. Focus ONLY on problems solvable by SaaS, automation, or digital tools.
-                    2. Ignore complaints about physical products, politics, or general life advice.
-                    3. Look for "spreadsheet fatigue", "manual data entry", "fragmented workflows", or "expensive enterprise tools".
+                    content: `You are a research strategist. Your goal is to find WHERE people are complaining about a specific topic.
+                    Output 3 specific, targeted search queries to find "complaints", "struggles", or "workarounds" on Reddit, Hacker News, or specialized forums.
                     
-                    Extract at least 10 distinct, high-value problems mentioned in the text.
-                    For each problem, estimate:
-                    - frequency (1-10): How often it appears?
-                    - intensity (1-10): How painful is it?
-                    - solvability (1-10): Technical feasibility?
-                    - monetizability (1-10): Willingness to pay?
+                    Output JSON: { "queries": ["query1", "query2", "query3"] }`
+                },
+                { role: "user", content: `Topic: ${topic}` }
+            ],
+            response_format: { type: "json_object" }
+        });
+        const data = JSON.parse(response.choices[0].message.content || "{}");
+        return data.queries || [`${topic} reddit complaints`, `${topic} problems`, `${topic} alternatives`];
+    } catch (e) {
+        console.error("Plan Research Error", e);
+        return [`${topic} reddit`, `${topic} issues`];
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                2. EXTRACT SIGNALS                          */
+/* -------------------------------------------------------------------------- */
+export async function extractSignals(content: string) {
+    try {
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+                {
+                    role: "system",
+                    content: `You are a data miner. Extract every distinct user complaint, struggle, desire, or workaround from the text.
+                    Ignore generic marketing or happy path comments.
                     
-                    Output valid JSON matching this structure:
+                    Output JSON: { 
+                        "signals": [ 
+                            { "quote": "exact text from user", "context": "1-sentence context", "source_url": "url_if_available" } 
+                        ] 
+                    }`
+                },
+                { role: "user", content: `Extract signals from: ${content.substring(0, 15000)}` }
+            ],
+            response_format: { type: "json_object" }
+        });
+        const data = JSON.parse(response.choices[0].message.content || "{}");
+        return data.signals || [];
+    } catch (e) {
+        console.error("Extract Signals Error", e);
+        return [];
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                          3. SYNTHESIZE & SCORE (Cluster + Brief)           */
+/* -------------------------------------------------------------------------- */
+export async function synthesizePatterns(signals: any[]) {
+    if (!signals || signals.length === 0) return mockAnalysis();
+
+    try {
+        const signalsText = JSON.stringify(signals.slice(0, 50)); // Limit to avoid context overflow
+
+        const response = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+                {
+                    role: "system",
+                    content: `You are an expert SaaS Product Analyst. 
+                    1. Group the provided "Complaint Signals" into distinct high-value "Problem Patterns".
+                    2. STRICTLY Focus on problems solvable by Micro-SaaS or B2B Software.
+                    3. Score each pattern based on Intensity, Frequency, Solvability, Monetizability.
+                    4. Cite specific quotes/sources from the input signals as evidence. Do NOT hallucinate evidence.
+                    
+                    Rubric:
+                    - Frequency (1-10): How many signals belong to this pattern?
+                    - Intensity (1-10): How emotional/painful is the language?
+                    - Solvability (1-10): Can software automate this?
+                    - Monetizability (1-10): Is this a business problem with budget?
+
+                    Output JSON:
                     {
                       "problems": [
                         {
                           "id": "string",
                           "rank": number,
-                          "description": "Clear 1-sentence problem statement",
+                          "description": "Clear problem statement",
                           "signalScore": number (1-10),
                           "metrics": { "frequency": number, "intensity": number, "solvability": number, "monetizability": number },
-                          "recommendation": "Specific actionable next step",
-                          "frequency": number (1-100, mapped from frequency * 10),
-                          "economicIntent": number (1-100, mapped from monetizability * 10),
-                          "trend": "GROWING" | "STABLE" | "DECLINING",
-                          "competition": "HIGH" | "MED" | "LOW",
+                          "recommendation": "Specific Micro-SaaS idea to solve this",
                           "sources": [ { "url": "string", "title": "string", "snippet": "string" } ],
-                          "quotes": [ "string" ],
+                          "quotes": [ "string (verbatim from signals)" ],
                           "existingSolutions": [ "string" ],
                           "gaps": [ "string" ]
                         }
                       ]
                     }`
                 },
-                {
-                    role: "user",
-                    content: `Analyze this raw discussion content and extract problem signals. Ignore noise/ads. Content: ${content.substring(0, 20000)}`
-                }
+                { role: "user", content: `Analyze these signals: ${signalsText}` }
             ],
             response_format: { type: "json_object" }
         });
 
-        return JSON.parse(completion.choices[0].message.content || "{}");
+        return JSON.parse(response.choices[0].message.content || "{}");
     } catch (e) {
-        console.error("OpenAI Error", e);
+        console.error("Synthesize Error", e);
         return mockAnalysis();
     }
 }
 
+// Kept for fallback/error handling
 function mockAnalysis() {
-    return {
-        problems: [
-            {
-                id: "p1",
-                rank: 1,
-                description: "Identifying and implementing the correct AI tools for small business productivity is difficult and overwhelming.",
-                signalScore: 8.5,
-                metrics: {
-                    frequency: 9,
-                    intensity: 8,
-                    solvability: 8,
-                    monetizability: 9
-                },
-                recommendation: "Develop a niche AI consultancy or a 'done-for-you' implementation kit specifically targeting common SMB workflows (e.g., invoicing, scheduling) to replace manual research.",
-
-                // Keep backward compatible fields for matrix if needed, or map them
-                frequency: 90, // mapped from 9
-                economicIntent: 90, // mapped from monetizability
-                trend: "GROWING",
-                competition: "MED"
-            },
-            {
-                id: "p2",
-                rank: 2,
-                description: "Remote teams struggle to maintain consistent culture and connection without intrusive monitoring tools.",
-                signalScore: 7.2,
-                metrics: {
-                    frequency: 7,
-                    intensity: 6,
-                    solvability: 9,
-                    monetizability: 7
-                },
-                recommendation: "Build a 'culture-first' async update tool that focuses on mood sharing and wins rather than hours logged.",
-
-                frequency: 70,
-                economicIntent: 70,
-                trend: "STABLE",
-                competition: "HIGH"
-            }
-        ]
-    };
+    return { problems: [] };
 }

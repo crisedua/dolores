@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest } from 'next/server';
-import { analyzeProblem } from '@/lib/openai';
+// Import the granular agentic functions
+import { planResearch, extractSignals, synthesizePatterns } from '@/lib/openai';
 
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
@@ -25,43 +26,66 @@ export async function POST(req: NextRequest) {
                 const { query } = await req.json();
                 console.log(`[API] Received query: "${query}"`);
 
-                // Step 1: Strategy
-                sendUpdate(`Generating research strategy for "${query}"...`, 'completed');
+                // --------------------------------------------------------------------------
+                // STEP 1: RESEARCH STRATEGY (Agentic Planner)
+                // --------------------------------------------------------------------------
+                sendUpdate(`Generating research strategy for "${query}"...`, 'active');
+                const researchPlan = await planResearch(query); // Returns array of queries
+                sendUpdate(`Strategy: Searching for ${researchPlan.slice(0, 2).join(", ")}...`, 'completed');
 
-                // Step 2: Firecrawl Search
-                sendUpdate(`Expanding search to Reddit and Hacker News...`, 'active');
+                // --------------------------------------------------------------------------
+                // STEP 2: MULTI-SOURCE SEARCH (Firecrawl)
+                // --------------------------------------------------------------------------
+                sendUpdate(`Scraping Reddit & HN with ${researchPlan.length} agents...`, 'active');
 
-                // Dynamic import to avoid cold start issues affecting stream start
-                const { searchDiscussions } = await import('@/lib/firecrawl');
-                const searchResults = await searchDiscussions(query);
+                // Dynamic import
+                const { scrapeDiscussions } = await import('@/lib/firecrawl');
+                const { firecrawl } = await import('@/lib/firecrawl');
 
-                sendUpdate(`Found ${searchResults.length} relevant discussions across 2 platforms`, 'completed');
-
-                let contextContent = "";
-
-                if (searchResults.length > 0) {
-                    sendUpdate(`Extracting insights from ${searchResults.length} unique sources...`, 'active');
-
-                    contextContent = searchResults.map((r: any) => `
-                        Source: ${r.url}
-                        Title: ${r.title}
-                        Content: ${r.content || r.snippet}
-                    `).join("\n\n");
-
-                    // Simulate a tiny delay for "reading" feel (optional, but nice for UX)
-                    await new Promise(r => setTimeout(r, 800));
-                    sendUpdate(`Processed ${contextContent.length} characters of raw user context`, 'completed');
-
-                } else {
-                    sendUpdate("No direct matches, falling back to knowledge base analysis...", 'active');
-                    console.warn("[API] No search results found.");
-                    contextContent = `No direct live discussions found for ${query}. Analyze based on general knowledge.`;
-                    await new Promise(r => setTimeout(r, 1000));
+                // execute searches in parallel for the generated queries
+                let allSearchResults: any[] = [];
+                for (const subQuery of researchPlan) {
+                    try {
+                        // Search "subQuery site:reddit.com" etc.
+                        const searchRes = await firecrawl.search(subQuery, { limit: 2, scrapeOptions: { formats: ['markdown'] } });
+                        if ((searchRes as any).success && (searchRes as any).data) {
+                            allSearchResults = [...allSearchResults, ...(searchRes as any).data];
+                        }
+                    } catch (err) {
+                        console.error("Sub-search failed", err);
+                    }
                 }
 
-                // Step 3: Analysis
-                sendUpdate("Analysing raw web data for recurring frustrations...", 'active');
-                const result = await analyzeProblem(contextContent);
+                // Deduplicate by URL
+                const uniqueResults = Array.from(new Map(allSearchResults.map(item => [item.url, item])).values());
+
+                if (uniqueResults.length === 0) {
+                    sendError("No relevant discussions found. Try a broader topic.");
+                    return;
+                }
+
+                sendUpdate(`Found ${uniqueResults.length} unique discussion threads`, 'completed');
+
+                // --------------------------------------------------------------------------
+                // STEP 3: SIGNAL EXTRACTION (Data Mining Agent)
+                // --------------------------------------------------------------------------
+                sendUpdate(`Extracting raw complaint signals from ${uniqueResults.length} threads...`, 'active');
+
+                // Combine content for extraction (chunk processing if needed, but for MVP send top 20k chars)
+                const combinedMarkdown = uniqueResults.map((r: any) => `
+                    Source: ${r.url}
+                    Title: ${r.title}
+                    Content: ${(r.markdown || r.content || '').substring(0, 3000)}
+                `).join("\n\n");
+
+                const signals = await extractSignals(combinedMarkdown);
+                sendUpdate(`Identified ${signals.length} distinct pain points & workarounds`, 'completed');
+
+                // --------------------------------------------------------------------------
+                // STEP 4: SYNTHESIS & SCORE (Analyst Agent)
+                // --------------------------------------------------------------------------
+                sendUpdate("Clustering patterns, scoring intensity, and generating briefs...", 'active');
+                const result = await synthesizePatterns(signals);
 
                 // Final Result
                 const finalPayload = JSON.stringify({ type: 'result', data: result });

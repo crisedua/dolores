@@ -67,6 +67,7 @@ Identify distinct pain points, problems, and frustrations mentioned by users.
 Extract and organize these pain points into clear categories.
 For each pain point, include all direct quotes from users that best illustrate this specific problem.
 Extract EVERY valuable pain point - thoroughness is crucial.
+AIM FOR MAXIMUM VOLUME: comprehensive list of 10-20 distinct pain points if data supports it. Do not over-cluster if it hides specific nuances.
 
 ANALYSIS CRITERIA:
 INCLUDE:
@@ -118,7 +119,7 @@ JSON OUTPUT STRUCTURE:
         },
         {
           role: "user",
-          content: `Analyze these Reddit/Forum conversations:\n\n${content.substring(0, 35000)}`
+          content: `Analyze these Reddit/Forum conversations:\n\n${content.substring(0, 100000)}`
         }
       ],
       response_format: { type: "json_object" }

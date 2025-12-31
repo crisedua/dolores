@@ -1,62 +1,63 @@
 import OpenAI from 'openai';
 
 export const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || "",
-    dangerouslyAllowBrowser: true
+  apiKey: process.env.OPENAI_API_KEY || "",
+  dangerouslyAllowBrowser: true
 });
 
 /* -------------------------------------------------------------------------- */
 /*                     PROMPT A: RESEARCH PLANNER                             */
 /* -------------------------------------------------------------------------- */
 export async function planResearch(topic: string) {
-    try {
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o",
-            messages: [
-                {
-                    role: "system",
-                    content: `You are a Research Strategist. Your goal is to plan a search strategy to find high-intent customer complaints.
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `You are a Research Strategist. Your goal is to plan a search strategy to find high-intent customer complaints.
 
 OBJECTIVE:
-Turn the user's topic into specific search queries that will uncover "problems", "workarounds", and "pain points" on forums like Reddit.
+Turn the user's topic into specific search queries that will uncover "problems", "workarounds", and "pain points" on tech forums and communities.
 
 RULES:
 1. Generate 4 distinct search queries.
 2. Queries must be short (2-5 words) and natural.
-3. INCLUDE words like "reddit", "forum", "vs", "alternatives".
-4. AVOID boolean operators (AND, OR) or "site:" operators.
-5. Focus on finding *discussions* not marketing pages.
+3. INCLUDE words like "hacker news", "stackoverflow", "forum", "vs", "alternatives", "problems", "issues".
+4. Target: Hacker News, StackOverflow, Product Hunt, IndieHackers, general tech forums.
+5. AVOID: "reddit" (blocked), boolean operators, "site:" operators.
+6. Focus on finding *discussions* not marketing pages.
 
 JSON OUTPUT FORMAT:
 {
   "queries": ["query1", "query2", ...]
 }`
-                },
-                { role: "user", content: `Topic: ${topic}` }
-            ],
-            response_format: { type: "json_object" }
-        });
-        const data = JSON.parse(response.choices[0].message.content || "{}");
-        // Fallback queries if empty
-        const fallback = [`${topic} reddit`, `${topic} problems reddit`, `${topic} alternatives reddit`, `why I hate ${topic}`];
-        return (data.queries && data.queries.length > 0) ? data.queries : fallback;
-    } catch (e) {
-        console.error("Plan Research Error", e);
-        return [`${topic} reddit`, `${topic} problems`];
-    }
+        },
+        { role: "user", content: `Topic: ${topic}` }
+      ],
+      response_format: { type: "json_object" }
+    });
+    const data = JSON.parse(response.choices[0].message.content || "{}");
+    // Fallback queries if empty - use sources Firecrawl supports
+    const fallback = [`${topic} hacker news`, `${topic} problems stackoverflow`, `${topic} alternatives`, `${topic} issues forum`];
+    return (data.queries && data.queries.length > 0) ? data.queries : fallback;
+  } catch (e) {
+    console.error("Plan Research Error", e);
+    return [`${topic} hacker news`, `${topic} problems`];
+  }
 }
 
 /* -------------------------------------------------------------------------- */
 /*                     PROMPT B: EXTRACTION AGENT                             */
 /* -------------------------------------------------------------------------- */
 export async function extractSignals(content: string) {
-    try {
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o",
-            messages: [
-                {
-                    role: "system",
-                    content: `You are a Data Miner. Your job is to extract raw "Complaint Signals" from the provided forum discussions.
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `You are a Data Miner. Your job is to extract raw "Complaint Signals" from the provided forum discussions.
 
 DEFINITION of SIGNAL:
 A specific problem, pain point, struggle, expensive workaround, or unmet desire expressed by a user.
@@ -77,35 +78,35 @@ JSON OUTPUT FORMAT:
     }
   ]
 }`
-                },
-                { role: "user", content: `Extract signals from this raw text (max 20k chars): \n\n${content.substring(0, 20000)}` }
-            ],
-            response_format: { type: "json_object" }
-        });
-        const data = JSON.parse(response.choices[0].message.content || "{}");
-        return data.signals || [];
-    } catch (e) {
-        console.error("Extract Signals Error", e);
-        return [];
-    }
+        },
+        { role: "user", content: `Extract signals from this raw text (max 20k chars): \n\n${content.substring(0, 20000)}` }
+      ],
+      response_format: { type: "json_object" }
+    });
+    const data = JSON.parse(response.choices[0].message.content || "{}");
+    return data.signals || [];
+  } catch (e) {
+    console.error("Extract Signals Error", e);
+    return [];
+  }
 }
 
 /* -------------------------------------------------------------------------- */
 /*               PROMPT C/D/E: SYNTHESIS, SCORING & BRIEF                     */
 /* -------------------------------------------------------------------------- */
 export async function synthesizePatterns(signals: any[]) {
-    if (!signals || signals.length === 0) return { problems: [] };
+  if (!signals || signals.length === 0) return { problems: [] };
 
-    try {
-        // We combine Clustering, Scoring, and Briefing into one call to save time/tokens
-        const signalsText = JSON.stringify(signals.slice(0, 60));
+  try {
+    // We combine Clustering, Scoring, and Briefing into one call to save time/tokens
+    const signalsText = JSON.stringify(signals.slice(0, 60));
 
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o",
-            messages: [
-                {
-                    role: "system",
-                    content: `You are a Senior Product Manager. Your goal is to Identify, Score, and Brief the top opportunities.
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `You are a Senior Product Manager. Your goal is to Identify, Score, and Brief the top opportunities.
 
 INPUT:
 A list of raw "Complaint Signals" from a specific market.
@@ -146,15 +147,15 @@ JSON OUTPUT FORMAT:
     }
   ]
 }`
-                },
-                { role: "user", content: `Analyze these signals and produce the PRD data: ${signalsText}` }
-            ],
-            response_format: { type: "json_object" }
-        });
+        },
+        { role: "user", content: `Analyze these signals and produce the PRD data: ${signalsText}` }
+      ],
+      response_format: { type: "json_object" }
+    });
 
-        return JSON.parse(response.choices[0].message.content || "{}");
-    } catch (e) {
-        console.error("Synthesize Error", e);
-        return { problems: [] };
-    }
+    return JSON.parse(response.choices[0].message.content || "{}");
+  } catch (e) {
+    console.error("Synthesize Error", e);
+    return { problems: [] };
+  }
 }

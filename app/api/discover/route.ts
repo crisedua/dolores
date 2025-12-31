@@ -100,35 +100,34 @@ export async function POST(req: NextRequest) {
                     }
                 }
 
-                // FALLBACK 2: Direct Scrape (Last Resort)
-                // If we STILL have 0 results, scrape Reddit Search directly (bypasses Search API index issues)
+                // FALLBACK 2: Hacker News Search (Last Resort)
+                // Reddit is blocked by Firecrawl. Use HN Algolia search instead.
                 if (uniqueResults.length === 0) {
-                    sendUpdate("[LAST RESORT] Attempting direct Reddit scrape...", 'active');
+                    sendUpdate("[LAST RESORT] Trying Hacker News search...", 'active');
                     try {
                         const encodedQuery = encodeURIComponent(query);
-                        const directUrl = `https://www.reddit.com/search/?q=${encodedQuery}&type=link`;
+                        // HN Algolia is public and reliable
+                        const hnUrl = `https://hn.algolia.com/api/v1/search?query=${encodedQuery}&tags=story`;
 
-                        // TIMEOUT PROTECTION: 15s (Scraping is slower)
-                        const scrapeRes = await Promise.race([
-                            firecrawl.scrape(directUrl, { formats: ['markdown'] }),
-                            new Promise((_, reject) => setTimeout(() => reject(new Error("Direct Scrape Timeout")), 15000))
-                        ]);
+                        const hnRes = await Promise.race([
+                            fetch(hnUrl).then(r => r.json()),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error("HN Search Timeout")), 10000))
+                        ]) as any;
 
-                        const raw = scrapeRes as any;
-                        if (raw.success && raw.markdown) {
-                            // Use the scraped search page as a "source"
-                            // It won't be as clean as individual threads, but it has titles/snippets
-                            uniqueResults.push({
-                                url: directUrl,
-                                title: `Reddit Search: ${query}`,
-                                content: raw.markdown,
-                                snippet: raw.markdown.substring(0, 500)
-                            });
-                            sendUpdate(`[LAST RESORT] Scraped Reddit Search Results page.`, 'completed');
+                        if (hnRes.hits && hnRes.hits.length > 0) {
+                            // Take top 5 stories
+                            const hnResults = hnRes.hits.slice(0, 5).map((hit: any) => ({
+                                url: `https://news.ycombinator.com/item?id=${hit.objectID}`,
+                                title: hit.title || "HN Discussion",
+                                content: `${hit.title}. ${hit.story_text || ""}`,
+                                snippet: hit.title
+                            }));
+                            uniqueResults.push(...hnResults);
+                            sendUpdate(`[LAST RESORT] Found ${hnResults.length} Hacker News discussions.`, 'completed');
                         }
                     } catch (e: any) {
-                        console.error("Direct scrape failed", e);
-                        sendUpdate(`[LAST RESORT] Failed: ${e.message}`, 'active');
+                        console.error("HN fallback failed", e);
+                        sendUpdate(`[LAST RESORT] HN search failed: ${e.message}`, 'active');
                     }
                 }
 

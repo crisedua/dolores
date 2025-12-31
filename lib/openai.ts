@@ -140,7 +140,7 @@ JSON OUTPUT STRUCTURE:
         solvability: p.metrics?.solvability || 5,
         monetizability: p.metrics?.monetizability || 5
       },
-      evidence: p.evidence || [],
+      quotes: p.evidence || [], // Map schema 'evidence' to UI 'quotes'
       recommendation: p.recommendation || "Investigate further"
     }));
 

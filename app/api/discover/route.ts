@@ -26,135 +26,156 @@ export async function POST(req: NextRequest) {
                 const { query } = await req.json();
                 console.log(`[API] Received query: "${query}"`);
 
-                // --------------------------------------------------------------------------
-                // STEP 1: RESEARCH STRATEGY (Agentic Planner)
-                // --------------------------------------------------------------------------
-                sendUpdate(`Generating research strategy for "${query}"...`, 'active');
-                const researchPlan = await planResearch(query); // Returns array of queries
-                console.log("[DEBUG] Research Plan Generated:", researchPlan);
-                sendUpdate(`[DEBUG] Planner output: ${JSON.stringify(researchPlan)}`, 'completed');
+                const hasPerplexity = !!process.env.PERPLEXITY_API_KEY;
 
-                // --------------------------------------------------------------------------
-                sendUpdate(`Searching Reddit for ${researchPlan.length} queries...`, 'completed');
-                sendUpdate(`Searching parallel (${researchPlan.length} queries)...`, 'active');
+                if (hasPerplexity) {
+                    // --------------------------------------------------------------------------
+                    // PATH A: PERPLEXITY AI RESEARCH (Fast & Reliable)
+                    // --------------------------------------------------------------------------
+                    const { perplexitySearch } = await import('@/lib/perplexity');
 
-                // execute searches in parallel for the generated queries
-                const searchPromises = researchPlan.map(async (subQuery: string) => {
-                    try {
-                        console.log(`[DEBUG] Searching Reddit: "${subQuery}"`);
-                        const { searchReddit, getRedditComments } = await import('@/lib/reddit');
+                    sendUpdate("Initializing Global AI Research Engine...", 'completed');
+                    sendUpdate(`Analyzing the web for "${query}" pain points...`, 'active');
 
-                        // Ensure we target reddit specifically
-                        const redditQuery = subQuery.toLowerCase().includes('reddit') ? subQuery : `${subQuery} reddit`;
+                    const result = await perplexitySearch(query);
 
-                        const redditPosts = await searchReddit(redditQuery, 10);
+                    sendUpdate(`Analyzing the web for "${query}" pain points...`, 'completed');
+                    sendUpdate("Analysis complete. Generating report...", 'completed');
 
-                        // Fetch comments for the top 3 posts in each sub-query to get deep discussion data
-                        const mappedResults = await Promise.all(redditPosts.map(async (p: any, idx: number) => {
-                            let content = p.selftext ? `${p.title}\n\n${p.selftext}` : p.title;
-
-                            if (idx < 3 && p.num_comments > 0) {
-                                const comments = await getRedditComments(p.url, 25);
-                                if (comments.length > 0) {
-                                    const commentText = comments.map((c: any) => `[Comment by ${c.author}]: ${c.body}`).join("\n");
-                                    content += `\n\n--- TOP COMMENTS ---\n${commentText}`;
-                                }
-                            }
-
-                            return {
-                                url: p.url,
-                                title: p.title,
-                                content: content,
-                                snippet: p.title
-                            };
-                        }));
-
-                        return { query: subQuery, results: mappedResults, success: true };
-                    } catch (err: any) {
-                        console.error(`[DEBUG] Reddit search failed for "${subQuery}":`, err.message);
-                        return { query: subQuery, results: [], success: false, error: err.message };
-                    }
-                });
-
-                const searchResults = await Promise.all(searchPromises);
-                sendUpdate(`Searching parallel (${researchPlan.length} queries)...`, 'completed');
-
-                let allSearchResults: any[] = [];
-                searchResults.forEach(res => {
-                    if (res.results.length > 0) {
-                        allSearchResults.push(...res.results);
-                        sendUpdate(`[DEBUG] Found ${res.results.length} for "${res.query}"`, 'active');
-                    }
-                });
-
-                console.log(`[DEBUG] Total raw results: ${allSearchResults.length}`);
-
-                // Deduplicate by URL
-                let uniqueResults = Array.from(new Map(allSearchResults.map(item => [item.url, item])).values());
-
-                // FALLBACK: Hacker News Search (Last Resort)
-                if (uniqueResults.length === 0) {
-                    sendUpdate("[LAST RESORT] Trying Hacker News search...", 'active');
-                    try {
-                        const encodedQuery = encodeURIComponent(query);
-                        // HN Algolia is public and reliable
-                        const hnUrl = `https://hn.algolia.com/api/v1/search?query=${encodedQuery}&tags=story`;
-
-                        const hnRes = await Promise.race([
-                            fetch(hnUrl).then(r => r.json()),
-                            new Promise((_, reject) => setTimeout(() => reject(new Error("HN Search Timeout")), 10000))
-                        ]) as any;
-
-                        if (hnRes.hits && hnRes.hits.length > 0) {
-                            // Take top 5 stories
-                            const hnResults = hnRes.hits.slice(0, 5).map((hit: any) => ({
-                                url: `https://news.ycombinator.com/item?id=${hit.objectID}`,
-                                title: hit.title || "HN Discussion",
-                                content: `${hit.title}. ${hit.story_text || ""}`,
-                                snippet: hit.title
-                            }));
-                            uniqueResults.push(...hnResults);
-                            sendUpdate(`[LAST RESORT] Found ${hnResults.length} Hacker News discussions.`, 'completed');
-                        }
-                    } catch (e: any) {
-                        console.error("HN fallback failed", e);
-                        sendUpdate(`[LAST RESORT] HN search failed: ${e.message}`, 'active');
-                    }
-                }
-
-                if (uniqueResults.length === 0) {
-                    sendError("No relevant discussions found. Try a broader topic.");
+                    const finalPayload = JSON.stringify({ type: 'result', data: result });
+                    controller.enqueue(encoder.encode(finalPayload + '\n'));
+                    controller.close();
                     return;
+
+                } else {
+                    // --------------------------------------------------------------------------
+                    // PATH B: MANUAL REDDIT PIPELINE (Fallback)
+                    // --------------------------------------------------------------------------
+
+                    // STEP 1: RESEARCH STRATEGY (Agentic Planner)
+                    // --------------------------------------------------------------------------
+                    sendUpdate(`Generating research strategy for "${query}"...`, 'active');
+                    const researchPlan = await planResearch(query); // Returns array of queries
+                    console.log("[DEBUG] Research Plan Generated:", researchPlan);
+                    sendUpdate(`[DEBUG] Planner output: ${JSON.stringify(researchPlan)}`, 'completed');
+
+                    sendUpdate(`Searching Reddit for ${researchPlan.length} queries...`, 'completed');
+                    sendUpdate(`Searching parallel (${researchPlan.length} queries)...`, 'active');
+
+                    // execute searches in parallel for the generated queries
+                    const searchPromises = researchPlan.map(async (subQuery: string) => {
+                        try {
+                            console.log(`[DEBUG] Searching Reddit: "${subQuery}"`);
+                            const { searchReddit, getRedditComments } = await import('@/lib/reddit');
+
+                            // Ensure we target reddit specifically
+                            const redditQuery = subQuery.toLowerCase().includes('reddit') ? subQuery : `${subQuery} reddit`;
+
+                            const redditPosts = await searchReddit(redditQuery, 10);
+
+                            // Fetch comments for the top 3 posts in each sub-query to get deep discussion data
+                            const mappedResults = await Promise.all(redditPosts.map(async (p: any, idx: number) => {
+                                let content = p.selftext ? `${p.title}\n\n${p.selftext}` : p.title;
+
+                                if (idx < 3 && p.num_comments > 0) {
+                                    const comments = await getRedditComments(p.url, 25);
+                                    if (comments.length > 0) {
+                                        const commentText = comments.map((c: any) => `[Comment by ${c.author}]: ${c.body}`).join("\n");
+                                        content += `\n\n--- TOP COMMENTS ---\n${commentText}`;
+                                    }
+                                }
+
+                                return {
+                                    url: p.url,
+                                    title: p.title,
+                                    content: content,
+                                    snippet: p.title
+                                };
+                            }));
+
+                            return { query: subQuery, results: mappedResults, success: true };
+                        } catch (err: any) {
+                            console.error(`[DEBUG] Reddit search failed for "${subQuery}":`, err.message);
+                            return { query: subQuery, results: [], success: false, error: err.message };
+                        }
+                    });
+
+                    const searchResults = await Promise.all(searchPromises);
+                    sendUpdate(`Searching parallel (${researchPlan.length} queries)...`, 'completed');
+
+                    let allSearchResults: any[] = [];
+                    searchResults.forEach(res => {
+                        if (res.results.length > 0) {
+                            allSearchResults.push(...res.results);
+                            sendUpdate(`[DEBUG] Found ${res.results.length} for "${res.query}"`, 'active');
+                        }
+                    });
+
+                    console.log(`[DEBUG] Total raw results: ${allSearchResults.length}`);
+
+                    // Deduplicate by URL
+                    let uniqueResults = Array.from(new Map(allSearchResults.map(item => [item.url, item])).values());
+
+                    // FALLBACK: Hacker News Search (Last Resort)
+                    if (uniqueResults.length === 0) {
+                        sendUpdate("[LAST RESORT] Trying Hacker News search...", 'active');
+                        try {
+                            const encodedQuery = encodeURIComponent(query);
+                            // HN Algolia is public and reliable
+                            const hnUrl = `https://hn.algolia.com/api/v1/search?query=${encodedQuery}&tags=story`;
+
+                            const hnRes = await Promise.race([
+                                fetch(hnUrl).then(r => r.json()),
+                                new Promise((_, reject) => setTimeout(() => reject(new Error("HN Search Timeout")), 10000))
+                            ]) as any;
+
+                            if (hnRes.hits && hnRes.hits.length > 0) {
+                                // Take top 5 stories
+                                const hnResults = hnRes.hits.slice(0, 5).map((hit: any) => ({
+                                    url: `https://news.ycombinator.com/item?id=${hit.objectID}`,
+                                    title: hit.title || "HN Discussion",
+                                    content: `${hit.title}. ${hit.story_text || ""}`,
+                                    snippet: hit.title
+                                }));
+                                uniqueResults.push(...hnResults);
+                                sendUpdate(`[LAST RESORT] Found ${hnResults.length} Hacker News discussions.`, 'completed');
+                            }
+                        } catch (e: any) {
+                            console.error("HN fallback failed", e);
+                            sendUpdate(`[LAST RESORT] HN search failed: ${e.message}`, 'active');
+                        }
+                    }
+
+                    if (uniqueResults.length === 0) {
+                        sendError("No relevant discussions found. Try a broader topic.");
+                        return;
+                    }
+
+                    sendUpdate(`Found ${uniqueResults.length} unique discussion threads`, 'completed');
+
+                    // --------------------------------------------------------------------------
+                    // STEP 3: ANALYST SYNTHESIS (Market Research Analyst)
+                    // --------------------------------------------------------------------------
+
+                    const combinedMarkdown = uniqueResults.map((r: any) => `
+                        Source: ${r.url}
+                        Title: ${r.title}
+                        Content: ${(r.markdown || r.content || '').substring(0, 10000)}
+                    `).join("\n\n");
+
+                    const analysisLabel = `Analyzing ${uniqueResults.length} discussions with Market Research Analyst...`;
+                    sendUpdate(analysisLabel, 'active');
+
+                    const result = await synthesizePatterns(combinedMarkdown);
+
+                    sendUpdate(analysisLabel, 'completed');
+                    sendUpdate("Analysis complete. Generating report...", 'completed');
+
+                    // Final Result
+                    const finalPayload = JSON.stringify({ type: 'result', data: result });
+                    controller.enqueue(encoder.encode(finalPayload + '\n'));
+                    controller.close();
                 }
-
-                sendUpdate(`Found ${uniqueResults.length} unique discussion threads`, 'completed');
-
-                // --------------------------------------------------------------------------
-                // --------------------------------------------------------------------------
-                // STEP 3: ANALYST SYNTHESIS (Market Research Analyst)
-                // --------------------------------------------------------------------------
-
-                // Combine content for analysis (Chunking limits applied inside prompt logic usually, but here we truncate)
-                const combinedMarkdown = uniqueResults.map((r: any) => `
-                    Source: ${r.url}
-                    Title: ${r.title}
-                    Content: ${(r.markdown || r.content || '').substring(0, 10000)}
-                `).join("\n\n");
-
-                const analysisLabel = `Analyzing ${uniqueResults.length} discussions with Market Research Analyst...`;
-                sendUpdate(analysisLabel, 'active');
-
-                // Pass RAW content to Analyst (Pipeline V2 bypasses signal extraction)
-                // sending top 30k chars to context window
-                const result = await synthesizePatterns(combinedMarkdown);
-
-                sendUpdate(analysisLabel, 'completed');
-                sendUpdate("Analysis complete. Generating report...", 'completed');
-
-                // Final Result
-                const finalPayload = JSON.stringify({ type: 'result', data: result });
-                controller.enqueue(encoder.encode(finalPayload + '\n'));
-                controller.close();
 
             } catch (error: any) {
                 console.error("[API] Discovery Error:", error);

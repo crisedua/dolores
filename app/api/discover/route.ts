@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
                     console.log(`[DEBUG] Executing firecrawl.search for: "${subQuery}"`);
                     sendUpdate(`[DEBUG] Searching: "${subQuery}"...`, 'active');
                     try {
-                        const searchRes = await firecrawl.search(subQuery, { limit: 2, scrapeOptions: { formats: ['markdown'] } });
+                        const searchRes = await firecrawl.search(subQuery, { limit: 5, scrapeOptions: { formats: ['markdown'] } });
                         const resData = (searchRes as any).data || [];
                         console.log(`[DEBUG] Result for "${subQuery}": ${resData.length} items`);
                         sendUpdate(`[DEBUG] Found ${resData.length} results for "${subQuery}"`, 'completed');

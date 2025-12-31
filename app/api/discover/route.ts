@@ -43,60 +43,54 @@ export async function POST(req: NextRequest) {
                 const { firecrawl } = await import('@/lib/firecrawl');
 
                 // execute searches in parallel for the generated queries
-                let allSearchResults: any[] = [];
-                for (const subQuery of researchPlan) {
-                    console.log(`[DEBUG] Executing firecrawl.search for: "${subQuery}"`);
-                    sendUpdate(`[DEBUG] Searching: "${subQuery}"...`, 'active');
+                // Execute searches in parallel to save time (Netlify Function Timeout is 10s)
+                const searchPromises = researchPlan.map(async (subQuery: string) => {
                     try {
-                        const searchRes = await firecrawl.search(subQuery, { limit: 5, scrapeOptions: { formats: ['markdown'] } });
-                        const resData = (searchRes as any).data || [];
-                        console.log(`[DEBUG] Result for "${subQuery}": ${resData.length} items`);
-                        sendUpdate(`[DEBUG] Found ${resData.length} results for "${subQuery}"`, 'completed');
-                        if ((searchRes as any).success && resData.length > 0) {
-                            allSearchResults = [...allSearchResults, ...resData];
-                        }
-                    } catch (err: any) {
-                        console.error(`[DEBUG] Sub-search FAILED for "${subQuery}":`, err);
-                        sendUpdate(`[DEBUG] FAILED: ${subQuery} - ${err.message}`, 'completed');
-                    }
-                }
+                        console.log(`[DEBUG] Searching: "${subQuery}"`);
+                        // Set a strict 5s timeout for each search to avoid hanging
+                        const searchRes = await Promise.race([
+                            firecrawl.search(subQuery, { limit: 5, scrapeOptions: { formats: ['markdown'] } }),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 5000))
+                        ]);
 
-                console.log(`[DEBUG] Total raw results before dedup: ${allSearchResults.length}`);
-                sendUpdate(`[DEBUG] Total raw results: ${allSearchResults.length}`, 'completed');
+                        const resData = (searchRes as any).data || [];
+                        return { query: subQuery, results: resData, success: (searchRes as any).success };
+                    } catch (err: any) {
+                        console.error(`[DEBUG] Search failed for "${subQuery}":`, err.message);
+                        return { query: subQuery, results: [], success: false, error: err.message };
+                    }
+                });
+
+                sendUpdate(`Searching parallel (${researchPlan.length} queries)...`, 'active');
+                const searchResults = await Promise.all(searchPromises);
+
+                let allSearchResults: any[] = [];
+                searchResults.forEach(res => {
+                    if (res.results.length > 0) {
+                        allSearchResults.push(...res.results);
+                        sendUpdate(`[DEBUG] Found ${res.results.length} for "${res.query}"`, 'active');
+                    }
+                });
+
+                console.log(`[DEBUG] Total raw results: ${allSearchResults.length}`);
 
                 // Deduplicate by URL
                 let uniqueResults = Array.from(new Map(allSearchResults.map(item => [item.url, item])).values());
 
-                // FALLBACK STRATEGY: If API search fails, try scraping Reddit Search page directly
+                // FALLBACK: If 0 results, try broader generic search
                 if (uniqueResults.length === 0) {
-                    sendUpdate("[FALLBACK] Primary search returned 0 results. Attempting direct scrape...", 'active');
-                    console.log("[DEBUG] Triggering fallback scrape...");
-
-                    // Construct a direct Reddit search URL based on the original query
-                    const fallbackQuery = encodeURIComponent(query);
-                    const fallbackUrl = `https://www.reddit.com/search/?q=${fallbackQuery}&type=link`;
-                    sendUpdate(`[FALLBACK] Scraping: ${fallbackUrl}`, 'active');
-
+                    sendUpdate("[FALLBACK] 0 results. Trying broad search...", 'active');
                     try {
-                        const { firecrawl } = await import('@/lib/firecrawl');
-                        const scrapeRes = await firecrawl.scrape(fallbackUrl, { formats: ['markdown'] });
-                        const raw = scrapeRes as any;
-
-                        console.log("[DEBUG] Fallback scrape response:", JSON.stringify(raw).substring(0, 500));
-                        sendUpdate(`[FALLBACK] Scrape success: ${raw.success}, Has markdown: ${!!raw.markdown}`, 'completed');
-
-                        if (raw.success && raw.markdown) {
-                            uniqueResults.push({
-                                url: fallbackUrl,
-                                title: 'Reddit Search Results (Fallback)',
-                                content: raw.markdown,
-                                snippet: raw.markdown.substring(0, 500)
-                            });
-                            sendUpdate(`[FALLBACK] Scraped ${raw.markdown.length} chars from Reddit!`, 'completed');
+                        // Broadest possible search
+                        const broadQuery = `${query} reddit discussion`;
+                        const fallbackRes = await firecrawl.search(broadQuery, { limit: 5, scrapeOptions: { formats: ['markdown'] } });
+                        const fallbackData = (fallbackRes as any).data || [];
+                        if (fallbackData.length > 0) {
+                            uniqueResults = fallbackData;
+                            sendUpdate(`[FALLBACK] Found ${fallbackData.length} results.`, 'completed');
                         }
-                    } catch (fallbackErr: any) {
-                        console.error("Fallback scrape failed", fallbackErr);
-                        sendUpdate(`[FALLBACK] FAILED: ${fallbackErr.message}`, 'completed');
+                    } catch (e) {
+                        console.error("Fallback failed", e);
                     }
                 }
 

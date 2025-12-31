@@ -6,7 +6,7 @@ export const openai = new OpenAI({
 });
 
 /* -------------------------------------------------------------------------- */
-/*                                1. PLAN RESEARCH                            */
+/*                     PROMPT A: RESEARCH PLANNER                             */
 /* -------------------------------------------------------------------------- */
 export async function planResearch(topic: string) {
     try {
@@ -15,35 +15,39 @@ export async function planResearch(topic: string) {
             messages: [
                 {
                     role: "system",
-                    content: `You are a research strategist. Generate search queries to find user complaints about a topic.
-                    
-                    RULES:
-                    - Generate 3 SHORT, SIMPLE queries (2-4 words max)
-                    - Focus on pain points, problems, complaints
-                    - DO NOT use special operators or quotes
-                    - Keep queries generic enough to find results
-                    
-                    Example good queries for "email marketing":
-                    - "email marketing problems"
-                    - "mailchimp frustrating"
-                    - "newsletter software issues"
-                    
-                    Output JSON: { "queries": ["query1", "query2", "query3"] }`
+                    content: `You are a Research Strategist. Your goal is to plan a search strategy to find high-intent customer complaints.
+
+OBJECTIVE:
+Turn the user's topic into specific search queries that will uncover "problems", "workarounds", and "pain points" on forums like Reddit.
+
+RULES:
+1. Generate 4 distinct search queries.
+2. Queries must be short (2-5 words) and natural.
+3. INCLUDE words like "reddit", "forum", "vs", "alternatives".
+4. AVOID boolean operators (AND, OR) or "site:" operators.
+5. Focus on finding *discussions* not marketing pages.
+
+JSON OUTPUT FORMAT:
+{
+  "queries": ["query1", "query2", ...]
+}`
                 },
                 { role: "user", content: `Topic: ${topic}` }
             ],
             response_format: { type: "json_object" }
         });
         const data = JSON.parse(response.choices[0].message.content || "{}");
-        return data.queries || [`${topic} reddit complaints`, `${topic} problems`, `${topic} alternatives`];
+        // Fallback queries if empty
+        const fallback = [`${topic} reddit`, `${topic} problems reddit`, `${topic} alternatives reddit`, `why I hate ${topic}`];
+        return (data.queries && data.queries.length > 0) ? data.queries : fallback;
     } catch (e) {
         console.error("Plan Research Error", e);
-        return [`${topic} reddit`, `${topic} issues`];
+        return [`${topic} reddit`, `${topic} problems`];
     }
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                2. EXTRACT SIGNALS                          */
+/*                     PROMPT B: EXTRACTION AGENT                             */
 /* -------------------------------------------------------------------------- */
 export async function extractSignals(content: string) {
     try {
@@ -52,16 +56,29 @@ export async function extractSignals(content: string) {
             messages: [
                 {
                     role: "system",
-                    content: `You are a data miner. Extract every distinct user complaint, struggle, desire, or workaround from the text.
-                    Ignore generic marketing or happy path comments.
-                    
-                    Output JSON: { 
-                        "signals": [ 
-                            { "quote": "exact text from user", "context": "1-sentence context", "source_url": "url_if_available" } 
-                        ] 
-                    }`
+                    content: `You are a Data Miner. Your job is to extract raw "Complaint Signals" from the provided forum discussions.
+
+DEFINITION of SIGNAL:
+A specific problem, pain point, struggle, expensive workaround, or unmet desire expressed by a user.
+IGNORE: Generic praise, marketing copy, or off-topic chatter.
+
+RULES:
+1. Extract verbatim quotes where possible.
+2. Context must explain *why* it's a problem in 1 sentence.
+3. If no signals are found, return empty list.
+
+JSON OUTPUT FORMAT:
+{
+  "signals": [
+    { 
+      "quote": "I spend 3 hours a day copying data manually...", 
+      "context": "User complaining about lack of integration", 
+      "source_url": "URL where this came from (if available in text)" 
+    }
+  ]
+}`
                 },
-                { role: "user", content: `Extract signals from: ${content.substring(0, 15000)}` }
+                { role: "user", content: `Extract signals from this raw text (max 20k chars): \n\n${content.substring(0, 20000)}` }
             ],
             response_format: { type: "json_object" }
         });
@@ -74,50 +91,63 @@ export async function extractSignals(content: string) {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                          3. SYNTHESIZE & SCORE (Cluster + Brief)           */
+/*               PROMPT C/D/E: SYNTHESIS, SCORING & BRIEF                     */
 /* -------------------------------------------------------------------------- */
 export async function synthesizePatterns(signals: any[]) {
-    if (!signals || signals.length === 0) return mockAnalysis();
+    if (!signals || signals.length === 0) return { problems: [] };
 
     try {
-        const signalsText = JSON.stringify(signals.slice(0, 50)); // Limit to avoid context overflow
+        // We combine Clustering, Scoring, and Briefing into one call to save time/tokens
+        const signalsText = JSON.stringify(signals.slice(0, 60));
 
         const response = await openai.chat.completions.create({
             model: "gpt-4o",
             messages: [
                 {
                     role: "system",
-                    content: `You are an expert SaaS Product Analyst. 
-                    1. Group the provided "Complaint Signals" into distinct high-value "Problem Patterns".
-                    2. STRICTLY Focus on problems solvable by Micro-SaaS or B2B Software.
-                    3. Score each pattern based on Intensity, Frequency, Solvability, Monetizability.
-                    4. Cite specific quotes/sources from the input signals as evidence. Do NOT hallucinate evidence.
-                    
-                    Rubric:
-                    - Frequency (1-10): How many signals belong to this pattern?
-                    - Intensity (1-10): How emotional/painful is the language?
-                    - Solvability (1-10): Can software automate this?
-                    - Monetizability (1-10): Is this a business problem with budget?
+                    content: `You are a Senior Product Manager. Your goal is to Identify, Score, and Brief the top opportunities.
 
-                    Output JSON:
-                    {
-                      "problems": [
-                        {
-                          "id": "string",
-                          "rank": number,
-                          "description": "Clear problem statement",
-                          "signalScore": number (1-10),
-                          "metrics": { "frequency": number, "intensity": number, "solvability": number, "monetizability": number },
-                          "recommendation": "Specific Micro-SaaS idea to solve this",
-                          "sources": [ { "url": "string", "title": "string", "snippet": "string" } ],
-                          "quotes": [ "string (verbatim from signals)" ],
-                          "existingSolutions": [ "string" ],
-                          "gaps": [ "string" ]
-                        }
-                      ]
-                    }`
+INPUT:
+A list of raw "Complaint Signals" from a specific market.
+
+TASK 1: CLUSTERING (Prompt C)
+Group signals into specific "Problem Patterns".
+- A pattern must represent a solved problem (e.g., "Users hate manual data entry")
+- Merge duplicates.
+
+TASK 2: SCORING (Prompt D)
+Score each pattern (1-10 points per dimension for UI compatibility):
+1. PAIN (Intensity): How angry/desperate are they? (1=Mild, 10=Furious)
+2. FREQUENCY: How common is this complaint in the dataset? (1=Rare, 10=Constant)
+3. WILLINGNESS TO PAY (Monetizability): Is this a business problem? (1=Hobby, 10=Enterprise)
+4. SOLVABILITY: Can an MVP solve this? (1=Hard, 10=Easy)
+5. RECURRENCE: Is this a recurring task? (Optional internal score)
+
+JSON OUTPUT FORMAT:
+{
+  "problems": [
+    {
+      "id": "unique_id",
+      "rank": 1,
+      "description": "2-sentence problem definition",
+      "signalScore": 8.5,
+      "metrics": { "frequency": 8, "intensity": 9, "solvability": 7, "monetizability": 10 },
+      "recommendation": "Specific Micro-SaaS idea...",
+      "brief": { ... },
+      "signal_class": "High Signal" | "Noise",
+      "brief": {
+        "solution_idea": "...",
+        "validation_steps": ["..."],
+        "gaps_in_market": "..."
+      },
+      "evidence": [
+        { "quote": "...", "source_url": "..." }
+      ]
+    }
+  ]
+}`
                 },
-                { role: "user", content: `Analyze these signals: ${signalsText}` }
+                { role: "user", content: `Analyze these signals and produce the PRD data: ${signalsText}` }
             ],
             response_format: { type: "json_object" }
         });
@@ -125,11 +155,6 @@ export async function synthesizePatterns(signals: any[]) {
         return JSON.parse(response.choices[0].message.content || "{}");
     } catch (e) {
         console.error("Synthesize Error", e);
-        return mockAnalysis();
+        return { problems: [] };
     }
-}
-
-// Kept for fallback/error handling
-function mockAnalysis() {
-    return { problems: [] };
 }

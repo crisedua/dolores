@@ -57,7 +57,33 @@ export async function POST(req: NextRequest) {
                 }
 
                 // Deduplicate by URL
-                const uniqueResults = Array.from(new Map(allSearchResults.map(item => [item.url, item])).values());
+                let uniqueResults = Array.from(new Map(allSearchResults.map(item => [item.url, item])).values());
+
+                // FALLBACK STRATEGY: If API search fails, try scraping Reddit Search page directly
+                if (uniqueResults.length === 0) {
+                    sendUpdate("Primary search yielded no results, attempting fallback scrape...", 'active');
+
+                    // Construct a direct Reddit search URL based on the original query
+                    const fallbackQuery = encodeURIComponent(query);
+                    const fallbackUrl = `https://www.reddit.com/search/?q=${fallbackQuery}&type=link`;
+
+                    try {
+                        const { firecrawl } = await import('@/lib/firecrawl');
+                        const scrapeRes = await firecrawl.scrape(fallbackUrl, { formats: ['markdown'] });
+                        const raw = scrapeRes as any;
+
+                        if (raw.success && raw.markdown) {
+                            uniqueResults.push({
+                                url: fallbackUrl,
+                                title: 'Reddit Search Results (Fallback)',
+                                content: raw.markdown,
+                                snippet: raw.markdown.substring(0, 500)
+                            });
+                        }
+                    } catch (fallbackErr) {
+                        console.error("Fallback scrape failed", fallbackErr);
+                    }
+                }
 
                 if (uniqueResults.length === 0) {
                     sendError("No relevant discussions found. Try a broader topic.");

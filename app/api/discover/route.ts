@@ -27,6 +27,14 @@ export async function POST(req: NextRequest) {
                 console.log(`[API] Received query: "${query}"`);
 
                 const hasPerplexity = !!process.env.PERPLEXITY_API_KEY;
+                const keyPreview = process.env.PERPLEXITY_API_KEY ?
+                    `${process.env.PERPLEXITY_API_KEY.substring(0, 8)}...` : 'NOT SET';
+
+                console.log(`[API] PERPLEXITY_API_KEY status: ${hasPerplexity ? 'DETECTED' : 'NOT DETECTED'}`);
+                console.log(`[API] Key preview: ${keyPreview}`);
+
+                // Send visible debug info to frontend
+                sendUpdate(`[DEBUG] Perplexity: ${hasPerplexity ? '✓ ENABLED' : '✗ DISABLED (using Reddit fallback)'}`, 'completed');
 
                 if (hasPerplexity) {
                     // --------------------------------------------------------------------------

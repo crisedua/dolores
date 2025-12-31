@@ -77,20 +77,58 @@ export async function POST(req: NextRequest) {
                 // Deduplicate by URL
                 let uniqueResults = Array.from(new Map(allSearchResults.map(item => [item.url, item])).values());
 
-                // FALLBACK: If 0 results, try broader generic search
+                // FALLBACK 1: Broad Search API
                 if (uniqueResults.length === 0) {
                     sendUpdate("[FALLBACK] 0 results. Trying broad search...", 'active');
+                    console.log("[DEBUG] Triggering broad search fallback...");
                     try {
-                        // Broadest possible search
                         const broadQuery = `${query} reddit discussion`;
-                        const fallbackRes = await firecrawl.search(broadQuery, { limit: 5, scrapeOptions: { formats: ['markdown'] } });
+                        // TIMEOUT PROTECTION: 10s
+                        const fallbackRes = await Promise.race([
+                            firecrawl.search(broadQuery, { limit: 5, scrapeOptions: { formats: ['markdown'] } }),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error("Broad Search Timeout")), 10000))
+                        ]);
+
                         const fallbackData = (fallbackRes as any).data || [];
                         if (fallbackData.length > 0) {
                             uniqueResults = fallbackData;
-                            sendUpdate(`[FALLBACK] Found ${fallbackData.length} results.`, 'completed');
+                            sendUpdate(`[FALLBACK] Found ${fallbackData.length} results via broad search.`, 'completed');
                         }
-                    } catch (e) {
-                        console.error("Fallback failed", e);
+                    } catch (e: any) {
+                        console.error("Broad fallback failed", e);
+                        sendUpdate(`[FALLBACK] Broad search failed: ${e.message}`, 'active');
+                    }
+                }
+
+                // FALLBACK 2: Direct Scrape (Last Resort)
+                // If we STILL have 0 results, scrape Reddit Search directly (bypasses Search API index issues)
+                if (uniqueResults.length === 0) {
+                    sendUpdate("[LAST RESORT] Attempting direct Reddit scrape...", 'active');
+                    try {
+                        const encodedQuery = encodeURIComponent(query);
+                        const directUrl = `https://www.reddit.com/search/?q=${encodedQuery}&type=link`;
+
+                        // TIMEOUT PROTECTION: 15s (Scraping is slower)
+                        const scrapeRes = await Promise.race([
+                            firecrawl.scrape(directUrl, { formats: ['markdown'] }),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error("Direct Scrape Timeout")), 15000))
+                        ]);
+
+                        const raw = scrapeRes as any;
+                        if (raw.success && raw.markdown) {
+                            // Use the scraped search page as a "source"
+                            // It won't be as clean as individual threads, but it has titles/snippets
+                            uniqueResults.push({
+                                url: directUrl,
+                                title: `Reddit Search: ${query}`,
+                                content: raw.markdown,
+                                snippet: raw.markdown.substring(0, 500)
+                            });
+                            sendUpdate(`[LAST RESORT] Scraped Reddit Search Results page.`, 'completed');
+                        }
+                    } catch (e: any) {
+                        console.error("Direct scrape failed", e);
+                        sendUpdate(`[LAST RESORT] Failed: ${e.message}`, 'active');
                     }
                 }
 

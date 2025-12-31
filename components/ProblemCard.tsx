@@ -160,7 +160,9 @@ export function ProblemCard({ problem }: { problem: Problem }) {
 
                     {/* Fallback if no evidence */}
                     {(!problem.sources || problem.sources.length === 0) &&
-                        (!problem.quotes || problem.quotes.length === 0) && (
+                        (!problem.quotes || problem.quotes.length === 0) &&
+                        (!problem.existingSolutions || problem.existingSolutions.length === 0) &&
+                        (!problem.gaps || problem.gaps.length === 0) && (
                             <div className="text-center py-8 text-gray-500 text-sm">
                                 <p>Detailed evidence and analysis will be available once the AI processes more data sources.</p>
                             </div>

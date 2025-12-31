@@ -50,7 +50,18 @@ export function Sidebar() {
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500" />
                     <div className="flex-1 w-full overflow-hidden">
                         <p className="text-sm font-medium text-white truncate" title={user?.email}>{user?.email || 'Guest User'}</p>
-                        <p className="text-xs text-gray-500">Free Plan</p>
+                        <p className="text-xs text-gray-500 mb-2">Free Plan</p>
+
+                        {/* Credits Usage */}
+                        <div className="pr-2">
+                            <div className="flex justify-between text-[10px] text-gray-400 mb-1">
+                                <span>Credits Used</span>
+                                <span>85%</span>
+                            </div>
+                            <div className="h-1 w-full bg-[#222] rounded-full overflow-hidden">
+                                <div className="h-full w-[85%] bg-blue-500/80 rounded-full" />
+                            </div>
+                        </div>
                     </div>
 
                     <button

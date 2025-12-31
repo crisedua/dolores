@@ -128,7 +128,7 @@ JSON OUTPUT STRUCTURE:
     const problems = data.problems || [];
 
     // Ensure strictly match TS interface
-    return problems.map((p: any, i: number) => ({
+    const mappedProblems = problems.map((p: any, i: number) => ({
       id: p.id || `problem-${i}`,
       type: 'problem',
       title: p.title || "Untitled Pain Point",
@@ -144,6 +144,8 @@ JSON OUTPUT STRUCTURE:
       recommendation: p.recommendation || "Investigate further"
     }));
 
+    return { problems: mappedProblems };
+
   } catch (e) {
     console.error("Synthesis Error", e);
     return mockAnalysis();
@@ -154,18 +156,20 @@ JSON OUTPUT STRUCTURE:
 /*                     HELPER: MOCK DATA                                      */
 /* -------------------------------------------------------------------------- */
 function mockAnalysis() {
-  return [
-    {
-      id: 'mock-error',
-      type: 'problem',
-      title: 'Analysis Failed',
-      description: 'We could not identify patterns in the retrieved data. Please try a different topic.',
-      signalScore: 1,
-      metrics: { frequency: 1, intensity: 1, solvability: 1, monetizability: 1 },
-      evidence: [],
-      recommendation: 'Try broadening your search terms.'
-    }
-  ];
+  return {
+    problems: [
+      {
+        id: 'mock-error',
+        type: 'problem',
+        title: 'Analysis Failed',
+        description: 'We could not identify patterns in the retrieved data. Please try a different topic.',
+        signalScore: 1,
+        metrics: { frequency: 1, intensity: 1, solvability: 1, monetizability: 1 },
+        evidence: [],
+        recommendation: 'Try broadening your search terms.'
+      }
+    ]
+  };
 }
 
 /* -------------------------------------------------------------------------- */

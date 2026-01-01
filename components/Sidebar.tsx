@@ -6,7 +6,7 @@ import {
     Folder,
     CheckSquare,
     Search,
-    BarChart3,
+    Gem, // Changed from BarChart3
     LogOut
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
@@ -20,10 +20,10 @@ export function Sidebar() {
         <aside className="fixed left-0 top-0 h-screen w-64 bg-[var(--sidebar-bg)] border-r border-[#333] flex flex-col p-4 z-50">
             {/* Brand */}
             <div className="flex items-center gap-2 mb-8 px-2">
-                <div className="w-8 h-8 bg-white text-black font-bold flex items-center justify-center rounded-lg">
-                    <BarChart3 size={20} />
+                <div className="w-8 h-8 bg-blue-600 text-white font-bold flex items-center justify-center rounded-lg shadow-lg shadow-blue-500/20">
+                    <Gem size={18} />
                 </div>
-                <span className="font-bold text-lg text-white tracking-tight">Focus</span>
+                <span className="font-bold text-lg text-white tracking-tight">Veta</span>
             </div>
 
             {/* Main Nav */}

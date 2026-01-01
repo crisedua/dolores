@@ -6,8 +6,8 @@ import { AuthProvider } from "@/context/AuthContext";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Problem Discovery | Focus",
-  description: "Identify validated business opportunities from online noise.",
+  title: "Veta | Descubre Oportunidades",
+  description: "Encuentra problemas reales que puedes resolver. Analiza el mercado con IA.",
 };
 
 export default function RootLayout({

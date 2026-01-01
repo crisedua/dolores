@@ -1,4 +1,5 @@
 import { AuthForm } from '@/components/auth/AuthForm';
+import { Gem } from 'lucide-react';
 
 export default function AuthPage() {
     return (
@@ -10,12 +11,14 @@ export default function AuthPage() {
             </div>
 
             <div className="z-10 w-full flex flex-col items-center px-4">
-                <div className="mb-8 text-center">
-                    {/* Logo could go here */}
-                    <div className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 mb-2">
-                        Dolores
+                <div className="mb-8 text-center flex flex-col items-center">
+                    <div className="w-12 h-12 bg-blue-600 text-white flex items-center justify-center rounded-xl shadow-lg shadow-blue-500/20 mb-4">
+                        <Gem size={24} />
                     </div>
-                    <div className="text-gray-500 text-sm tracking-widest uppercase font-bold">Problem Discovery</div>
+                    <div className="text-3xl font-bold text-white mb-2">
+                        Veta
+                    </div>
+                    <div className="text-gray-500 text-sm tracking-widest uppercase font-bold">Descubre Oportunidades</div>
                 </div>
 
                 <AuthForm />

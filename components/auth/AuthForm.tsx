@@ -52,16 +52,16 @@ export function AuthForm() {
         <div className="w-full max-w-md p-8 bg-[#0F0F0F] border border-[#222] rounded-2xl shadow-2xl">
             <div className="mb-8 text-center">
                 <h1 className="text-2xl font-bold text-white mb-2">
-                    {isLogin ? 'Welcome back' : 'Create account'}
+                    {isLogin ? 'Bienvenido de nuevo' : 'Crear cuenta'}
                 </h1>
                 <p className="text-gray-500 text-sm">
-                    {isLogin ? 'Enter your details to access your workspace.' : 'Start discovering opportunities today.'}
+                    {isLogin ? 'Ingresa tus datos para acceder.' : 'Comienza a descubrir oportunidades hoy.'}
                 </p>
             </div>
 
             <form onSubmit={handleAuth} className="space-y-4">
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Email</label>
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Correo Electrónico</label>
                     <input
                         type="email"
                         value={email}
@@ -73,7 +73,7 @@ export function AuthForm() {
                 </div>
 
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Password</label>
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Contraseña</label>
                     <input
                         type="password"
                         value={password}
@@ -97,7 +97,7 @@ export function AuthForm() {
                 >
                     {loading ? <Loader2 className="animate-spin" size={20} /> : (
                         <>
-                            {isLogin ? 'Sign In' : 'Sign Up'} <ArrowRight size={18} />
+                            {isLogin ? 'Iniciar Sesión' : 'Registrarse'} <ArrowRight size={18} />
                         </>
                     )}
                 </button>
@@ -108,12 +108,12 @@ export function AuthForm() {
                     onClick={() => setIsLogin(!isLogin)}
                     className="text-sm text-gray-500 hover:text-white transition-colors"
                 >
-                    {isLogin ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+                    {isLogin ? "¿No tienes cuenta? Regístrate" : '¿Ya tienes cuenta? Inicia sesión'}
                 </button>
             </div>
 
             <div className="mt-8 border-t border-[#222] pt-6">
-                <p className="text-xs text-center text-gray-600 mb-4">OR CONTINUE WITH</p>
+                <p className="text-xs text-center text-gray-600 mb-4">O CONTINUAR CON</p>
                 <button
                     type="button"
                     className="w-full bg-[#1A1A1A] text-white font-medium py-3 rounded-xl border border-[#333] hover:bg-[#222] transition-colors flex items-center justify-center gap-2"

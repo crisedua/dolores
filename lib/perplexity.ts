@@ -105,35 +105,65 @@ Si el tema está en español, tradúcelo al inglés para buscar contenido (hay m
         console.log('[Perplexity] Response received, parsing content...');
 
         let content = data.choices[0].message.content;
-        console.log('[Perplexity] Raw content preview:', content.substring(0, 200));
+        console.log('[Perplexity] Raw content preview:', content.substring(0, 300));
 
-        // Smart JSON extraction - handle markdown code blocks and extra text
-        try {
-            // Try direct parse first
-            const parsed = JSON.parse(content);
-            console.log('[Perplexity] Successfully parsed JSON with', parsed.problems?.length || 0, 'problems');
-            return parsed;
-        } catch (e) {
-            console.log('[Perplexity] Direct parse failed, attempting cleanup...');
+        // Multi-strategy JSON extraction
+        const parseStrategies = [
+            // Strategy 1: Direct parse
+            () => {
+                console.log('[Perplexity] Strategy 1: Direct parse');
+                return JSON.parse(content);
+            },
 
-            // Remove markdown code blocks (```json ... ``` or ``` ... ```)
-            content = content.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+            // Strategy 2: Remove markdown code blocks
+            () => {
+                console.log('[Perplexity] Strategy 2: Remove markdown blocks');
+                let cleaned = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '');
+                return JSON.parse(cleaned);
+            },
 
-            // Try to extract JSON object/array from text
-            const jsonMatch = content.match(/\{[\s\S]*\}/);
-            if (jsonMatch) {
-                try {
-                    const parsed = JSON.parse(jsonMatch[0]);
-                    console.log('[Perplexity] Successfully parsed cleaned JSON with', parsed.problems?.length || 0, 'problems');
-                    return parsed;
-                } catch (e2) {
-                    console.error("[Perplexity] Failed to parse cleaned JSON:", jsonMatch[0].substring(0, 500));
-                }
+            // Strategy 3: Extract JSON with greedy regex
+            () => {
+                console.log('[Perplexity] Strategy 3: Greedy regex extraction');
+                const match = content.match(/\{[\s\S]*\}/);
+                if (!match) throw new Error('No JSON found');
+                return JSON.parse(match[0]);
+            },
+
+            // Strategy 4: Extract JSON with non-greedy regex
+            () => {
+                console.log('[Perplexity] Strategy 4: Non-greedy regex');
+                const match = content.match(/\{[\s\S]*?\}\s*$/);
+                if (!match) throw new Error('No JSON found');
+                return JSON.parse(match[0]);
+            },
+
+            // Strategy 5: Find first { and last }
+            () => {
+                console.log('[Perplexity] Strategy 5: Bracket boundaries');
+                const firstBrace = content.indexOf('{');
+                const lastBrace = content.lastIndexOf('}');
+                if (firstBrace === -1 || lastBrace === -1) throw new Error('No JSON boundaries');
+                const extracted = content.substring(firstBrace, lastBrace + 1);
+                return JSON.parse(extracted);
             }
+        ];
 
-            console.error("[Perplexity] All parse attempts failed. Raw content:", content.substring(0, 1000));
-            throw new Error("Perplexity returned invalid JSON format");
+        // Try each strategy
+        for (let i = 0; i < parseStrategies.length; i++) {
+            try {
+                const parsed = parseStrategies[i]();
+                console.log(`[Perplexity] ✓ Strategy ${i + 1} succeeded! Found ${parsed.problems?.length || 0} problems`);
+                return parsed;
+            } catch (e: any) {
+                console.log(`[Perplexity] ✗ Strategy ${i + 1} failed:`, e.message);
+            }
         }
+
+        // All strategies failed
+        console.error('[Perplexity] All parsing strategies failed. Full content:');
+        console.error(content);
+        throw new Error('Perplexity returned invalid JSON format');
     } catch (error: any) {
         clearTimeout(timeoutId);
 

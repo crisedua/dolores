@@ -1,23 +1,79 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { HeroInput } from '@/components/HeroInput';
 import { SearchProgress, ProgressStep } from '@/components/SearchProgress';
 import { ProblemCard } from '@/components/ProblemCard';
-import { Bell, Search, Calendar } from 'lucide-react';
+import { Bell, Search, Calendar, Save, Check } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any>(null);
   const [searchSteps, setSearchSteps] = useState<ProgressStep[]>([]);
+  const [currentQuery, setCurrentQuery] = useState('');
+  const [reportSaved, setReportSaved] = useState(false);
   const { user } = useAuth();
+  const searchParams = useSearchParams();
+
+  // Handle URL query parameter for templates/history
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q && !isLoading && !data) {
+      handleSearch(q);
+    }
+  }, [searchParams]);
+
+  // Save search to history
+  const saveToHistory = (query: string, resultCount: number) => {
+    try {
+      const historyStr = localStorage.getItem('dolores_search_history') || '[]';
+      const history = JSON.parse(historyStr);
+      const newItem = {
+        id: Date.now().toString(),
+        query,
+        resultCount,
+        createdAt: new Date().toISOString()
+      };
+      // Add to beginning, limit to 50 items
+      const updated = [newItem, ...history].slice(0, 50);
+      localStorage.setItem('dolores_search_history', JSON.stringify(updated));
+    } catch (e) {
+      console.error('Failed to save history:', e);
+    }
+  };
+
+  // Save current results as a report
+  const saveReport = () => {
+    if (!data || !currentQuery) return;
+    try {
+      const reportsStr = localStorage.getItem('dolores_saved_reports') || '[]';
+      const reports = JSON.parse(reportsStr);
+      const newReport = {
+        id: Date.now().toString(),
+        title: `Análisis: ${currentQuery}`,
+        query: currentQuery,
+        problemCount: data.problems?.length || 0,
+        results: data,
+        createdAt: new Date().toISOString()
+      };
+      const updated = [newReport, ...reports];
+      localStorage.setItem('dolores_saved_reports', JSON.stringify(updated));
+      setReportSaved(true);
+      setTimeout(() => setReportSaved(false), 3000);
+    } catch (e) {
+      console.error('Failed to save report:', e);
+    }
+  };
 
   const handleSearch = async (query: string) => {
     console.log("Starting search for:", query);
     setIsLoading(true);
     setSearchSteps([]);
     setData(null);
+    setCurrentQuery(query);
+    setReportSaved(false);
 
     try {
       const response = await fetch('/api/discover', {
@@ -77,6 +133,8 @@ export default function Home() {
               await new Promise(r => setTimeout(r, 500));
               console.log("Got results:", update.data);
               setData(update.data);
+              // Auto-save to history
+              saveToHistory(query, update.data.problems?.length || 0);
             }
           } catch (e) {
             console.error("Error parsing stream line:", line, e);
@@ -175,12 +233,32 @@ export default function Home() {
 
           {/* List Only */}
           <div className="max-w-4xl mx-auto">
-            <div className="flex justify-start mb-4">
+            <div className="flex justify-between items-center mb-4">
               <button
-                onClick={() => { setData(null); setSearchSteps([]); setIsLoading(false); }}
+                onClick={() => { setData(null); setSearchSteps([]); setIsLoading(false); setCurrentQuery(''); }}
                 className="text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest"
               >
                 ← NUEVA BÚSQUEDA
+              </button>
+              <button
+                onClick={saveReport}
+                disabled={reportSaved}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${reportSaved
+                    ? 'bg-green-600 text-white'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
+              >
+                {reportSaved ? (
+                  <>
+                    <Check size={16} />
+                    Guardado
+                  </>
+                ) : (
+                  <>
+                    <Save size={16} />
+                    Guardar Reporte
+                  </>
+                )}
               </button>
             </div>
             <div className="space-y-6">

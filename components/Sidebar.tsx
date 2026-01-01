@@ -1,4 +1,6 @@
 'use client';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
     LayoutGrid,
     Folder,
@@ -8,9 +10,11 @@ import {
     LogOut
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { ReactNode } from 'react';
 
 export function Sidebar() {
     const { user, signOut } = useAuth();
+    const pathname = usePathname();
 
     return (
         <aside className="fixed left-0 top-0 h-screen w-64 bg-[var(--sidebar-bg)] border-r border-[#333] flex flex-col p-4 z-50">
@@ -25,21 +29,41 @@ export function Sidebar() {
             {/* Main Nav */}
             <div className="space-y-6 flex-1">
 
-                {/* Section: Projects */}
+                {/* Section: Discoveries */}
                 <div>
                     <h3 className="text-xs font-semibold text-[#666] uppercase mb-3 px-2">Discoveries</h3>
                     <nav className="space-y-1">
-                        <NavItem icon={<LayoutGrid size={18} />} label="All Discoveries" active />
-                        <NavItem icon={<Folder size={18} />} label="Saved Templates" />
+                        <NavItem
+                            href="/"
+                            icon={<LayoutGrid size={18} />}
+                            label="All Discoveries"
+                            active={pathname === '/'}
+                        />
+                        <NavItem
+                            href="/templates"
+                            icon={<Folder size={18} />}
+                            label="Saved Templates"
+                            active={pathname === '/templates'}
+                        />
                     </nav>
                 </div>
 
-                {/* Section: Tasks */}
+                {/* Section: Analysis */}
                 <div>
                     <h3 className="text-xs font-semibold text-[#666] uppercase mb-3 px-2">Analysis</h3>
                     <nav className="space-y-1">
-                        <NavItem icon={<CheckSquare size={18} />} label="Recent Reports" badge="4" />
-                        <NavItem icon={<Search size={18} />} label="Search History" />
+                        <NavItem
+                            href="/reports"
+                            icon={<CheckSquare size={18} />}
+                            label="Recent Reports"
+                            active={pathname === '/reports'}
+                        />
+                        <NavItem
+                            href="/history"
+                            icon={<Search size={18} />}
+                            label="Search History"
+                            active={pathname === '/history'}
+                        />
                     </nav>
                 </div>
             </div>
@@ -77,14 +101,15 @@ export function Sidebar() {
     );
 }
 
-import { ReactNode } from 'react';
-
-function NavItem({ icon, label, active = false, badge }: { icon: ReactNode, label: string, active?: boolean, badge?: string }) {
+function NavItem({ href, icon, label, active = false, badge }: { href: string, icon: ReactNode, label: string, active?: boolean, badge?: string }) {
     return (
-        <div className={`
-      flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all
-      ${active ? 'bg-[#333] text-white' : 'text-[#888] hover:text-white hover:bg-white/5'}
-    `}>
+        <Link
+            href={href}
+            className={`
+                flex items-center justify-between p-2 rounded-lg cursor-pointer transition-all
+                ${active ? 'bg-[#333] text-white' : 'text-[#888] hover:text-white hover:bg-white/5'}
+            `}
+        >
             <div className="flex items-center gap-3">
                 {icon}
                 <span className="text-sm font-medium">{label}</span>
@@ -92,6 +117,7 @@ function NavItem({ icon, label, active = false, badge }: { icon: ReactNode, labe
             {badge && (
                 <span className="text-xs bg-white/10 text-white px-2 py-0.5 rounded-full">{badge}</span>
             )}
-        </div>
+        </Link>
     )
 }
+

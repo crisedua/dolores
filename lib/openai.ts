@@ -98,9 +98,14 @@ You must output your analysis in specific JSON format for our dashboard. Do NOT 
 Map your "Pain Point Analysis" to the following schema:
 - Heading -> title (This should be a punchy 1-sentence headline)
 - Summary -> description (The UI uses this field as the MAIN HEADING, so make it descriptive)
-- Direct Quotes -> evidence (array of strings)
+- Direct Quotes -> evidence (array of objects with "text" and "url" fields)
 - Priority Ranking -> signalScore (1-10)
 - Frequency/Intensity -> metrics (1-10)
+
+IMPORTANT: For each quote you extract, you MUST identify which source URL it came from.
+Each quote must be an object with:
+- "text": The actual quote text
+- "url": The source URL where this quote appeared
 
 JSON OUTPUT STRUCTURE:
 {
@@ -119,10 +124,10 @@ JSON OUTPUT STRUCTURE:
         "monetizability": 6 
       },
       "evidence": [
-        "Quote 1...",
-        "Quote 2..."
+        { "text": "Quote text from a user...", "url": "https://reddit.com/..." },
+        { "text": "Another quote...", "url": "https://reddit.com/..." }
       ],
-      "recommendation": "Brief MVP Solution Idea or Opportunity based on this need"
+      "recommendation": "Specific, actionable MVP solution idea. Must include: (1) What product/service to build, (2) How it solves this specific problem, (3) Clear value proposition. Example: 'Build a SaaS platform with automated GDPR compliance checklists that auto-maps sensitive data and generates one-click audit reports.' 2-3 sentences max."
     }
   ]
 }`

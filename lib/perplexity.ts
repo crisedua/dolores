@@ -50,13 +50,19 @@ export async function perplexitySearch(topic: string) {
                                     "monetizability": 6
                                 },
                                 "quotes": [
-                                    "Cita directa en INGLÉS del usuario original",
-                                    "Otra cita en INGLÉS..."
+                                    { "text": "Cita directa en INGLÉS del usuario original", "url": "https://reddit.com/r/example/comments/abc123" },
+                                    { "text": "Otra cita en INGLÉS...", "url": "https://reddit.com/r/example/comments/def456" }
                                 ],
-                                "recommendation": "Breve idea de solución MVP (en español)"
+                                "recommendation": "Idea de solución MVP específica y accionable. Debe incluir: (1) Qué producto/servicio crear, (2) Cómo resuelve el problema específico, (3) Propuesta de valor clara. Ejemplo: 'Crear una plataforma SaaS con checklist automatizado de cumplimiento GDPR que mapea automáticamente datos sensibles y genera reportes de auditoría en un clic.' Máximo 2-3 oraciones en español."
                             }
                         ]
-                    }`
+                    }
+                    
+                    IMPORTANTE: Cada cita debe incluir:
+                    - "text": La cita exacta del usuario (en el idioma original, preferiblemente inglés)
+                    - "url": El enlace directo al post o comentario de Reddit/foro donde apareció la cita
+                    
+                    Si no tienes la URL exacta para una cita, omítela de la lista de quotes.`
                 },
                 {
                     role: "user",

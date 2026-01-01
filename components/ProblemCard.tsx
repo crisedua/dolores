@@ -23,7 +23,7 @@ export interface Problem {
         title: string;
         snippet: string;
     }>;
-    quotes?: string[];
+    quotes?: Array<string | { text: string; url?: string }>;
     existingSolutions?: string[];
     gaps?: string[];
 }
@@ -71,11 +71,22 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                         <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shrink-0 mt-1">
                             <ArrowRight className="text-white" size={20} />
                         </div>
-                        <div>
+                        <div className="flex-1">
                             <h4 className="text-blue-400 text-xs font-bold tracking-widest uppercase mb-2">Próximo Paso Recomendado</h4>
-                            <p className="text-gray-300 leading-relaxed text-sm md:text-base">
+                            <p className="text-gray-300 leading-relaxed text-sm md:text-base mb-4">
                                 {problem.recommendation}
                             </p>
+                            <button
+                                onClick={() => {
+                                    // Copy to clipboard or save for later
+                                    navigator.clipboard.writeText(problem.recommendation);
+                                    alert('¡Idea guardada en el portapapeles!');
+                                }}
+                                className="text-xs font-bold text-blue-400 hover:text-blue-300 uppercase tracking-wider transition-colors flex items-center gap-2"
+                            >
+                                <span>Guardar Idea</span>
+                                <ArrowRight size={12} />
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -119,11 +130,35 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                         <div>
                             <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">Citas Clave</h3>
                             <div className="space-y-3">
-                                {problem.quotes.map((quote, idx) => (
-                                    <div key={idx} className="bg-[#111] border-l-2 border-blue-500 pl-4 py-3 italic text-gray-300 text-sm">
-                                        &quot;{quote}&quot;
-                                    </div>
-                                ))}
+                                {problem.quotes.map((quote, idx) => {
+                                    const quoteText = typeof quote === 'string' ? quote : quote.text;
+                                    const quoteUrl = typeof quote === 'object' ? quote.url : undefined;
+
+                                    if (quoteUrl) {
+                                        return (
+                                            <a
+                                                key={idx}
+                                                href={quoteUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="block bg-[#111] border-l-2 border-blue-500 pl-4 py-3 pr-4 italic text-gray-300 text-sm hover:bg-[#161616] hover:border-blue-400 transition-all group cursor-pointer"
+                                            >
+                                                <div className="flex items-start gap-3">
+                                                    <div className="flex-1">
+                                                        &quot;{quoteText}&quot;
+                                                    </div>
+                                                    <ExternalLink size={14} className="text-gray-500 group-hover:text-blue-400 mt-1 shrink-0 transition-colors" />
+                                                </div>
+                                            </a>
+                                        );
+                                    }
+
+                                    return (
+                                        <div key={idx} className="bg-[#111] border-l-2 border-blue-500 pl-4 py-3 italic text-gray-300 text-sm">
+                                            &quot;{quoteText}&quot;
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}

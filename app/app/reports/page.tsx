@@ -2,36 +2,58 @@
 import { useState, useEffect } from 'react';
 import { FileText, Calendar, Eye, Trash2, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/context/AuthContext';
 
 interface Report {
     id: string;
     title: string;
     query: string;
-    problemCount: number;
-    createdAt: string;
+    problem_count: number;
+    created_at: string;
 }
 
 export default function ReportsPage() {
     const [reports, setReports] = useState<Report[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { user } = useAuth();
 
     useEffect(() => {
-        // Load reports from localStorage (for now, until Supabase is set up)
-        const savedReports = localStorage.getItem('dolores_saved_reports');
-        if (savedReports) {
-            try {
-                setReports(JSON.parse(savedReports));
-            } catch (e) {
-                console.error('Failed to parse reports:', e);
-            }
+        if (user) {
+            fetchReports();
+        } else {
+            if (user === null) setIsLoading(false);
         }
-        setIsLoading(false);
-    }, []);
+    }, [user]);
 
-    const deleteReport = (id: string) => {
-        const updated = reports.filter(r => r.id !== id);
-        setReports(updated);
-        localStorage.setItem('dolores_saved_reports', JSON.stringify(updated));
+    const fetchReports = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('saved_reports')
+                .select('id, title, query, problem_count, created_at') // Don't fetch heavy 'results' JSON for list
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            if (data) setReports(data);
+        } catch (error) {
+            console.error('Error fetching reports:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const deleteReport = async (id: string) => {
+        try {
+            const { error } = await supabase
+                .from('saved_reports')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+            setReports(prev => prev.filter(r => r.id !== id));
+        } catch (error) {
+            console.error('Error deleting report:', error);
+        }
     };
 
     const formatDate = (dateStr: string) => {
@@ -71,7 +93,7 @@ export default function ReportsPage() {
                     <h3 className="text-lg font-semibold text-white mb-2">Sin reportes guardados</h3>
                     <p className="text-gray-500 mb-6">Cuando guardes un análisis, aparecerá aquí.</p>
                     <Link
-                        href="/"
+                        href="/app"
                         className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                     >
                         Crear Nueva Búsqueda
@@ -92,16 +114,16 @@ export default function ReportsPage() {
                                     <div className="flex items-center gap-4 text-xs text-gray-500">
                                         <span className="flex items-center gap-1">
                                             <Calendar size={12} />
-                                            {formatDate(report.createdAt)}
+                                            {formatDate(report.created_at)}
                                         </span>
                                         <span className="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">
-                                            {report.problemCount} problemas
+                                            {report.problem_count} problemas
                                         </span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Link
-                                        href={`/reports/${report.id}`}
+                                        href={`/app/reports/${report.id}`}
                                         className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all"
                                         title="Ver Reporte"
                                     >

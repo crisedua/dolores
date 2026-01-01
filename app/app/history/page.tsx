@@ -2,40 +2,75 @@
 import { useState, useEffect } from 'react';
 import { Search, Calendar, ArrowRight, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/context/AuthContext';
 
 interface HistoryItem {
     id: string;
     query: string;
-    resultCount: number;
-    createdAt: string;
+    result_count: number;
+    created_at: string;
 }
 
 export default function HistoryPage() {
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { user } = useAuth();
 
     useEffect(() => {
-        // Load history from localStorage (for now, until Supabase is set up)
-        const savedHistory = localStorage.getItem('dolores_search_history');
-        if (savedHistory) {
-            try {
-                setHistory(JSON.parse(savedHistory));
-            } catch (e) {
-                console.error('Failed to parse history:', e);
-            }
+        if (user) {
+            fetchHistory();
+        } else {
+            // Fallback to local storage if guest? Or just wait for auth?
+            // Since layout wraps everything in AuthProvider and we are in protected /app, 
+            // user should be there or loading.
+            if (user === null) setIsLoading(false); // Guest user or not logged in
         }
-        setIsLoading(false);
-    }, []);
+    }, [user]);
 
-    const deleteItem = (id: string) => {
-        const updated = history.filter(h => h.id !== id);
-        setHistory(updated);
-        localStorage.setItem('dolores_search_history', JSON.stringify(updated));
+    const fetchHistory = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('search_history')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            if (data) setHistory(data);
+        } catch (error) {
+            console.error('Error fetching history:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const clearAll = () => {
-        setHistory([]);
-        localStorage.removeItem('dolores_search_history');
+    const deleteItem = async (id: string) => {
+        try {
+            const { error } = await supabase
+                .from('search_history')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+            setHistory(prev => prev.filter(h => h.id !== id));
+        } catch (error) {
+            console.error('Error deleting item:', error);
+        }
+    };
+
+    const clearAll = async () => {
+        if (!user) return;
+        try {
+            const { error } = await supabase
+                .from('search_history')
+                .delete()
+                .eq('user_id', user.id); // Although RLS handles this, being specific is safe
+
+            if (error) throw error;
+            setHistory([]);
+        } catch (error) {
+            console.error('Error clearing history:', error);
+        }
     };
 
     const formatDate = (dateStr: string) => {
@@ -80,7 +115,7 @@ export default function HistoryPage() {
                     <h3 className="text-lg font-semibold text-white mb-2">Sin historial aún</h3>
                     <p className="text-gray-500 mb-6">Tus búsquedas aparecerán aquí después de realizar una.</p>
                     <Link
-                        href="/"
+                        href="/app"
                         className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                     >
                         Iniciar Búsqueda
@@ -97,7 +132,7 @@ export default function HistoryPage() {
                             <div className="flex items-center justify-between">
                                 <div className="flex-1">
                                     <Link
-                                        href={`/?q=${encodeURIComponent(item.query)}`}
+                                        href={`/app?q=${encodeURIComponent(item.query)}`}
                                         className="text-white font-medium hover:text-blue-400 transition-colors"
                                     >
                                         {item.query}
@@ -105,14 +140,14 @@ export default function HistoryPage() {
                                     <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
                                         <span className="flex items-center gap-1">
                                             <Calendar size={12} />
-                                            {formatDate(item.createdAt)}
+                                            {formatDate(item.created_at)}
                                         </span>
-                                        <span>{item.resultCount} problemas encontrados</span>
+                                        <span>{item.result_count} problemas encontrados</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Link
-                                        href={`/?q=${encodeURIComponent(item.query)}`}
+                                        href={`/app?q=${encodeURIComponent(item.query)}`}
                                         className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all"
                                     >
                                         <ArrowRight size={16} />

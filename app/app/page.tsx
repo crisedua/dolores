@@ -7,6 +7,7 @@ import { SearchProgress, ProgressStep } from '@/components/SearchProgress';
 import { ProblemCard } from '@/components/ProblemCard';
 import { Bell, Search, Calendar, Save, Check } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { supabase } from '@/lib/supabase';
 
 // Wrapper component to handle useSearchParams with Suspense
 function HomeContent() {
@@ -27,40 +28,33 @@ function HomeContent() {
   }, [searchParams]);
 
   // Save search to history
-  const saveToHistory = (query: string, resultCount: number) => {
+  const saveToHistory = async (query: string, result_count: number) => {
+    if (!user) return;
     try {
-      const historyStr = localStorage.getItem('dolores_search_history') || '[]';
-      const history = JSON.parse(historyStr);
-      const newItem = {
-        id: Date.now().toString(),
+      await supabase.from('search_history').insert({
+        user_id: user.id,
         query,
-        resultCount,
-        createdAt: new Date().toISOString()
-      };
-      // Add to beginning, limit to 50 items
-      const updated = [newItem, ...history].slice(0, 50);
-      localStorage.setItem('dolores_search_history', JSON.stringify(updated));
+        result_count
+      });
     } catch (e) {
       console.error('Failed to save history:', e);
     }
   };
 
   // Save current results as a report
-  const saveReport = () => {
-    if (!data || !currentQuery) return;
+  const saveReport = async () => {
+    if (!data || !currentQuery || !user) return;
     try {
-      const reportsStr = localStorage.getItem('dolores_saved_reports') || '[]';
-      const reports = JSON.parse(reportsStr);
-      const newReport = {
-        id: Date.now().toString(),
+      const { error } = await supabase.from('saved_reports').insert({
+        user_id: user.id,
         title: `Análisis: ${currentQuery}`,
         query: currentQuery,
-        problemCount: data.problems?.length || 0,
-        results: data,
-        createdAt: new Date().toISOString()
-      };
-      const updated = [newReport, ...reports];
-      localStorage.setItem('dolores_saved_reports', JSON.stringify(updated));
+        problem_count: data.problems?.length || 0,
+        results: data
+      });
+
+      if (error) throw error;
+
       setReportSaved(true);
       setTimeout(() => setReportSaved(false), 3000);
     } catch (e) {

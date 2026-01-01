@@ -3,12 +3,14 @@ import { useState, useEffect } from 'react';
 import { Folder, Play, Trash2, Plus, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/context/AuthContext';
 
 interface Template {
     id: string;
     name: string;
     query: string;
-    createdAt: string;
+    created_at: string;
 }
 
 export default function TemplatesPage() {
@@ -18,47 +20,73 @@ export default function TemplatesPage() {
     const [newName, setNewName] = useState('');
     const [newQuery, setNewQuery] = useState('');
     const router = useRouter();
+    const { user } = useAuth();
 
     useEffect(() => {
-        // Load templates from localStorage
-        const savedTemplates = localStorage.getItem('dolores_templates');
-        if (savedTemplates) {
-            try {
-                setTemplates(JSON.parse(savedTemplates));
-            } catch (e) {
-                console.error('Failed to parse templates:', e);
-            }
+        if (user) {
+            fetchTemplates();
+        } else {
+            if (user === null) setIsLoading(false);
         }
-        setIsLoading(false);
-    }, []);
+    }, [user]);
 
-    const saveTemplates = (updated: Template[]) => {
-        setTemplates(updated);
-        localStorage.setItem('dolores_templates', JSON.stringify(updated));
+    const fetchTemplates = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('saved_templates')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            if (data) setTemplates(data);
+        } catch (error) {
+            console.error('Error fetching templates:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const createTemplate = () => {
-        if (!newName.trim() || !newQuery.trim()) return;
+    const createTemplate = async () => {
+        if (!newName.trim() || !newQuery.trim() || !user) return;
 
-        const template: Template = {
-            id: Date.now().toString(),
-            name: newName,
-            query: newQuery,
-            createdAt: new Date().toISOString()
-        };
+        try {
+            const { data, error } = await supabase
+                .from('saved_templates')
+                .insert({
+                    user_id: user.id,
+                    name: newName,
+                    query: newQuery
+                })
+                .select()
+                .single();
 
-        saveTemplates([template, ...templates]);
-        setNewName('');
-        setNewQuery('');
-        setShowCreate(false);
+            if (error) throw error;
+            if (data) setTemplates([data, ...templates]);
+
+            setNewName('');
+            setNewQuery('');
+            setShowCreate(false);
+        } catch (error) {
+            console.error('Error creating template:', error);
+        }
     };
 
-    const deleteTemplate = (id: string) => {
-        saveTemplates(templates.filter(t => t.id !== id));
+    const deleteTemplate = async (id: string) => {
+        try {
+            const { error } = await supabase
+                .from('saved_templates')
+                .delete()
+                .eq('id', id);
+
+            if (error) throw error;
+            setTemplates(prev => prev.filter(t => t.id !== id));
+        } catch (error) {
+            console.error('Error deleting template:', error);
+        }
     };
 
     const useTemplate = (query: string) => {
-        router.push(`/?q=${encodeURIComponent(query)}`);
+        router.push(`/app?q=${encodeURIComponent(query)}`);
     };
 
     return (

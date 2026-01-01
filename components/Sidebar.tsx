@@ -34,16 +34,16 @@ export function Sidebar() {
                     <h3 className="text-xs font-semibold text-[#666] uppercase mb-3 px-2">Discoveries</h3>
                     <nav className="space-y-1">
                         <NavItem
-                            href="/"
+                            href="/app"
                             icon={<LayoutGrid size={18} />}
                             label="All Discoveries"
-                            active={pathname === '/'}
+                            active={pathname === '/app'}
                         />
                         <NavItem
-                            href="/templates"
+                            href="/app/templates"
                             icon={<Folder size={18} />}
                             label="Saved Templates"
-                            active={pathname === '/templates'}
+                            active={pathname === '/app/templates'}
                         />
                     </nav>
                 </div>
@@ -53,16 +53,16 @@ export function Sidebar() {
                     <h3 className="text-xs font-semibold text-[#666] uppercase mb-3 px-2">Analysis</h3>
                     <nav className="space-y-1">
                         <NavItem
-                            href="/reports"
+                            href="/app/reports"
                             icon={<CheckSquare size={18} />}
                             label="Recent Reports"
-                            active={pathname === '/reports'}
+                            active={pathname === '/app/reports'}
                         />
                         <NavItem
-                            href="/history"
+                            href="/app/history"
                             icon={<Search size={18} />}
                             label="Search History"
-                            active={pathname === '/history'}
+                            active={pathname === '/app/history'}
                         />
                     </nav>
                 </div>

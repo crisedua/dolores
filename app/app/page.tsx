@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { HeroInput } from '@/components/HeroInput';
 import { SearchProgress, ProgressStep } from '@/components/SearchProgress';
@@ -8,7 +8,8 @@ import { ProblemCard } from '@/components/ProblemCard';
 import { Bell, Search, Calendar, Save, Check } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
-export default function Home() {
+// Wrapper component to handle useSearchParams with Suspense
+function HomeContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<any>(null);
   const [searchSteps, setSearchSteps] = useState<ProgressStep[]>([]);
@@ -244,8 +245,8 @@ export default function Home() {
                 onClick={saveReport}
                 disabled={reportSaved}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${reportSaved
-                    ? 'bg-green-600 text-white'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  ? 'bg-green-600 text-white'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
                   }`}
               >
                 {reportSaved ? (
@@ -274,5 +275,18 @@ export default function Home() {
       )}
 
     </div>
+  );
+}
+
+// Default export with Suspense boundary for useSearchParams
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
   );
 }

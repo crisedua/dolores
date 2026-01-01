@@ -31,18 +31,18 @@ export function Sidebar() {
 
                 {/* Section: Discoveries */}
                 <div>
-                    <h3 className="text-xs font-semibold text-[#666] uppercase mb-3 px-2">Discoveries</h3>
+                    <h3 className="text-xs font-semibold text-[#666] uppercase mb-3 px-2">Descubrimiento</h3>
                     <nav className="space-y-1">
                         <NavItem
                             href="/app"
                             icon={<LayoutGrid size={18} />}
-                            label="All Discoveries"
+                            label="Explorar"
                             active={pathname === '/app'}
                         />
                         <NavItem
                             href="/app/templates"
                             icon={<Folder size={18} />}
-                            label="Saved Templates"
+                            label="Plantillas"
                             active={pathname === '/app/templates'}
                         />
                     </nav>
@@ -50,18 +50,18 @@ export function Sidebar() {
 
                 {/* Section: Analysis */}
                 <div>
-                    <h3 className="text-xs font-semibold text-[#666] uppercase mb-3 px-2">Analysis</h3>
+                    <h3 className="text-xs font-semibold text-[#666] uppercase mb-3 px-2">Análisis</h3>
                     <nav className="space-y-1">
                         <NavItem
                             href="/app/reports"
                             icon={<CheckSquare size={18} />}
-                            label="Recent Reports"
+                            label="Reportes"
                             active={pathname === '/app/reports'}
                         />
                         <NavItem
                             href="/app/history"
                             icon={<Search size={18} />}
-                            label="Search History"
+                            label="Historial"
                             active={pathname === '/app/history'}
                         />
                     </nav>
@@ -73,13 +73,13 @@ export function Sidebar() {
                 <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer group relative">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500" />
                     <div className="flex-1 w-full overflow-hidden">
-                        <p className="text-sm font-medium text-white truncate" title={user?.email}>{user?.email || 'Guest User'}</p>
-                        <p className="text-xs text-gray-500 mb-2">Free Plan</p>
+                        <p className="text-sm font-medium text-white truncate" title={user?.email}>{user?.email || 'Usuario Invitado'}</p>
+                        <p className="text-xs text-gray-500 mb-2">Plan Gratuito</p>
 
                         {/* Credits Usage */}
                         <div className="pr-2">
                             <div className="flex justify-between text-[10px] text-gray-400 mb-1">
-                                <span>Credits Used</span>
+                                <span>Créditos</span>
                                 <span>85%</span>
                             </div>
                             <div className="h-1 w-full bg-[#222] rounded-full overflow-hidden">
@@ -91,7 +91,7 @@ export function Sidebar() {
                     <button
                         onClick={() => signOut()}
                         className="p-1.5 hover:bg-white/10 rounded-md text-gray-500 hover:text-white transition-colors"
-                        title="Sign Out"
+                        title="Cerrar Sesión"
                     >
                         <LogOut size={16} />
                     </button>

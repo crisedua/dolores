@@ -97,17 +97,10 @@ export default function TemplatesPage() {
                     <h1 className="text-2xl font-bold text-white mb-2">Plantillas Guardadas</h1>
                     <p className="text-gray-500 text-sm">Búsquedas predefinidas para reutilizar rápidamente.</p>
                 </div>
-                <button
-                    onClick={() => setShowCreate(true)}
-                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                >
-                    <Plus size={18} />
-                    Nueva Plantilla
-                </button>
             </div>
 
-            {/* Create Template Modal */}
-            {showCreate && (
+            {/* Create Template Modal - Hidden */}
+            {false && showCreate && (
                 <div className="bg-[#1A1A1A] border border-[#333] rounded-xl p-6 mb-6 animate-in fade-in slide-in-from-top-2 duration-200">
                     <h3 className="text-lg font-semibold text-white mb-4">Crear Nueva Plantilla</h3>
                     <div className="space-y-4">
@@ -161,14 +154,7 @@ export default function TemplatesPage() {
                         <Folder size={24} className="text-gray-500" />
                     </div>
                     <h3 className="text-lg font-semibold text-white mb-2">Sin plantillas guardadas</h3>
-                    <p className="text-gray-500 mb-6">Crea plantillas para reutilizar tus búsquedas frecuentes.</p>
-                    <button
-                        onClick={() => setShowCreate(true)}
-                        className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                    >
-                        <Plus size={18} />
-                        Crear Primera Plantilla
-                    </button>
+                    <p className="text-gray-500 mb-6">Las plantillas aparecerán aquí cuando estén disponibles.</p>
                 </div>
             ) : (
                 <div className="grid gap-4">

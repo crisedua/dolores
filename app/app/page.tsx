@@ -128,8 +128,10 @@ function HomeContent() {
               await new Promise(r => setTimeout(r, 500));
               console.log("Got results:", update.data);
               setData(update.data);
-              // Auto-save to history
-              saveToHistory(query, update.data.problems?.length || 0);
+              // Auto-save to history (with error handling)
+              saveToHistory(query, update.data.problems?.length || 0).catch(err => {
+                console.error('Failed to save search history:', err);
+              });
             }
           } catch (e) {
             console.error("Error parsing stream line:", line, e);

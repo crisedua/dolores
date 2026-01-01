@@ -31,7 +31,13 @@ export async function perplexitySearch(topic: string) {
                     - Encuentra al menos 10-15 puntos de dolor distintos y granulares.
                     
                     CRÍTICO: Tu respuesta DEBE estar COMPLETAMENTE EN ESPAÑOL, pero busca contenido en inglés.
-                    DEBES responder ÚNICAMENTE con un objeto JSON válido en ESPAÑOL. Sin otro texto.
+                    DEBES responder ÚNICAMENTE con un objeto JSON válido en ESPAÑOL.
+                    
+                    IMPORTANTE SOBRE EL FORMATO:
+                    - NO uses markdown code blocks (ni triple backtick json ni triple backtick)
+                    - NO agregues texto explicativo antes o después del JSON
+                    - Responde SOLO con el objeto JSON puro
+                    - El JSON debe comenzar con { y terminar con }
                     
                     FORMATO DE SALIDA (SOLO JSON EN ESPAÑOL):
                     {
@@ -98,15 +104,34 @@ Si el tema está en español, tradúcelo al inglés para buscar contenido (hay m
         const data = await response.json();
         console.log('[Perplexity] Response received, parsing content...');
 
-        const content = data.choices[0].message.content;
-        console.log('[Perplexity] Content preview:', content.substring(0, 200));
+        let content = data.choices[0].message.content;
+        console.log('[Perplexity] Raw content preview:', content.substring(0, 200));
 
+        // Smart JSON extraction - handle markdown code blocks and extra text
         try {
+            // Try direct parse first
             const parsed = JSON.parse(content);
             console.log('[Perplexity] Successfully parsed JSON with', parsed.problems?.length || 0, 'problems');
             return parsed;
         } catch (e) {
-            console.error("[Perplexity] Failed to parse JSON:", content);
+            console.log('[Perplexity] Direct parse failed, attempting cleanup...');
+
+            // Remove markdown code blocks (```json ... ``` or ``` ... ```)
+            content = content.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+
+            // Try to extract JSON object/array from text
+            const jsonMatch = content.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+                try {
+                    const parsed = JSON.parse(jsonMatch[0]);
+                    console.log('[Perplexity] Successfully parsed cleaned JSON with', parsed.problems?.length || 0, 'problems');
+                    return parsed;
+                } catch (e2) {
+                    console.error("[Perplexity] Failed to parse cleaned JSON:", jsonMatch[0].substring(0, 500));
+                }
+            }
+
+            console.error("[Perplexity] All parse attempts failed. Raw content:", content.substring(0, 1000));
             throw new Error("Perplexity returned invalid JSON format");
         }
     } catch (error: any) {

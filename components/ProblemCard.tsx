@@ -15,7 +15,11 @@ export interface Problem {
         monetizability: number;
     };
 
-    recommendation: string;
+    solution?: {
+        landingPage: string;
+        mvpFeatures: string[];
+    };
+    recommendation?: string; // Fallback for old data
 
     // Optional evidence fields
     sources?: Array<{
@@ -30,6 +34,12 @@ export interface Problem {
 
 export function ProblemCard({ problem }: { problem: Problem }) {
     const [isExpanded, setIsExpanded] = useState(false);
+
+    // Backward compatibility: If no solution object, wrap recommendation in object
+    const solution = problem.solution || {
+        landingPage: problem.recommendation || "No hay recomendación disponible.",
+        mvpFeatures: []
+    };
 
     return (
         <div className="bg-[#0F0F0F] rounded-2xl border border-[#222] overflow-hidden mb-6 hover:border-[#333] transition-colors">
@@ -63,28 +73,47 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                     <MetricBar label="MONETIZACIÓN" value={problem.metrics.monetizability} color="bg-amber-500" />
                 </div>
 
-                {/* Recommendation Box */}
-                <div className="bg-[#141420] border border-blue-500/20 rounded-xl p-6 relative overflow-hidden group">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
+                {/* Solution Plan Box */}
+                <div className="bg-[#141420] border border-blue-500/20 rounded-xl overflow-hidden group">
+                    <div className="p-6 relative">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-blue-500" />
 
-                    <div className="flex gap-4">
-                        <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shrink-0 mt-1">
-                            <ArrowRight className="text-white" size={20} />
+                        <div className="flex gap-4 mb-6">
+                            <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shrink-0 mt-1">
+                                <ArrowRight className="text-white" size={20} />
+                            </div>
+                            <div>
+                                <h4 className="text-blue-400 text-xs font-bold tracking-widest uppercase mb-2">Validación: Idea de Landing Page</h4>
+                                <p className="text-gray-300 leading-relaxed text-sm md:text-base">
+                                    {solution.landingPage}
+                                </p>
+                            </div>
                         </div>
-                        <div className="flex-1">
-                            <h4 className="text-blue-400 text-xs font-bold tracking-widest uppercase mb-2">Próximo Paso Recomendado</h4>
-                            <p className="text-gray-300 leading-relaxed text-sm md:text-base mb-4">
-                                {problem.recommendation}
-                            </p>
+
+                        {solution.mvpFeatures && solution.mvpFeatures.length > 0 && (
+                            <div className="ml-14 bg-[#0A0A0A] rounded-lg p-5 border border-white/5">
+                                <h4 className="text-gray-500 text-[10px] font-bold tracking-widest uppercase mb-3 text-white">Funcionalidades MVP Recomendadas</h4>
+                                <ul className="space-y-3">
+                                    {solution.mvpFeatures.map((feature, idx) => (
+                                        <li key={idx} className="flex items-start gap-3 text-sm text-gray-400">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
+                                            <span>{feature}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        <div className="ml-14 mt-4">
                             <button
                                 onClick={() => {
-                                    // Copy to clipboard or save for later
-                                    navigator.clipboard.writeText(problem.recommendation);
-                                    alert('¡Idea guardada en el portapapeles!');
+                                    const text = `Landing Page: ${solution.landingPage}\n\nMVP Features:\n${solution.mvpFeatures.map(f => `- ${f}`).join('\n')}`;
+                                    navigator.clipboard.writeText(text);
+                                    alert('¡Plan guardado en el portapapeles!');
                                 }}
                                 className="text-xs font-bold text-blue-400 hover:text-blue-300 uppercase tracking-wider transition-colors flex items-center gap-2"
                             >
-                                <span>Guardar Idea</span>
+                                <span>Guardar Plan de Acción</span>
                                 <ArrowRight size={12} />
                             </button>
                         </div>

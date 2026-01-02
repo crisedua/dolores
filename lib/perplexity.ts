@@ -53,7 +53,14 @@ export async function perplexitySearch(topic: string) {
                                     "Cita directa en INGLÉS del usuario original",
                                     "Otra cita en INGLÉS..."
                                 ],
-                                "recommendation": "Breve idea de solución MVP (en español)"
+                                "solution": {
+                                    "landingPage": "Idea detallada para Landing Page: Gancho principal, propuesta de valor única y qué validar primero.",
+                                    "mvpFeatures": [
+                                        "Feature 1: Descripción concreta...",
+                                        "Feature 2: Descripción concreta...",
+                                        "Feature 3: Descripción concreta..."
+                                    ]
+                                }
                             }
                         ]
                     }`

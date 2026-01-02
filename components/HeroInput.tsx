@@ -79,40 +79,40 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
             {/* Example Searches - User-Friendly Guidance */}
             <div className="mt-10 max-w-3xl mx-auto">
                 {/* Guidance Text */}
-                <p className="text-center text-xs text-gray-500 mb-4">
-                    💡 <span className="text-gray-400">Tip:</span> Piensa en un grupo de personas o industria que conozcas bien. ¿Qué les frustra?
+                <p className="text-center text-xs text-gray-400 mb-6 font-medium">
+                    💡 <span className="text-gray-200 font-bold">Tip:</span> Piensa en un grupo de personas o industria que conozcas bien. ¿Qué les frustra?
                 </p>
 
                 {/* Category: Professionals */}
-                <div className="mb-4">
-                    <span className="block text-[10px] uppercase tracking-widest text-gray-600 mb-2">👔 Profesionales:</span>
+                <div className="mb-6">
+                    <span className="block text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-3 text-center">👔 Profesionales</span>
                     <div className="flex flex-wrap justify-center gap-2">
-                        <button onClick={() => setQuery("problemas de freelancers")} className="px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 text-xs hover:border-purple-500 hover:text-purple-400 transition-all">Freelancers</button>
-                        <button onClick={() => setQuery("frustaciones de dentistas")} className="px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 text-xs hover:border-purple-500 hover:text-purple-400 transition-all">Dentistas</button>
-                        <button onClick={() => setQuery("quejas de contadores")} className="px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 text-xs hover:border-purple-500 hover:text-purple-400 transition-all">Contadores</button>
-                        <button onClick={() => setQuery("problemas de agentes inmobiliarios")} className="px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 text-xs hover:border-purple-500 hover:text-purple-400 transition-all">Agentes Inmobiliarios</button>
+                        <button onClick={() => setQuery("problemas de freelancers")} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Freelancers</button>
+                        <button onClick={() => setQuery("frustaciones de dentistas")} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Dentistas</button>
+                        <button onClick={() => setQuery("quejas de contadores")} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Contadores</button>
+                        <button onClick={() => setQuery("problemas de agentes inmobiliarios")} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Agentes Inmobiliarios</button>
                     </div>
                 </div>
 
                 {/* Category: Small Business */}
-                <div className="mb-4">
-                    <span className="block text-[10px] uppercase tracking-widest text-gray-600 mb-2">🏪 Negocios Pequeños:</span>
+                <div className="mb-6">
+                    <span className="block text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-3 text-center">🏪 Negocios Pequeños</span>
                     <div className="flex flex-wrap justify-center gap-2">
-                        <button onClick={() => setQuery("problemas de dueños de restaurantes")} className="px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 text-xs hover:border-purple-500 hover:text-purple-400 transition-all">Restaurantes</button>
-                        <button onClick={() => setQuery("frustraciones de tiendas online")} className="px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 text-xs hover:border-purple-500 hover:text-purple-400 transition-all">E-commerce</button>
-                        <button onClick={() => setQuery("quejas de gimnasios")} className="px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 text-xs hover:border-purple-500 hover:text-purple-400 transition-all">Gimnasios</button>
-                        <button onClick={() => setQuery("problemas de clínicas veterinarias")} className="px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 text-xs hover:border-purple-500 hover:text-purple-400 transition-all">Veterinarias</button>
+                        <button onClick={() => setQuery("problemas de dueños de restaurantes")} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Restaurantes</button>
+                        <button onClick={() => setQuery("frustraciones de tiendas online")} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">E-commerce</button>
+                        <button onClick={() => setQuery("quejas de gimnasios")} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Gimnasios</button>
+                        <button onClick={() => setQuery("problemas de clínicas veterinarias")} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Veterinarias</button>
                     </div>
                 </div>
 
                 {/* Category: Lifestyle */}
-                <div className="mb-4">
-                    <span className="block text-[10px] uppercase tracking-widest text-gray-600 mb-2">🎯 Nichos de Vida:</span>
+                <div className="mb-6">
+                    <span className="block text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-3 text-center">🎯 Nichos de Vida</span>
                     <div className="flex flex-wrap justify-center gap-2">
-                        <button onClick={() => setQuery("problemas de padres que trabajan desde casa")} className="px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 text-xs hover:border-purple-500 hover:text-purple-400 transition-all">Padres Remotos</button>
-                        <button onClick={() => setQuery("frustraciones de nómadas digitales")} className="px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 text-xs hover:border-purple-500 hover:text-purple-400 transition-all">Nómadas Digitales</button>
-                        <button onClick={() => setQuery("quejas de estudiantes universitarios")} className="px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 text-xs hover:border-purple-500 hover:text-purple-400 transition-all">Estudiantes</button>
-                        <button onClick={() => setQuery("problemas de creadores de contenido")} className="px-3 py-1.5 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-400 text-xs hover:border-purple-500 hover:text-purple-400 transition-all">Creadores</button>
+                        <button onClick={() => setQuery("problemas de padres que trabajan desde casa")} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Padres Remotos</button>
+                        <button onClick={() => setQuery("frustraciones de nómadas digitales")} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Nómadas Digitales</button>
+                        <button onClick={() => setQuery("quejas de estudiantes universitarios")} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Estudiantes</button>
+                        <button onClick={() => setQuery("problemas de creadores de contenido")} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Creadores</button>
                     </div>
                 </div>
             </div>

@@ -37,11 +37,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
     const t = translations[language];
 
-    // Prevent hydration mismatch by not rendering until mounted
-    if (!mounted) {
-        return <>{children}</>;
-    }
-
     return (
         <LanguageContext.Provider value={{ language, setLanguage, t }}>
             {children}

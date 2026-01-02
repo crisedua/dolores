@@ -23,6 +23,8 @@ interface Stats {
 
 const ADMIN_EMAILS = ['ed@eduardoescalante.com'];
 
+import { useTranslation } from '@/context/LanguageContext';
+
 export default function AdminPage() {
     const { user } = useAuth();
     const [users, setUsers] = useState<User[]>([]);
@@ -31,6 +33,7 @@ export default function AdminPage() {
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [actionLoading, setActionLoading] = useState<string | null>(null);
+    const { t, language } = useTranslation();
 
     const isAdmin = user?.email && ADMIN_EMAILS.includes(user.email);
 
@@ -38,7 +41,7 @@ export default function AdminPage() {
         if (user && isAdmin) {
             fetchUsers();
         } else if (user && !isAdmin) {
-            setError('Acceso denegado. Solo administradores.');
+            setError(t.admin.onlyAdmins);
             setIsLoading(false);
         }
     }, [user, isAdmin]);
@@ -104,8 +107,8 @@ export default function AdminPage() {
     );
 
     const formatDate = (dateStr: string) => {
-        if (!dateStr) return 'Nunca';
-        return new Date(dateStr).toLocaleDateString('es-ES', {
+        if (!dateStr) return t.admin.never;
+        return new Date(dateStr).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
             day: 'numeric',
             month: 'short',
             year: 'numeric',
@@ -127,7 +130,7 @@ export default function AdminPage() {
             <div className="min-h-screen flex items-center justify-center p-8">
                 <div className="text-center">
                     <Shield size={48} className="text-red-500 mx-auto mb-4" />
-                    <h2 className="text-xl font-bold text-white mb-2">Acceso Denegado</h2>
+                    <h2 className="text-xl font-bold text-white mb-2">{t.admin.accessDenied}</h2>
                     <p className="text-gray-500">{error}</p>
                 </div>
             </div>
@@ -141,9 +144,9 @@ export default function AdminPage() {
                 <div>
                     <h1 className="text-3xl font-bold text-white flex items-center gap-3">
                         <Shield className="text-blue-500" />
-                        Panel de Administración
+                        {t.admin.title}
                     </h1>
-                    <p className="text-gray-500 mt-1">Gestión de usuarios y suscripciones</p>
+                    <p className="text-gray-500 mt-1">{t.admin.description}</p>
                 </div>
                 <button
                     onClick={fetchUsers}
@@ -151,7 +154,7 @@ export default function AdminPage() {
                     className="flex items-center gap-2 bg-[#222] hover:bg-[#333] text-white px-4 py-2 rounded-lg transition-colors"
                 >
                     <RefreshCw size={18} className={isLoading ? 'animate-spin' : ''} />
-                    Actualizar
+                    {t.admin.update}
                 </button>
             </div>
 
@@ -161,28 +164,28 @@ export default function AdminPage() {
                     <div className="bg-[#1A1A1A] border border-[#333] rounded-xl p-5">
                         <div className="flex items-center gap-3 mb-2">
                             <Users className="text-blue-500" size={24} />
-                            <span className="text-gray-400 text-sm">Total Usuarios</span>
+                            <span className="text-gray-400 text-sm">{t.admin.stats.totalUsers}</span>
                         </div>
                         <p className="text-3xl font-bold text-white">{stats.total_users}</p>
                     </div>
                     <div className="bg-[#1A1A1A] border border-[#333] rounded-xl p-5">
                         <div className="flex items-center gap-3 mb-2">
                             <Crown className="text-yellow-500" size={24} />
-                            <span className="text-gray-400 text-sm">Usuarios Pro</span>
+                            <span className="text-gray-400 text-sm">{t.admin.stats.proUsers}</span>
                         </div>
                         <p className="text-3xl font-bold text-white">{stats.pro_users}</p>
                     </div>
                     <div className="bg-[#1A1A1A] border border-[#333] rounded-xl p-5">
                         <div className="flex items-center gap-3 mb-2">
                             <Users className="text-gray-500" size={24} />
-                            <span className="text-gray-400 text-sm">Usuarios Free</span>
+                            <span className="text-gray-400 text-sm">{t.admin.stats.freeUsers}</span>
                         </div>
                         <p className="text-3xl font-bold text-white">{stats.free_users}</p>
                     </div>
                     <div className="bg-[#1A1A1A] border border-[#333] rounded-xl p-5">
                         <div className="flex items-center gap-3 mb-2">
                             <Search className="text-green-500" size={24} />
-                            <span className="text-gray-400 text-sm">Búsquedas (este mes)</span>
+                            <span className="text-gray-400 text-sm">{t.admin.stats.searchesThisMonth}</span>
                         </div>
                         <p className="text-3xl font-bold text-white">{stats.total_searches_this_month}</p>
                     </div>
@@ -195,7 +198,7 @@ export default function AdminPage() {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
                     <input
                         type="text"
-                        placeholder="Buscar por email..."
+                        placeholder={t.admin.searchPlaceholder}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full bg-[#1A1A1A] border border-[#333] rounded-lg pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
@@ -213,12 +216,12 @@ export default function AdminPage() {
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-[#333]">
-                                <th className="text-left text-gray-400 text-sm font-medium px-6 py-4">Email</th>
-                                <th className="text-left text-gray-400 text-sm font-medium px-6 py-4">Plan</th>
-                                <th className="text-left text-gray-400 text-sm font-medium px-6 py-4">Búsquedas</th>
-                                <th className="text-left text-gray-400 text-sm font-medium px-6 py-4">Registro</th>
-                                <th className="text-left text-gray-400 text-sm font-medium px-6 py-4">Último Acceso</th>
-                                <th className="text-right text-gray-400 text-sm font-medium px-6 py-4">Acciones</th>
+                                <th className="text-left text-gray-400 text-sm font-medium px-6 py-4">{t.admin.table.email}</th>
+                                <th className="text-left text-gray-400 text-sm font-medium px-6 py-4">{t.admin.table.plan}</th>
+                                <th className="text-left text-gray-400 text-sm font-medium px-6 py-4">{t.admin.table.searches}</th>
+                                <th className="text-left text-gray-400 text-sm font-medium px-6 py-4">{t.admin.table.registration}</th>
+                                <th className="text-left text-gray-400 text-sm font-medium px-6 py-4">{t.admin.table.lastAccess}</th>
+                                <th className="text-right text-gray-400 text-sm font-medium px-6 py-4">{t.admin.table.actions}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -234,13 +237,13 @@ export default function AdminPage() {
                                                 PRO
                                             </span>
                                         ) : (
-                                            <span className="text-gray-500 text-xs">Free</span>
+                                            <span className="text-gray-500 text-xs">{language === 'es' ? 'Gratis' : 'Free'}</span>
                                         )}
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="text-white">{u.search_count}</span>
                                         {u.plan_type !== 'pro' && (
-                                            <span className="text-gray-500">/3</span>
+                                            <span className="text-gray-500">/5</span>
                                         )}
                                     </td>
                                     <td className="px-6 py-4 text-gray-400 text-sm">
@@ -261,7 +264,7 @@ export default function AdminPage() {
                                                 ) : (
                                                     <XCircle size={14} />
                                                 )}
-                                                Quitar Pro
+                                                {t.admin.actions.revokePro}
                                             </button>
                                         ) : (
                                             <button
@@ -274,7 +277,7 @@ export default function AdminPage() {
                                                 ) : (
                                                     <CheckCircle size={14} />
                                                 )}
-                                                Dar Pro
+                                                {t.admin.actions.grantPro}
                                             </button>
                                         )}
                                     </td>
@@ -284,7 +287,7 @@ export default function AdminPage() {
                     </table>
                     {filteredUsers.length === 0 && (
                         <div className="text-center py-12 text-gray-500">
-                            No se encontraron usuarios
+                            {t.admin.noUsersFound}
                         </div>
                     )}
                 </div>

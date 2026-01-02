@@ -53,12 +53,6 @@ export function Sidebar() {
                     <h3 className="text-xs font-semibold text-[#666] uppercase mb-3 px-2">Análisis</h3>
                     <nav className="space-y-1">
                         <NavItem
-                            href="/app/reports"
-                            icon={<CheckSquare size={18} />}
-                            label="Reportes"
-                            active={pathname === '/app/reports'}
-                        />
-                        <NavItem
                             href="/app/history"
                             icon={<Search size={18} />}
                             label="Historial"

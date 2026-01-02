@@ -96,7 +96,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 border-b border-[#222] pb-8">
                     <MetricBar label="FRECUENCIA" value={problem.metrics.frequency} color="bg-blue-500" />
                     <MetricBar label="INTENSIDAD" value={problem.metrics.intensity} color="bg-red-500" />
-                    <MetricBar label="WTP SCORE" value={problem.willingnessToPay?.score || problem.metrics.monetizability} color="bg-green-500" />
+                    <MetricBar label="DISPOSICIÓN PAGO" value={problem.willingnessToPay?.score || problem.metrics.monetizability} color="bg-green-500" />
                     <MetricBar label="MONETIZACIÓN" value={problem.metrics.monetizability} color="bg-amber-500" />
                 </div>
 
@@ -107,7 +107,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                         {problem.willingnessToPay && (
                             <div className="bg-[#111] rounded-xl p-5 border border-[#222]">
                                 <h4 className="flex items-center gap-2 text-green-400 text-xs font-bold tracking-widest uppercase mb-3">
-                                    <Wallet size={14} /> Willingness to Pay
+                                    <Wallet size={14} /> DISPOSICIÓN A PAGAR
                                 </h4>
                                 <p className="text-gray-300 text-sm leading-relaxed">
                                     {problem.willingnessToPay.evidence}

@@ -113,12 +113,9 @@ function PricingContent() {
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <Check size={20} className="text-green-500 mt-0.5 shrink-0" />
-                                    <span className="text-gray-300">Resultados básicos</span>
+                                    <span className="text-gray-300">Análisis completo con IA</span>
                                 </li>
-                                <li className="flex items-start gap-3">
-                                    <Check size={20} className="text-green-500 mt-0.5 shrink-0" />
-                                    <span className="text-gray-300">Historial limitado</span>
-                                </li>
+
                             </ul>
                             <Link
                                 href={user ? '/app' : '/auth'}
@@ -163,10 +160,7 @@ function PricingContent() {
                                     <Check size={20} className="text-blue-400 mt-0.5 shrink-0" />
                                     <span className="text-white font-medium">Reportes guardados</span>
                                 </li>
-                                <li className="flex items-start gap-3">
-                                    <Check size={20} className="text-blue-400 mt-0.5 shrink-0" />
-                                    <span className="text-white font-medium">Plantillas personalizadas</span>
-                                </li>
+
                                 <li className="flex items-start gap-3">
                                     <Check size={20} className="text-blue-400 mt-0.5 shrink-0" />
                                     <span className="text-white font-medium">Soporte prioritario</span>

@@ -11,10 +11,15 @@ import {
     Zap
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useSubscription } from '@/hooks/useSubscription';
 import { ReactNode } from 'react';
 
 export function Sidebar() {
     const { user, signOut } = useAuth();
+    const { usage, subscription } = useSubscription();
+
+    const planName = subscription?.plan_type === 'pro' ? 'Pro' : 'Gratuito';
+    const usagePercentage = usage.isProUser ? 100 : (usage.search_count / usage.limit) * 100;
     const pathname = usePathname();
 
     return (
@@ -75,28 +80,44 @@ export function Sidebar() {
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500" />
                     <div className="flex-1 w-full overflow-hidden">
                         <p className="text-sm font-medium text-white truncate" title={user?.email}>{user?.email || 'Usuario Invitado'}</p>
-                        <p className="text-xs text-gray-500 mb-2">Plan Gratuito</p>
+                        <p className="text-xs text-gray-500 mb-2">Plan {planName}</p>
 
-                        {/* Credits Usage */}
-                        <div className="pr-2">
-                            <div className="flex justify-between text-[10px] text-gray-400 mb-1">
-                                <span>Créditos</span>
-                                <span>85%</span>
+                        {/* Usage for Free Plan */}
+                        {!usage.isProUser && (
+                            <div className="pr-2">
+                                <div className="flex justify-between text-[10px] text-gray-400 mb-1">
+                                    <span>Búsquedas</span>
+                                    <span>{usage.search_count}/{usage.limit}</span>
+                                </div>
+                                <div className="h-1 w-full bg-[#222] rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-blue-500/80 rounded-full transition-all"
+                                        style={{ width: `${usagePercentage}%` }}
+                                    />
+                                </div>
                             </div>
-                            <div className="h-1 w-full bg-[#222] rounded-full overflow-hidden">
-                                <div className="h-full w-[85%] bg-blue-500/80 rounded-full" />
+                        )}
+
+                        {/* Pro Badge */}
+                        {usage.isProUser && (
+                            <div className="pr-2">
+                                <div className="text-[10px] text-blue-400 font-semibold">
+                                    ✨ Búsquedas Ilimitadas
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
 
-                    {/* Upgrade Button */}
-                    <Link
-                        href="/pricing"
-                        className="mt-3 w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2"
-                    >
-                        <Zap size={14} />
-                        Actualizar a Pro
-                    </Link>
+                    {/* Upgrade Button - Only for Free Users */}
+                    {!usage.isProUser && (
+                        <Link
+                            href="/pricing"
+                            className="mt-3 w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2"
+                        >
+                            <Zap size={14} />
+                            Actualizar a Pro
+                        </Link>
+                    )}
                 </div>
 
                 <button

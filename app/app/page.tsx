@@ -8,6 +8,8 @@ import { ProblemCard } from '@/components/ProblemCard';
 import { Bell, Search, Calendar, Save, Check } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/lib/supabase';
+import { useSubscription } from '@/hooks/useSubscription';
+import { UpgradeModal } from '@/components/UpgradeModal';
 
 // Wrapper component to handle useSearchParams with Suspense
 function HomeContent() {
@@ -16,7 +18,9 @@ function HomeContent() {
   const [searchSteps, setSearchSteps] = useState<ProgressStep[]>([]);
   const [currentQuery, setCurrentQuery] = useState('');
   const [reportSaved, setReportSaved] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const { user } = useAuth();
+  const { usage, incrementUsage } = useSubscription();
   const searchParams = useSearchParams();
 
   // Handle URL query parameter for templates/history
@@ -63,6 +67,12 @@ function HomeContent() {
   };
 
   const handleSearch = async (query: string) => {
+    // Check if user can search
+    if (!usage.canSearch) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
     console.log("Starting search for:", query);
     setIsLoading(true);
     setSearchSteps([]);
@@ -128,6 +138,10 @@ function HomeContent() {
               await new Promise(r => setTimeout(r, 500));
               console.log("Got results:", update.data);
               setData(update.data);
+
+              // Increment usage count for free users
+              await incrementUsage();
+
               // Auto-save to history (with error handling)
               saveToHistory(query, update.data.problems?.length || 0).catch(err => {
                 console.error('Failed to save search history:', err);
@@ -163,6 +177,13 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen relative flex flex-col">
+      {/* Upgrade Modal */}
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        searchesUsed={usage.search_count}
+        searchLimit={usage.limit}
+      />
 
       {/* Dashboard Header - Only show when we have results */}
       {data && (

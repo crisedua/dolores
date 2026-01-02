@@ -22,7 +22,14 @@ export default function DashboardLayout({
                     <div className="flex items-center justify-end gap-4">
                         <span className="text-sm text-gray-400">{user?.email}</span>
                         <button
-                            onClick={() => signOut()}
+                            onClick={async () => {
+                                try {
+                                    console.log('Sign out clicked');
+                                    await signOut();
+                                } catch (error) {
+                                    console.error('Sign out error:', error);
+                                }
+                            }}
                             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                         >
                             <LogOut size={16} />

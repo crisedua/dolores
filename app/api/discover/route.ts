@@ -14,7 +14,7 @@ const supabase = createClient(
 );
 
 // Hardcoded Pro users (same as frontend for consistency)
-const PRO_USER_EMAILS = ['ed@eduardoescalante.com', 'ed@acme.com'];
+const PRO_USER_EMAILS = ['ed@eduardoescalante.com', 'ed@acme.com', 'sicruzat1954@gmail.com'];
 
 export async function POST(req: NextRequest) {
     const encoder = new TextEncoder();

@@ -79,7 +79,7 @@ export function useSubscription() {
         }
 
         // Hardcoded Pro User Access (backup for paid users if DB is not updated)
-        const proUserEmails = ['ed@eduardoescalante.com', 'ed@acme.com'];
+        const proUserEmails = ['ed@eduardoescalante.com', 'ed@acme.com', 'sicruzat1954@gmail.com'];
         if (proUserEmails.includes(user.email || '')) {
             console.log('useSubscription: Pro user detected, granting unlimited access:', user.email);
             setUsage({

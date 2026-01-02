@@ -12,7 +12,10 @@ export async function POST(request: Request) {
     try {
         const { userId, userEmail } = await request.json();
 
+        console.log('📦 Create subscription request:', { userId, userEmail });
+
         if (!userId || !userEmail) {
+            console.error('❌ Missing user data:', { userId, userEmail });
             return Response.json({ error: 'Missing user data' }, { status: 400 });
         }
 
@@ -49,6 +52,12 @@ export async function POST(request: Request) {
         };
 
         const response = await preference.create({ body: preferenceData });
+
+        console.log('✅ MercadoPago preference created:', {
+            preferenceId: response.id,
+            external_reference: response.external_reference,
+            initPoint: response.init_point
+        });
 
         return Response.json({
             preferenceId: response.id,

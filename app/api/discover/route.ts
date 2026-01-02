@@ -1,13 +1,104 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 // Import the granular agentic functions
 import { planResearch, extractSignals, synthesizePatterns } from '@/lib/openai';
 
 export const maxDuration = 120;
 export const dynamic = 'force-dynamic';
 
+// Server-side Supabase client
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+// Hardcoded Pro users (same as frontend for consistency)
+const PRO_USER_EMAILS = ['ed@eduardoescalante.com', 'ed@acme.com'];
+
 export async function POST(req: NextRequest) {
     const encoder = new TextEncoder();
+
+    // --- SERVER-SIDE USAGE ENFORCEMENT ---
+    const authHeader = req.headers.get('authorization');
+    let userId: string | null = null;
+    let userEmail: string | null = null;
+
+    // Try to get user from auth header or cookies
+    const supabaseAuthToken = req.cookies.get('sb-access-token')?.value ||
+        authHeader?.replace('Bearer ', '');
+
+    if (supabaseAuthToken) {
+        const { data: { user } } = await supabase.auth.getUser(supabaseAuthToken);
+        if (user) {
+            userId = user.id;
+            userEmail = user.email || null;
+        }
+    }
+
+    // Check if user is a Pro user (hardcoded list or DB)
+    let isProUser = false;
+    if (userEmail && PRO_USER_EMAILS.includes(userEmail)) {
+        isProUser = true;
+        console.log(`[API] Pro user detected (hardcoded): ${userEmail}`);
+    } else if (userId) {
+        // Check subscription in database
+        const { data: sub } = await supabase
+            .from('subscriptions')
+            .select('plan_type, status')
+            .eq('user_id', userId)
+            .single();
+
+        if (sub?.plan_type === 'pro' && sub?.status === 'active') {
+            isProUser = true;
+            console.log(`[API] Pro user detected (database): ${userId}`);
+        }
+    }
+
+    // Enforce limit for free users
+    if (!isProUser && userId) {
+        const currentMonth = new Date().toISOString().slice(0, 7);
+        const { data: usage } = await supabase
+            .from('usage_tracking')
+            .select('search_count')
+            .eq('user_id', userId)
+            .eq('month_year', currentMonth)
+            .single();
+
+        const searchCount = usage?.search_count || 0;
+        if (searchCount >= 3) {
+            console.log(`[API] ❌ User ${userId} blocked: ${searchCount}/3 searches used`);
+            return new Response(
+                JSON.stringify({ error: 'Límite de búsquedas alcanzado. Actualiza a Pro para búsquedas ilimitadas.' }),
+                { status: 403, headers: { 'Content-Type': 'application/json' } }
+            );
+        }
+    }
+
+    // Increment usage for free users BEFORE the search
+    if (!isProUser && userId) {
+        const currentMonth = new Date().toISOString().slice(0, 7);
+        const { data: existing } = await supabase
+            .from('usage_tracking')
+            .select('search_count')
+            .eq('user_id', userId)
+            .eq('month_year', currentMonth)
+            .single();
+
+        if (existing) {
+            await supabase
+                .from('usage_tracking')
+                .update({ search_count: existing.search_count + 1, updated_at: new Date().toISOString() })
+                .eq('user_id', userId)
+                .eq('month_year', currentMonth);
+        } else {
+            await supabase
+                .from('usage_tracking')
+                .insert({ user_id: userId, month_year: currentMonth, search_count: 1 });
+        }
+        console.log(`[API] Usage incremented for user ${userId}`);
+    }
+    // --- END SERVER-SIDE USAGE ENFORCEMENT ---
 
     const stream = new ReadableStream({
         async start(controller) {

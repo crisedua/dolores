@@ -20,6 +20,15 @@ export function Sidebar() {
 
     const planName = subscription?.plan_type === 'pro' ? 'Pro' : 'Gratuito';
     const usagePercentage = usage.isProUser ? 100 : (usage.search_count / usage.limit) * 100;
+
+    // Debug logging
+    console.log('Sidebar - Subscription Data:', {
+        user: user?.email,
+        subscription,
+        usage,
+        planName,
+        usagePercentage
+    });
     const pathname = usePathname();
 
     return (

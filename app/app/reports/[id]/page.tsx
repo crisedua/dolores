@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { ProblemCard, Problem } from '@/components/ProblemCard';
 import { ArrowLeft, Calendar, Download } from 'lucide-react';
+import jsPDF from 'jspdf';
 
 interface Report {
     id: string;
@@ -52,26 +53,99 @@ export default function ReportDetailsPage() {
         }
     };
 
-    const downloadReport = () => {
+    const downloadReportPDF = () => {
         if (!report) return;
 
-        const exportData = {
-            title: report.title,
-            query: report.query,
-            created_at: report.created_at,
-            problem_count: report.problem_count,
-            problems: report.results?.problems || []
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 20;
+        let yPos = 20;
+
+        // Helper to add text with word wrap
+        const addWrappedText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number = 7) => {
+            const lines = doc.splitTextToSize(text, maxWidth);
+            doc.text(lines, x, y);
+            return y + (lines.length * lineHeight);
         };
 
-        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `reporte-${report.query.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        // Title
+        doc.setFontSize(20);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Reporte de Análisis - Veta', margin, yPos);
+        yPos += 15;
+
+        // Report info
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Búsqueda: "${report.query}"`, margin, yPos);
+        yPos += 8;
+        doc.text(`Fecha: ${new Date(report.created_at).toLocaleDateString('es-ES')}`, margin, yPos);
+        yPos += 8;
+        doc.text(`Problemas encontrados: ${report.problem_count}`, margin, yPos);
+        yPos += 15;
+
+        // Separator line
+        doc.setDrawColor(200);
+        doc.line(margin, yPos, pageWidth - margin, yPos);
+        yPos += 10;
+
+        // Problems
+        const problems = report.results?.problems || [];
+        problems.forEach((problem, index) => {
+            // Check if we need a new page
+            if (yPos > 250) {
+                doc.addPage();
+                yPos = 20;
+            }
+
+            // Problem title
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(0, 102, 204);
+            yPos = addWrappedText(`${index + 1}. ${problem.description.slice(0, 100)}${problem.description.length > 100 ? '...' : ''}`, margin, yPos, pageWidth - margin * 2);
+            yPos += 5;
+
+            // Problem description
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(0, 0, 0);
+            if (problem.description) {
+                yPos = addWrappedText(problem.description, margin, yPos, pageWidth - margin * 2, 5);
+                yPos += 5;
+            }
+
+            // Severity & WTP
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Puntuación: ${problem.signalScore || 'N/A'} | Disposición a Pagar: ${problem.willingnessToPay?.score || 'N/A'}`, margin, yPos);
+            yPos += 10;
+
+            if (problem.quotes && problem.quotes.length > 0) {
+                doc.setFontSize(9);
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(80, 80, 80);
+                const topQuotes = problem.quotes.slice(0, 2);
+                topQuotes.forEach((quote: string | { text: string; url?: string }) => {
+                    if (yPos > 270) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    const quoteText = typeof quote === 'string' ? quote : quote.text;
+                    yPos = addWrappedText(`"${quoteText}"`, margin + 5, yPos, pageWidth - margin * 2 - 10, 5);
+                    yPos += 3;
+                });
+            }
+
+            yPos += 8;
+        });
+
+        // Footer
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text('Generado por Veta - veta.lat', margin, doc.internal.pageSize.getHeight() - 10);
+
+        // Save
+        doc.save(`reporte-${report.query.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.pdf`);
     };
 
     const formatDate = (dateStr: string) => {
@@ -126,11 +200,11 @@ export default function ReportDetailsPage() {
                 <div className="flex items-center justify-between">
                     <h1 className="text-3xl font-bold text-white mb-2">{report.title}</h1>
                     <button
-                        onClick={downloadReport}
+                        onClick={downloadReportPDF}
                         className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                     >
                         <Download size={18} />
-                        Descargar
+                        Descargar PDF
                     </button>
                 </div>
                 <div className="flex items-center gap-4 text-sm text-gray-500">

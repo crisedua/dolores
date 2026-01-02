@@ -33,19 +33,27 @@ export function useSubscription() {
     }, [user]);
 
     const fetchSubscriptionData = async () => {
-        if (!user) return;
+        if (!user) {
+            console.log('useSubscription: No user, skipping fetch');
+            return;
+        }
+
+        console.log('useSubscription: Fetching data for user:', user.id);
 
         try {
             // Get subscription
-            const { data: subData } = await supabase
+            const { data: subData, error: subError } = await supabase
                 .from('subscriptions')
                 .select('plan_type, status')
                 .eq('user_id', user.id)
                 .single();
 
+            console.log('useSubscription: Subscription query result:', { subData, subError });
+
             setSubscription(subData);
 
             const isPro = subData?.plan_type === 'pro' && subData?.status === 'active';
+            console.log('useSubscription: Is Pro?', isPro);
 
             if (isPro) {
                 setUsage({
@@ -60,16 +68,21 @@ export function useSubscription() {
 
             // Get usage for free users
             const currentMonth = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
+            console.log('useSubscription: Fetching usage for month:', currentMonth);
 
-            const { data: usageData } = await supabase
+            const { data: usageData, error: usageError } = await supabase
                 .from('usage_tracking')
                 .select('search_count')
                 .eq('user_id', user.id)
                 .eq('month_year', currentMonth)
                 .single();
 
+            console.log('useSubscription: Usage query result:', { usageData, usageError });
+
             const searchCount = usageData?.search_count || 0;
             const canSearch = searchCount < 5;
+
+            console.log('useSubscription: Final usage state:', { searchCount, canSearch });
 
             setUsage({
                 search_count: searchCount,
@@ -79,7 +92,7 @@ export function useSubscription() {
             });
 
         } catch (error) {
-            console.error('Error fetching subscription:', error);
+            console.error('useSubscription: ERROR fetching subscription:', error);
         } finally {
             setIsLoading(false);
         }

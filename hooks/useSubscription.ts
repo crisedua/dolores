@@ -32,9 +32,9 @@ export function useSubscription() {
             fetchSubscriptionData();
 
             // Set up real-time subscription to usage_tracking changes
-            const currentMonth = new Date().toISOString().slice(0, 7);
+            // Set up real-time subscription for both usage and subscription status
             const channel = supabase
-                .channel('usage_tracking_changes')
+                .channel('subscription_changes')
                 .on(
                     'postgres_changes',
                     {
@@ -46,6 +46,20 @@ export function useSubscription() {
                     (payload) => {
                         console.log('🔴 REALTIME: Usage tracking changed!', payload);
                         // Refresh subscription data when usage changes
+                        fetchSubscriptionData();
+                    }
+                )
+                .on(
+                    'postgres_changes',
+                    {
+                        event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+                        schema: 'public',
+                        table: 'subscriptions',
+                        filter: `user_id=eq.${user.id}`
+                    },
+                    (payload) => {
+                        console.log('🔴 REALTIME: Subscription status changed!', payload);
+                        // Refresh subscription data when subscription status changes
                         fetchSubscriptionData();
                     }
                 )

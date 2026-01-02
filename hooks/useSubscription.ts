@@ -99,21 +99,29 @@ export function useSubscription() {
     };
 
     const incrementUsage = async () => {
-        if (!user || usage.isProUser) return true;
+        console.log('🔵 incrementUsage called!', { user: user?.id, isProUser: usage.isProUser });
+
+        if (!user || usage.isProUser) {
+            console.log('🟡 Skipping increment:', !user ? 'No user' : 'Pro user');
+            return true;
+        }
 
         const currentMonth = new Date().toISOString().slice(0, 7);
+        console.log('🔵 Incrementing for month:', currentMonth);
 
         try {
-            const { data: existing } = await supabase
+            const { data: existing, error: fetchError } = await supabase
                 .from('usage_tracking')
                 .select('search_count')
                 .eq('user_id', user.id)
                 .eq('month_year', currentMonth)
                 .single();
 
+            console.log('🔵 Existing usage:', { existing, fetchError });
+
             if (existing) {
                 // Update existing
-                await supabase
+                const { error: updateError } = await supabase
                     .from('usage_tracking')
                     .update({
                         search_count: existing.search_count + 1,
@@ -121,23 +129,28 @@ export function useSubscription() {
                     })
                     .eq('user_id', user.id)
                     .eq('month_year', currentMonth);
+
+                console.log('🟢 Updated usage to:', existing.search_count + 1, { updateError });
             } else {
                 // Create new
-                await supabase
+                const { error: insertError } = await supabase
                     .from('usage_tracking')
                     .insert({
                         user_id: user.id,
                         month_year: currentMonth,
                         search_count: 1
                     });
+
+                console.log('🟢 Created new usage record with count: 1', { insertError });
             }
 
             // Refresh data
+            console.log('🔵 Refreshing subscription data...');
             await fetchSubscriptionData();
             return true;
 
         } catch (error) {
-            console.error('Error incrementing usage:', error);
+            console.error('🔴 Error incrementing usage:', error);
             return false;
         }
     };

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { ProblemCard, Problem } from '@/components/ProblemCard';
-import { ArrowLeft, Calendar } from 'lucide-react';
+import { ArrowLeft, Calendar, Download } from 'lucide-react';
 
 interface Report {
     id: string;
@@ -50,6 +50,28 @@ export default function ReportDetailsPage() {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const downloadReport = () => {
+        if (!report) return;
+
+        const exportData = {
+            title: report.title,
+            query: report.query,
+            created_at: report.created_at,
+            problem_count: report.problem_count,
+            problems: report.results?.problems || []
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `reporte-${report.query.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     };
 
     const formatDate = (dateStr: string) => {
@@ -101,7 +123,16 @@ export default function ReportDetailsPage() {
                     Volver a Reportes
                 </Link>
 
-                <h1 className="text-3xl font-bold text-white mb-2">{report.title}</h1>
+                <div className="flex items-center justify-between">
+                    <h1 className="text-3xl font-bold text-white mb-2">{report.title}</h1>
+                    <button
+                        onClick={downloadReport}
+                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    >
+                        <Download size={18} />
+                        Descargar
+                    </button>
+                </div>
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                     <span className="flex items-center gap-2">
                         <Calendar size={14} />

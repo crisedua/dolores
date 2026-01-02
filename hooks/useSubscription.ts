@@ -78,9 +78,10 @@ export function useSubscription() {
             return;
         }
 
-        // Hardcoded Admin Access
-        if (user.email === 'ed@eduardoescalante.com') {
-            console.log('useSubscription: Admin user detected, granting unlimited access');
+        // Hardcoded Pro User Access (backup for paid users if DB is not updated)
+        const proUserEmails = ['ed@eduardoescalante.com', 'ed@acme.com'];
+        if (proUserEmails.includes(user.email || '')) {
+            console.log('useSubscription: Pro user detected, granting unlimited access:', user.email);
             setUsage({
                 search_count: 0,
                 limit: Infinity,

@@ -25,7 +25,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     const { user, signOut } = useAuth();
     const { usage, subscription } = useSubscription();
 
-    const planName = subscription?.plan_type === 'pro' ? 'Pro' : 'Gratuito';
+    const planName = usage.isProUser ? 'Pro' : 'Gratuito';
     const usagePercentage = usage.isProUser ? 100 : (usage.search_count / usage.limit) * 100;
 
     // Debug logging

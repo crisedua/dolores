@@ -38,6 +38,7 @@ export default function LandingPage() {
                             <Gem size={18} />
                         </div>
                         <span className="font-bold text-lg text-white">Veta</span>
+                        <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20 font-medium tracking-wide">BETA</span>
                     </div>
                     <div className="flex items-center gap-6">
                         <Link

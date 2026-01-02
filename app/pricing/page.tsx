@@ -109,7 +109,7 @@ function PricingContent() {
                             <ul className="space-y-4 mb-8">
                                 <li className="flex items-start gap-3">
                                     <Check size={20} className="text-green-500 mt-0.5 shrink-0" />
-                                    <span className="text-gray-300">5 búsquedas por mes</span>
+                                    <span className="text-gray-300">3 búsquedas por mes</span>
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <Check size={20} className="text-green-500 mt-0.5 shrink-0" />

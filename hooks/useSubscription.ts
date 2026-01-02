@@ -20,7 +20,7 @@ export function useSubscription() {
     const [subscription, setSubscription] = useState<Subscription | null>(null);
     const [usage, setUsage] = useState<UsageData>({
         search_count: 0,
-        limit: 3,
+        limit: 1,
         canSearch: true,
         isProUser: false
     });
@@ -135,13 +135,13 @@ export function useSubscription() {
             console.log('useSubscription: Usage query result:', { usageData, usageError });
 
             const searchCount = usageData?.search_count || 0;
-            const canSearch = searchCount < 3;
+            const canSearch = searchCount < 1;
 
             console.log('useSubscription: Final usage state:', { searchCount, canSearch });
 
             setUsage({
                 search_count: searchCount,
-                limit: 3,
+                limit: 1,
                 canSearch,
                 isProUser: false
             });

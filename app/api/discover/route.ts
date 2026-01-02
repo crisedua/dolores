@@ -66,8 +66,8 @@ export async function POST(req: NextRequest) {
             .single();
 
         const searchCount = usage?.search_count || 0;
-        if (searchCount >= 3) {
-            console.log(`[API] ❌ User ${userId} blocked: ${searchCount}/3 searches used`);
+        if (searchCount >= 1) {
+            console.log(`[API] ❌ User ${userId} blocked: ${searchCount}/1 searches used`);
             return new Response(
                 JSON.stringify({ error: 'Límite de búsquedas alcanzado. Actualiza a Pro para búsquedas ilimitadas.' }),
                 { status: 403, headers: { 'Content-Type': 'application/json' } }

@@ -30,6 +30,31 @@ export function useSubscription() {
     useEffect(() => {
         if (user) {
             fetchSubscriptionData();
+
+            // Set up real-time subscription to usage_tracking changes
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            const channel = supabase
+                .channel('usage_tracking_changes')
+                .on(
+                    'postgres_changes',
+                    {
+                        event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+                        schema: 'public',
+                        table: 'usage_tracking',
+                        filter: `user_id=eq.${user.id}`
+                    },
+                    (payload) => {
+                        console.log('🔴 REALTIME: Usage tracking changed!', payload);
+                        // Refresh subscription data when usage changes
+                        fetchSubscriptionData();
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                console.log('🔴 REALTIME: Unsubscribing from usage_tracking');
+                supabase.removeChannel(channel);
+            };
         }
     }, [user]);
 

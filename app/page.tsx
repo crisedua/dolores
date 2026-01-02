@@ -1,5 +1,7 @@
 'use client';
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
     Search,
     TrendingUp,
@@ -15,7 +17,15 @@ import {
 import { useAuth } from '@/context/AuthContext';
 
 export default function LandingPage() {
-    const { user } = useAuth();
+    const { user, isLoading } = useAuth();
+    const router = useRouter();
+
+    // Redirect logged-in users to the app
+    useEffect(() => {
+        if (!isLoading && user) {
+            router.push('/app');
+        }
+    }, [user, isLoading, router]);
 
     return (
         <div className="min-h-screen bg-[#0A0A0A]">

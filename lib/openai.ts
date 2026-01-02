@@ -123,11 +123,22 @@ JSON OUTPUT STRUCTURE:
         "solvability": 7, 
         "monetizability": 6 
       },
-      "evidence": [
-        { "text": "Quote text from a user...", "url": "https://reddit.com/..." },
-        { "text": "Another quote...", "url": "https://reddit.com/..." }
+      "persona": "Specific job title or segment (e.g. 'Junior Associates at mid-size firms')",
+      "urgencySignals": "Signals like deadline pressure, money loss, 'ASAP'",
+      "existingSolutions": [
+        { "name": "Tool X", "complaint": "Too expensive" }
       ],
-      "recommendation": "Specific, actionable MVP solution idea. Must include: (1) What product/service to build, (2) How it solves this specific problem, (3) Clear value proposition. Example: 'Build a SaaS platform with automated GDPR compliance checklists that auto-maps sensitive data and generates one-click audit reports.' 2-3 sentences max."
+      "willingnessToPay": {
+        "score": 8,
+        "evidence": "Users pay $X currently"
+      },
+      "evidence": [
+        { "text": "Quote text from a user...", "url": "https://reddit.com/..." }
+      ],
+      "mvpIdeas": [
+        "Idea 1...", "Idea 2...", "Idea 3..."
+      ],
+      "contactStrategy": "Where to find the first 20 users (e.g. 'Subreddit X', 'LinkedIn Group Y')"
     }
   ]
 }`
@@ -151,7 +162,7 @@ JSON OUTPUT STRUCTURE:
       rank: i + 1,
       type: 'problem',
       title: p.title || "Untitled Pain Point",
-      description: p.description || p.title || "No description", // Mapping for UI compatibility
+      description: p.description || p.title || "No description",
       signalScore: p.signalScore || 5,
       metrics: {
         frequency: p.metrics?.frequency || 5,
@@ -159,7 +170,16 @@ JSON OUTPUT STRUCTURE:
         solvability: p.metrics?.solvability || 5,
         monetizability: p.metrics?.monetizability || 5
       },
-      quotes: p.evidence || [], // Map schema 'evidence' to UI 'quotes'
+
+      // New fields
+      persona: p.persona,
+      urgencySignals: p.urgencySignals,
+      existingSolutions: p.existingSolutions,
+      willingnessToPay: p.willingnessToPay,
+      mvpIdeas: p.mvpIdeas,
+      contactStrategy: p.contactStrategy,
+
+      quotes: p.evidence || [],
       recommendation: p.recommendation || "Investigate further"
     }));
 

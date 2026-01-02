@@ -136,9 +136,15 @@ function PricingContent() {
                                 </span>
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-2">Pro</h3>
-                            <div className="flex items-baseline gap-2 mb-6">
-                                <span className="text-4xl font-bold text-white">$10</span>
-                                <span className="text-gray-400">/mes</span>
+                            <div className="flex flex-col mb-6">
+                                <div className="flex items-baseline gap-2">
+                                    <span className="text-4xl font-bold text-white">$10</span>
+                                    <span className="text-xl text-gray-500 line-through">$39</span>
+                                    <span className="text-gray-400">/mes</span>
+                                </div>
+                                <span className="text-green-400 text-xs font-bold mt-1 uppercase tracking-wider">
+                                    Oferta de Lanzamiento
+                                </span>
                             </div>
                             <ul className="space-y-4 mb-8">
                                 <li className="flex items-start gap-3">

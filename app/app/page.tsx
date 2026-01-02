@@ -48,6 +48,13 @@ function HomeContent() {
   // Save current results as a report
   const saveReport = async () => {
     if (!data || !currentQuery || !user) return;
+
+    // Feature Gate: Only Pro users can save reports
+    if (!usage.isProUser) {
+      setShowUpgradeModal(true);
+      return;
+    }
+
     try {
       const { error } = await supabase.from('saved_reports').insert({
         user_id: user.id,

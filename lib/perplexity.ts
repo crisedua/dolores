@@ -40,8 +40,8 @@ export async function perplexitySearch(topic: string) {
                                 "id": "id-unico-en-kebab-case",
                                 "rank": 1,
                                 "type": "problem",
-                                "title": "Título corto y contundente (3-6 palabras en español)",
-                                "description": "2-3 oraciones explicando la frustración específica del usuario en detalle (en español)",
+                                "title": "Título corto y contundente (3-6 palabras)",
+                                "description": "Resumen del problema (1 oración fuerte, estilo titular)",
                                 "signalScore": 9,
                                 "metrics": {
                                     "frequency": 8,
@@ -49,18 +49,30 @@ export async function perplexitySearch(topic: string) {
                                     "solvability": 7,
                                     "monetizability": 6
                                 },
+                                "persona": "Quién tiene el dolor (ej: 'Abogados de familia en firmas pequeñas')",
+                                "urgencySignals": "Señales de urgencia observadas (ej: 'Dinero perdido', 'Fecha límite legal', 'Necesito esto para ayer')",
                                 "quotes": [
-                                    "Cita directa en INGLÉS del usuario original",
-                                    "Otra cita en INGLÉS..."
+                                    {
+                                        "text": "Cita directa en INGLÉS...",
+                                        "url": "https://..."
+                                    }
                                 ],
-                                "solution": {
-                                    "landingPage": "Idea detallada para Landing Page: Gancho principal, propuesta de valor única y qué validar primero.",
-                                    "mvpFeatures": [
-                                        "Feature 1: Descripción concreta...",
-                                        "Feature 2: Descripción concreta...",
-                                        "Feature 3: Descripción concreta..."
-                                    ]
-                                }
+                                "existingSolutions": [
+                                    {
+                                        "name": "Excel / Hojas de cálculo",
+                                        "complaint": "Muy manual y propenso a errores"
+                                    }
+                                ],
+                                "willingnessToPay": {
+                                    "score": 8,
+                                    "evidence": "Usuarios mencionan pagar $500/mes por parches ineficientes"
+                                },
+                                "mvpIdeas": [
+                                    "Idea 1: Descripción concreta del MVP...",
+                                    "Idea 2: Descripción concreta...",
+                                    "Idea 3: Descripción concreta..."
+                                ],
+                                "contactStrategy": "Estrategia para encontrar los primeros 20 clientes (ej: 'Grupos de LinkedIn de X', 'Foro Y', 'Buscar Z en Twitter')"
                             }
                         ]
                     }`

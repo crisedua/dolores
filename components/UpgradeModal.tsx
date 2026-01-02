@@ -59,9 +59,15 @@ export function UpgradeModal({ isOpen, onClose, searchesUsed, searchLimit }: Upg
                             </li>
                         </ul>
                         <div className="mt-4 pt-4 border-t border-[#333]">
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-3xl font-bold text-white">$10</span>
-                                <span className="text-gray-500">/mes</span>
+                            <div className="flex flex-col">
+                                <div className="flex items-baseline gap-2">
+                                    <span className="text-3xl font-bold text-white">$10</span>
+                                    <span className="text-lg text-gray-500 line-through">$39</span>
+                                    <span className="text-gray-500">/mes</span>
+                                </div>
+                                <span className="text-green-500 text-xs font-bold uppercase tracking-wider">
+                                    Oferta de Lanzamiento
+                                </span>
                             </div>
                         </div>
                     </div>

@@ -70,8 +70,8 @@ export async function POST(req: NextRequest) {
             .single();
 
         const searchCount = usage?.search_count || 0;
-        if (searchCount >= 5) { // Updated to match usage.searchLimit (5)
-            console.log(`[API] ❌ User ${userId} blocked: ${searchCount}/5 searches used`);
+        if (searchCount >= 1) { // Limit is 1 search for free users
+            console.log(`[API] ❌ User ${userId} blocked: ${searchCount}/1 searches used`);
             return new Response(
                 JSON.stringify({ error: t.upgradeModal.limitReached }),
                 { status: 403, headers: { 'Content-Type': 'application/json' } }

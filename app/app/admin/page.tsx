@@ -243,7 +243,7 @@ export default function AdminPage() {
                                     <td className="px-6 py-4">
                                         <span className="text-white">{u.search_count}</span>
                                         {u.plan_type !== 'pro' && (
-                                            <span className="text-gray-500">/5</span>
+                                            <span className="text-gray-500">/1</span>
                                         )}
                                     </td>
                                     <td className="px-6 py-4 text-gray-400 text-sm">

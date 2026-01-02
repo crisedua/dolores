@@ -47,7 +47,7 @@ export default function LandingPage() {
                                 href="/auth"
                                 className="bg-white text-black px-5 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
                             >
-                                Iniciar Sesión
+                                Ingresar
                             </Link>
                         )}
                     </div>

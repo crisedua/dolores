@@ -45,12 +45,6 @@ export function Sidebar() {
                             label="Explorar"
                             active={pathname === '/app'}
                         />
-                        <NavItem
-                            href="/app/templates"
-                            icon={<Folder size={18} />}
-                            label="Plantillas"
-                            active={pathname === '/app/templates'}
-                        />
                     </nav>
                 </div>
 

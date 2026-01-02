@@ -8,7 +8,8 @@ import {
     Search,
     Gem, // Changed from BarChart3
     LogOut,
-    Zap
+    Zap,
+    FileText
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -67,6 +68,12 @@ export function Sidebar() {
                             icon={<Search size={18} />}
                             label="Historial"
                             active={pathname === '/app/history'}
+                        />
+                        <NavItem
+                            href="/app/reports"
+                            icon={<FileText size={18} />}
+                            label="Reportes"
+                            active={pathname?.startsWith('/app/reports')}
                         />
                     </nav>
                 </div>

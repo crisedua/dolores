@@ -188,7 +188,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                     {/* Quotes */}
                     {problem.quotes && problem.quotes.length > 0 && (
                         <div>
-                            <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">Citas Clave ("Evidence")</h3>
+                            <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">Citas Clave</h3>
                             <div className="grid md:grid-cols-2 gap-4">
                                 {problem.quotes.map((quote, idx) => {
                                     const quoteText = typeof quote === 'string' ? quote : quote.text;

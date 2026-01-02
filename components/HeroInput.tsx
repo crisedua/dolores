@@ -64,13 +64,19 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
             </form>
 
             {/* Popular Tags */}
-            <div className="mt-8 flex items-center justify-center gap-4 text-sm text-gray-500 font-medium">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-sm text-gray-500 font-medium max-w-3xl mx-auto">
                 <span className="tracking-widest text-[10px] uppercase text-gray-600">Popular:</span>
+                <button onClick={() => setQuery("Herramientas IA")} className="hover:text-purple-400 transition-colors">Herramientas IA</button>
+                <span className="text-gray-700">•</span>
                 <button onClick={() => setQuery("Apps de Shopify")} className="hover:text-purple-400 transition-colors">Apps de Shopify</button>
                 <span className="text-gray-700">•</span>
-                <button onClick={() => setQuery("Inmobiliario")} className="hover:text-purple-400 transition-colors">Inmobiliario</button>
+                <button onClick={() => setQuery("SaaS para contadores")} className="hover:text-purple-400 transition-colors">SaaS para contadores</button>
+                <span className="text-gray-700">•</span>
+                <button onClick={() => setQuery("Apps de productividad")} className="hover:text-purple-400 transition-colors">Apps de productividad</button>
                 <span className="text-gray-700">•</span>
                 <button onClick={() => setQuery("Legal Tech")} className="hover:text-purple-400 transition-colors">Legal Tech</button>
+                <span className="text-gray-700">•</span>
+                <button onClick={() => setQuery("Health Tech")} className="hover:text-purple-400 transition-colors">Health Tech</button>
             </div>
         </div>
     );

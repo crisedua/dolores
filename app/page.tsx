@@ -15,6 +15,7 @@ import {
     Users
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { WhatsAppButton } from '@/components/WhatsAppButton';
 
 export default function LandingPage() {
     const { user, isLoading } = useAuth();
@@ -304,6 +305,9 @@ export default function LandingPage() {
                     </p>
                 </div>
             </footer>
+
+            {/* WhatsApp Floating Button */}
+            <WhatsAppButton />
         </div>
     );
 }

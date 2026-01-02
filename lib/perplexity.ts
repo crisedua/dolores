@@ -97,38 +97,53 @@ Si el tema está en español, tradúcelo al inglés para buscar contenido (hay m
 
         // Multi-strategy JSON extraction
         const parseStrategies = [
+            // Strategy 0: Remove <think>...</think> blocks if present (sometimes DeepSeek/models do this)
+            () => {
+                console.log('[Perplexity] Strategy 0: Cleaning thinking blocks');
+                let cleaned = content.replace(/<think>[\s\S]*?<\/think>/gi, '');
+                return JSON.parse(cleaned);
+            },
+
             // Strategy 1: Direct parse
             () => {
                 console.log('[Perplexity] Strategy 1: Direct parse');
                 return JSON.parse(content);
             },
 
-            // Strategy 2: Remove markdown code blocks
+            // Strategy 2: Extract from markdown code blocks (```json ... ```)
             () => {
-                console.log('[Perplexity] Strategy 2: Remove markdown blocks');
+                console.log('[Perplexity] Strategy 2: Extract from markdown code blocks');
+                const match = content.match(/```json\s*([\s\S]*?)\s*```/i) || content.match(/```\s*([\s\S]*?)\s*```/);
+                if (!match) throw new Error('No markdown code block found');
+                return JSON.parse(match[1]);
+            },
+
+            // Strategy 3: Remove markdown syntax but keep content (fallback for Strategy 2)
+            () => {
+                console.log('[Perplexity] Strategy 3: Remove markdown syntax');
                 let cleaned = content.replace(/```json\s*/gi, '').replace(/```\s*/g, '');
                 return JSON.parse(cleaned);
             },
 
-            // Strategy 3: Extract JSON with greedy regex
+            // Strategy 4: Extract JSON with greedy regex
             () => {
-                console.log('[Perplexity] Strategy 3: Greedy regex extraction');
+                console.log('[Perplexity] Strategy 4: Greedy regex extraction');
                 const match = content.match(/\{[\s\S]*\}/);
                 if (!match) throw new Error('No JSON found');
                 return JSON.parse(match[0]);
             },
 
-            // Strategy 4: Extract JSON with non-greedy regex
+            // Strategy 5: Extract JSON with non-greedy regex
             () => {
-                console.log('[Perplexity] Strategy 4: Non-greedy regex');
+                console.log('[Perplexity] Strategy 5: Non-greedy regex');
                 const match = content.match(/\{[\s\S]*?\}\s*$/);
                 if (!match) throw new Error('No JSON found');
                 return JSON.parse(match[0]);
             },
 
-            // Strategy 5: Find first { and last }
+            // Strategy 6: Find first { and last }
             () => {
-                console.log('[Perplexity] Strategy 5: Bracket boundaries');
+                console.log('[Perplexity] Strategy 6: Bracket boundaries');
                 const firstBrace = content.indexOf('{');
                 const lastBrace = content.lastIndexOf('}');
                 if (firstBrace === -1 || lastBrace === -1) throw new Error('No JSON boundaries');

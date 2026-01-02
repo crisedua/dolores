@@ -115,17 +115,11 @@ export default function LandingPage() {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
                         <Link
                             href={user ? "/app" : "/auth"}
-                            className="group bg-white text-black px-8 py-4 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all flex items-center gap-3"
+                            className="group bg-white text-black px-6 py-3 rounded-lg font-semibold text-base hover:bg-gray-100 transition-all flex items-center gap-2"
                         >
                             Comenzar Análisis
-                            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                         </Link>
-                        <a
-                            href="#como-funciona"
-                            className="text-gray-400 hover:text-white px-8 py-4 font-medium transition-colors"
-                        >
-                            ¿Cómo funciona?
-                        </a>
                     </div>
 
                     {/* Demo Preview */}

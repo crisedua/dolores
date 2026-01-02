@@ -51,10 +51,10 @@ export default function LandingPage() {
                                     Iniciar Sesión
                                 </Link>
                                 <Link
-                                    href="/auth"
+                                    href="/pricing"
                                     className="bg-white text-black px-5 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
                                 >
-                                    Comenzar Gratis
+                                    Comenzar
                                 </Link>
                             </>
                         )}

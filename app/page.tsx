@@ -77,14 +77,14 @@ export default function LandingPage() {
 
                     {/* Main Headline */}
                     {/* Main Headline */}
-                    <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
                         Deja de adivinar ideas de startup.
                         <br />
                         <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                             Encuentra problemas reales
                         </span>
                         <br />
-                        <span className="text-4xl md:text-5xl text-gray-200">
+                        <span className="text-3xl md:text-4xl text-gray-200">
                             de los que la gente se queja.
                         </span>
                     </h1>

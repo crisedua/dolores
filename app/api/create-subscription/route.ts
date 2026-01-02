@@ -16,6 +16,8 @@ export async function POST(request: Request) {
             return Response.json({ error: 'Missing user data' }, { status: 400 });
         }
 
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://veta.lat';
+
         // Create preference for $10/month subscription
         const preferenceData = {
             items: [
@@ -29,12 +31,12 @@ export async function POST(request: Request) {
                 }
             ],
             back_urls: {
-                success: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success`,
-                failure: `${process.env.NEXT_PUBLIC_APP_URL}/payment/failure`,
-                pending: `${process.env.NEXT_PUBLIC_APP_URL}/payment/pending`
+                success: `${appUrl}/payment/success`,
+                failure: `${appUrl}/payment/failure`,
+                pending: `${appUrl}/payment/pending`
             },
             auto_return: 'approved' as const,
-            notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhook/mercadopago`,
+            notification_url: `${appUrl}/api/webhook/mercadopago`,
             external_reference: userId,
             payer: {
                 email: userEmail
@@ -42,7 +44,8 @@ export async function POST(request: Request) {
             payment_methods: {
                 installments: 1 // No installments for subscriptions
             },
-            statement_descriptor: 'VETA PRO'
+            statement_descriptor: 'VETA PRO',
+            binary_mode: true
         };
 
         const response = await preference.create({ body: preferenceData });

@@ -1,12 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { Check, Zap, ArrowRight, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
-export default function PricingPage() {
+function PricingContent() {
     const { user } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -213,5 +213,17 @@ export default function PricingPage() {
                 </div>
             </section>
         </div>
+    );
+}
+
+export default function PricingPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <div className="text-white">Cargando...</div>
+            </div>
+        }>
+            <PricingContent />
+        </Suspense>
     );
 }

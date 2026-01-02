@@ -3,16 +3,32 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Check, Zap, ArrowRight, Loader2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function PricingPage() {
     const { user } = useAuth();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [loading, setLoading] = useState(false);
+
+    // Auto-trigger payment if user just signed up with upgrade intent
+    useEffect(() => {
+        const action = searchParams.get('action');
+
+        if (user && action === 'subscribe' && !loading) {
+            // User returned after signup, trigger payment
+            handleSubscribe();
+
+            // Clean URL
+            window.history.replaceState({}, '', '/pricing');
+        }
+    }, [user, searchParams]);
 
     const handleSubscribe = async () => {
         if (!user) {
-            router.push('/auth');
+            // Redirect to auth with return URL to complete payment after signup
+            router.push('/auth?returnTo=/pricing&action=subscribe');
             return;
         }
 

@@ -46,6 +46,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 } catch (error) {
                     console.error('Failed to initialize subscription:', error);
                 }
+
+                // Check for return URL (e.g., after signup with payment intent)
+                const params = new URLSearchParams(window.location.search);
+                const returnTo = params.get('returnTo');
+                const action = params.get('action');
+
+                if (returnTo) {
+                    // Preserve action parameter when redirecting
+                    const redirectUrl = action ? `${returnTo}?action=${action}` : returnTo;
+                    router.push(redirectUrl);
+                    return;
+                }
+
+                // Default redirect to dashboard
+                router.push('/app');
+                return;
             }
 
             if (!session) {

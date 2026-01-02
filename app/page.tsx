@@ -76,20 +76,39 @@ export default function LandingPage() {
                     </div>
 
                     {/* Main Headline */}
+                    {/* Main Headline */}
                     <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                        Descubre Problemas
+                        Deja de adivinar ideas de startup.
                         <br />
                         <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                            Que Puedes Resolver
+                            Encuentra problemas reales
+                        </span>
+                        <br />
+                        <span className="text-4xl md:text-5xl text-gray-200">
+                            de los que la gente se queja.
                         </span>
                     </h1>
 
                     {/* Subheadline */}
-                    <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-                        Analiza miles de conversaciones en Reddit y foros para encontrar
-                        <strong className="text-white"> problemas reales</strong> que la gente está
-                        dispuesta a pagar por resolver.
+                    <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-8 leading-relaxed">
+                        Escribe un nicho. Obtén un reporte clasificado de puntos de dolor con pruebas, quién los tiene y un plan de construcción no-code de 7 días.
                     </p>
+
+                    {/* Bullets */}
+                    <div className="flex flex-col md:flex-row gap-4 justify-center items-center text-sm text-gray-300 mb-12">
+                        <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                            <CheckCircle2 size={16} className="text-green-500" />
+                            <span>Quejas reales + fuentes (no corazonadas)</span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                            <CheckCircle2 size={16} className="text-green-500" />
+                            <span>Puntuado por urgencia y pago</span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                            <CheckCircle2 size={16} className="text-green-500" />
+                            <span>Plan de MVP + primeros clientes</span>
+                        </div>
+                    </div>
 
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">

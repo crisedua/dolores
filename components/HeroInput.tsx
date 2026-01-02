@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Check } from 'lucide-react';
 
 interface HeroInputProps {
     onSearch: (query: string) => void;
@@ -20,14 +20,27 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
             {/* Glow Effect Background */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-purple-600/20 blur-[100px] rounded-full pointer-events-none -z-10" />
 
-            <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 tracking-tight">
-                Descubre Problemas <br />
-                <span className="text-gray-400">Que Puedes Resolver con IA</span>
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight">
+                Deja de adivinar ideas. <br />
+                <span className="text-gray-400">Encuentra problemas reales.</span>
             </h1>
 
-            <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-                Deja de adivinar. Analiza quejas reales, frustraciones y patrones emergentes de toda la web. Obtén pruebas validadas para tu próximo emprendimiento.
+            <p className="text-gray-400 text-lg md:text-xl max-w-3xl mx-auto mb-8 leading-relaxed">
+                Escribe un nicho. Obtén un reporte clasificado de puntos de dolor con pruebas, quién los tiene y un plan de construcción no-code de 7 días.
             </p>
+
+            {/* Bullets */}
+            <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-400 mb-10">
+                <div className="flex items-center gap-2">
+                    <Check size={14} className="text-green-500" /> Quejas reales (no corazonadas)
+                </div>
+                <div className="flex items-center gap-2">
+                    <Check size={14} className="text-green-500" /> Puntuado por urgencia
+                </div>
+                <div className="flex items-center gap-2">
+                    <Check size={14} className="text-green-500" /> Plan MVP + 1ros Clientes
+                </div>
+            </div>
 
             <form onSubmit={handleSubmit} className="relative max-w-2xl mx-auto">
                 {/* Input Container */}

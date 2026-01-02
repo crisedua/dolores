@@ -13,6 +13,39 @@ export const translations = {
             pro: 'Pro Plan',
             free: 'Free Plan',
         },
+        hero: {
+            title: 'Stop guessing ideas.',
+            subtitle: 'Find real problems.',
+            description: 'Type a niche. Get a ranked report of pain points with evidence, who has them, and a 7-day no-code build plan.',
+            bullets: [
+                'Real complaints (not hunches)',
+                'Scored by urgency',
+                'MVP Plan + 1st Customers'
+            ],
+            placeholder: 'e.g. AI tools',
+            button: 'Analyze',
+            analyzing: 'Analyzing...',
+            tip: 'Think of a group of people or industry you know well. What frustrates them?',
+            categories: {
+                professionals: 'Professionals',
+                smallBusiness: 'Small Businesses',
+                lifestyle: 'Lifestyle Niches',
+            },
+            examples: {
+                freelancers: 'freelancer problems',
+                dentists: 'dentists frustrations',
+                accountants: 'accountant complaints',
+                realEstate: 'real estate agent problems',
+                restaurants: 'restaurant owner problems',
+                ecommerce: 'online store frustrations',
+                gyms: 'gym complaints',
+                vets: 'vet clinic problems',
+                remoteParents: 'remote working parents problems',
+                digitalNomads: 'digital nomad frustrations',
+                students: 'university student complaints',
+                creators: 'content creator problems',
+            }
+        },
         landing: {
             nav: {
                 pricing: 'Pricing',
@@ -223,6 +256,39 @@ export const translations = {
             upgrade: 'Actualizar a Pro',
             pro: 'Plan Pro',
             free: 'Plan Gratuito',
+        },
+        hero: {
+            title: 'Deja de adivinar ideas.',
+            subtitle: 'Encuentra problemas reales.',
+            description: 'Escribe un nicho. Obtén un reporte clasificado de puntos de dolor con pruebas, quién los tiene y un plan de construcción no-code de 7 días.',
+            bullets: [
+                'Quejas reales (no corazonadas)',
+                'Puntuado por urgencia',
+                'Plan MVP + 1ros Clientes'
+            ],
+            placeholder: 'ej. herramientas ia',
+            button: 'Analizar',
+            analyzing: 'Analizando...',
+            tip: 'Piensa en un grupo de personas o industria que conozcas bien. ¿Qué les frustra?',
+            categories: {
+                professionals: 'Profesionales',
+                smallBusiness: 'Negocios Pequeños',
+                lifestyle: 'Nichos de Vida',
+            },
+            examples: {
+                freelancers: 'problemas de freelancers',
+                dentists: 'frustraciones de dentistas',
+                accountants: 'quejas de contadores',
+                realEstate: 'problemas de agentes inmobiliarios',
+                restaurants: 'problemas de dueños de restaurantes',
+                ecommerce: 'frustraciones de tiendas online',
+                gyms: 'quejas de gimnasios',
+                vets: 'problemas de clínicas veterinarias',
+                remoteParents: 'problemas de padres que trabajan desde casa',
+                digitalNomads: 'frustraciones de nómadas digitales',
+                students: 'quejas de estudiantes universitarios',
+                creators: 'problemas de creadores de contenido',
+            }
         },
         landing: {
             nav: {

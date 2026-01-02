@@ -76,17 +76,17 @@ export function Sidebar() {
                 <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer group relative">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500" />
                     <div className="flex-1 w-full overflow-hidden">
-                        <p className="text-sm font-medium text-white truncate" title={user?.email}>{user?.email || 'Usuario Invitado'}</p>
-                        <p className="text-xs text-gray-500 mb-2">Plan {planName}</p>
+                        <p className="text-sm font-semibold text-white truncate" title={user?.email}>{user?.email || 'Usuario Invitado'}</p>
+                        <p className="text-sm text-gray-400 mb-2">Plan {planName}</p>
 
                         {/* Usage for Free Plan */}
                         {!usage.isProUser && (
                             <div className="pr-2">
-                                <div className="flex justify-between text-[10px] text-gray-400 mb-1">
+                                <div className="flex justify-between text-xs text-gray-300 mb-1">
                                     <span>Búsquedas</span>
-                                    <span>{usage.search_count}/{usage.limit}</span>
+                                    <span className="font-semibold">{usage.search_count}/{usage.limit}</span>
                                 </div>
-                                <div className="h-1 w-full bg-[#222] rounded-full overflow-hidden">
+                                <div className="h-2 w-full bg-[#222] rounded-full overflow-hidden">
                                     <div
                                         className="h-full bg-blue-500/80 rounded-full transition-all"
                                         style={{ width: `${usagePercentage}%` }}
@@ -98,7 +98,7 @@ export function Sidebar() {
                         {/* Pro Badge */}
                         {usage.isProUser && (
                             <div className="pr-2">
-                                <div className="text-[10px] text-blue-400 font-semibold">
+                                <div className="text-xs text-blue-400 font-semibold">
                                     ✨ Búsquedas Ilimitadas
                                 </div>
                             </div>

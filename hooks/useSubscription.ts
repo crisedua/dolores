@@ -25,6 +25,7 @@ export function useSubscription() {
         isProUser: false
     });
     const [isLoading, setIsLoading] = useState(true);
+    const [refreshKey, setRefreshKey] = useState(0); // Force re-render trigger
 
     useEffect(() => {
         if (user) {
@@ -91,10 +92,11 @@ export function useSubscription() {
                 isProUser: false
             });
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('useSubscription: ERROR fetching subscription:', error);
         } finally {
             setIsLoading(false);
+            setRefreshKey(prev => prev + 1); // Force re-render
         }
     };
 
@@ -160,6 +162,7 @@ export function useSubscription() {
         usage,
         isLoading,
         incrementUsage,
-        refreshSubscription: fetchSubscriptionData
+        refreshSubscription: fetchSubscriptionData,
+        refreshKey // Export to force re-renders
     };
 }

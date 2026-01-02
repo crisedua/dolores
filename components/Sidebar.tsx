@@ -104,18 +104,18 @@ export function Sidebar() {
                             </div>
                         )}
                     </div>
-
-                    {/* Upgrade Button - Only for Free Users */}
-                    {!usage.isProUser && (
-                        <Link
-                            href="/pricing"
-                            className="mt-3 w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2"
-                        >
-                            <Zap size={14} />
-                            Actualizar a Pro
-                        </Link>
-                    )}
                 </div>
+
+                {/* Upgrade Button - Only for Free Users */}
+                {!usage.isProUser && (
+                    <Link
+                        href="/pricing"
+                        className="mt-3 w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2"
+                    >
+                        <Zap size={14} />
+                        Actualizar a Pro
+                    </Link>
+                )}
 
                 <button
                     onClick={() => signOut()}

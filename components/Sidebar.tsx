@@ -67,15 +67,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     <div className="flex items-center gap-1 bg-white/5 p-1 rounded-md border border-white/10">
                         <button
                             onClick={() => setLanguage('en')}
-                            className={`text-[10px] px-1.5 py-0.5 rounded font-bold transition-all ${language === 'en' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                            className={`text-[10px] px-2 py-0.5 rounded font-bold transition-all ${language === 'en' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}
                         >
-                            EN
+                            English
                         </button>
                         <button
                             onClick={() => setLanguage('es')}
-                            className={`text-[10px] px-1.5 py-0.5 rounded font-bold transition-all ${language === 'es' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                            className={`text-[10px] px-2 py-0.5 rounded font-bold transition-all ${language === 'es' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}
                         >
-                            ES
+                            Español
                         </button>
                     </div>
 

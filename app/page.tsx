@@ -17,7 +17,6 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { WhatsAppButton } from '@/components/WhatsAppButton';
 import { useTranslation } from '@/context/LanguageContext';
-import { Languages } from 'lucide-react';
 
 export default function LandingPage() {
     const { user, isLoading } = useAuth();
@@ -31,9 +30,7 @@ export default function LandingPage() {
         }
     }, [user, isLoading, router]);
 
-    const toggleLanguage = () => {
-        setLanguage(language === 'es' ? 'en' : 'es');
-    };
+
 
     return (
         <div className="min-h-screen bg-[#0A0A0A]">
@@ -48,13 +45,20 @@ export default function LandingPage() {
                         <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20 font-medium tracking-wide">BETA</span>
                     </div>
                     <div className="flex items-center gap-4 md:gap-6">
-                        <button
-                            onClick={toggleLanguage}
-                            className="flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-white transition-colors bg-white/5 px-2 py-1 rounded border border-white/10"
-                        >
-                            <Languages size={14} />
-                            {language === 'es' ? 'EN' : 'ES'}
-                        </button>
+                        <div className="flex items-center gap-1 bg-white/5 p-1 rounded-md border border-white/10">
+                            <button
+                                onClick={() => setLanguage('en')}
+                                className={`text-[10px] px-2 py-0.5 rounded font-bold transition-all ${language === 'en' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                            >
+                                English
+                            </button>
+                            <button
+                                onClick={() => setLanguage('es')}
+                                className={`text-[10px] px-2 py-0.5 rounded font-bold transition-all ${language === 'es' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                            >
+                                Español
+                            </button>
+                        </div>
                         <Link
                             href="/pricing"
                             className="text-gray-400 hover:text-white transition-colors text-sm md:text-base"

@@ -3,7 +3,7 @@
 
 INSERT INTO public.subscriptions (user_id, plan_type, status)
 VALUES (
-    (SELECT id FROM auth.users WHERE email = 'ed@acme.com'),
+    (SELECT id FROM auth.users WHERE email = 'ed@eduardoescalante.com'),
     'pro',
     'active'
 )
@@ -15,4 +15,4 @@ SET
 
 -- Verify the update
 SELECT * FROM public.subscriptions 
-WHERE user_id = (SELECT id FROM auth.users WHERE email = 'ed@acme.com');
+WHERE user_id = (SELECT id FROM auth.users WHERE email = 'ed@eduardoescalante.com');

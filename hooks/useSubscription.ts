@@ -64,6 +64,20 @@ export function useSubscription() {
             return;
         }
 
+        // Hardcoded Admin Access
+        if (user.email === 'ed@eduardoescalante.com') {
+            console.log('useSubscription: Admin user detected, granting unlimited access');
+            setUsage({
+                search_count: 0,
+                limit: Infinity,
+                canSearch: true,
+                isProUser: true
+            });
+            setSubscription({ plan_type: 'pro', status: 'active' });
+            setIsLoading(false);
+            return;
+        }
+
         console.log('useSubscription: Fetching data for user:', user.id);
 
         try {

@@ -94,10 +94,7 @@ export async function POST(req: NextRequest) {
         const { action, userId, email } = await req.json();
 
         if (action === 'grant_pro') {
-            // Grant Pro status
-            const endDate = new Date();
-            endDate.setFullYear(endDate.getFullYear() + 1); // 1 year
-
+            // Grant Pro status - only use essential columns
             const { error } = await supabase
                 .from('subscriptions')
                 .upsert({
@@ -105,8 +102,6 @@ export async function POST(req: NextRequest) {
                     email: email,
                     plan_type: 'pro',
                     status: 'active',
-                    current_period_start: new Date().toISOString(),
-                    current_period_end: endDate.toISOString(),
                     updated_at: new Date().toISOString()
                 }, { onConflict: 'user_id' });
 

@@ -16,10 +16,13 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { WhatsAppButton } from '@/components/WhatsAppButton';
+import { useTranslation } from '@/context/LanguageContext';
+import { Languages } from 'lucide-react';
 
 export default function LandingPage() {
     const { user, isLoading } = useAuth();
     const router = useRouter();
+    const { t, language, setLanguage } = useTranslation();
 
     // Redirect logged-in users to the app
     useEffect(() => {
@@ -27,6 +30,10 @@ export default function LandingPage() {
             router.push('/app');
         }
     }, [user, isLoading, router]);
+
+    const toggleLanguage = () => {
+        setLanguage(language === 'es' ? 'en' : 'es');
+    };
 
     return (
         <div className="min-h-screen bg-[#0A0A0A]">
@@ -40,26 +47,33 @@ export default function LandingPage() {
                         <span className="font-bold text-lg text-white">Veta</span>
                         <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20 font-medium tracking-wide">BETA</span>
                     </div>
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-4 md:gap-6">
+                        <button
+                            onClick={toggleLanguage}
+                            className="flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-white transition-colors bg-white/5 px-2 py-1 rounded border border-white/10"
+                        >
+                            <Languages size={14} />
+                            {language === 'es' ? 'EN' : 'ES'}
+                        </button>
                         <Link
                             href="/pricing"
-                            className="text-gray-400 hover:text-white transition-colors"
+                            className="text-gray-400 hover:text-white transition-colors text-sm md:text-base"
                         >
-                            Precios
+                            {t.landing.nav.pricing}
                         </Link>
                         {user ? (
                             <Link
                                 href="/app"
-                                className="bg-white text-black px-5 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                                className="bg-white text-black px-4 py-1.5 md:px-5 md:py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm md:text-base"
                             >
-                                Dashboard
+                                {t.landing.nav.dashboard}
                             </Link>
                         ) : (
                             <Link
                                 href="/auth"
-                                className="bg-white text-black px-5 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                                className="bg-white text-black px-4 py-1.5 md:px-5 md:py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm md:text-base"
                             >
-                                Ingresar
+                                {t.landing.nav.login}
                             </Link>
                         )}
                     </div>
@@ -72,43 +86,35 @@ export default function LandingPage() {
                     {/* Badge */}
                     <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-1.5 mb-8">
                         <Zap size={14} className="text-blue-400" />
-                        <span className="text-sm text-blue-400 font-medium">Impulsado por IA</span>
+                        <span className="text-sm text-blue-400 font-medium">{t.landing.hero.badge}</span>
                     </div>
 
                     {/* Main Headline */}
-                    {/* Main Headline */}
-                    {/* Main Headline */}
                     <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                        Deja de adivinar ideas de startup.
+                        {t.landing.hero.title1}
                         <br />
                         <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                            Encuentra problemas reales
+                            {t.landing.hero.title2}
                         </span>
                         <br />
                         <span className="text-2xl md:text-3xl text-gray-200">
-                            de los que la gente se queja.
+                            {t.landing.hero.title3}
                         </span>
                     </h1>
 
                     {/* Subheadline */}
                     <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8 leading-relaxed">
-                        Escribe un nicho. Obtén un reporte clasificado de puntos de dolor con pruebas, quién los tiene y un plan de construcción no-code de 7 días.
+                        {t.landing.hero.description}
                     </p>
 
                     {/* Bullets */}
                     <div className="flex flex-col md:flex-row gap-4 justify-center items-center text-sm text-gray-300 mb-12">
-                        <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-                            <CheckCircle2 size={16} className="text-green-500" />
-                            <span>Quejas reales + fuentes (no corazonadas)</span>
-                        </div>
-                        <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-                            <CheckCircle2 size={16} className="text-green-500" />
-                            <span>Puntuado por urgencia y pago</span>
-                        </div>
-                        <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-                            <CheckCircle2 size={16} className="text-green-500" />
-                            <span>Plan de MVP + primeros clientes</span>
-                        </div>
+                        {t.landing.hero.bullets.map((bullet: string, idx: number) => (
+                            <div key={idx} className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                                <CheckCircle2 size={16} className="text-green-500" />
+                                <span>{bullet}</span>
+                            </div>
+                        ))}
                     </div>
 
                     {/* CTA Buttons */}
@@ -117,7 +123,7 @@ export default function LandingPage() {
                             href={user ? "/app" : "/auth"}
                             className="group bg-white text-black px-6 py-3 rounded-lg font-semibold text-base hover:bg-gray-100 transition-all flex items-center gap-2"
                         >
-                            Comenzar Análisis
+                            {t.landing.hero.cta}
                             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </div>
@@ -134,21 +140,21 @@ export default function LandingPage() {
                             <div className="bg-[#0A0A0A] rounded-xl p-4 border border-[#222]">
                                 <div className="flex items-center gap-3 mb-4">
                                     <Search size={18} className="text-gray-500" />
-                                    <span className="text-gray-400">software para abogados</span>
+                                    <span className="text-gray-400 font-medium">{t.landing.demo.search}</span>
                                 </div>
                                 <div className="space-y-3">
-                                    <div className="bg-[#1A1A1A] rounded-lg p-4 border-l-4 border-blue-500">
+                                    <div className="bg-[#1A1A1A] rounded-lg p-4 border-l-4 border-blue-500 text-left">
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="text-white font-medium">⚡ Gestión de casos fragmentada</span>
-                                            <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded">ALTA PRIORIDAD</span>
+                                            <span className="text-white font-medium">{t.landing.demo.problem1}</span>
+                                            <span className="text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-bold">{t.landing.demo.priority}</span>
                                         </div>
-                                        <p className="text-sm text-gray-400">Los abogados usan 5+ herramientas para gestionar un solo caso...</p>
+                                        <p className="text-sm text-gray-400">{t.landing.demo.problem1Desc}</p>
                                     </div>
-                                    <div className="bg-[#1A1A1A] rounded-lg p-4 border-l-4 border-blue-400">
-                                        <span className="text-white font-medium">💰 Facturación manual de horas</span>
+                                    <div className="bg-[#1A1A1A] rounded-lg p-4 border-l-4 border-blue-400 text-left">
+                                        <span className="text-white font-medium">{t.landing.demo.problem2}</span>
                                     </div>
-                                    <div className="bg-[#1A1A1A] rounded-lg p-4 border-l-4 border-blue-300">
-                                        <span className="text-white font-medium">📄 Documentos sin organizar</span>
+                                    <div className="bg-[#1A1A1A] rounded-lg p-4 border-l-4 border-blue-300 text-left">
+                                        <span className="text-white font-medium">{t.landing.demo.problem3}</span>
                                     </div>
                                 </div>
                             </div>
@@ -162,19 +168,19 @@ export default function LandingPage() {
                 <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                     <div>
                         <div className="text-4xl font-bold text-white mb-2">10K+</div>
-                        <div className="text-gray-500 text-sm">Hilos analizados por búsqueda</div>
+                        <div className="text-gray-500 text-sm">{t.landing.stats.threads}</div>
                     </div>
                     <div>
                         <div className="text-4xl font-bold text-white mb-2">15+</div>
-                        <div className="text-gray-500 text-sm">Problemas identificados</div>
+                        <div className="text-gray-500 text-sm">{t.landing.stats.problems}</div>
                     </div>
                     <div>
                         <div className="text-4xl font-bold text-white mb-2">30s</div>
-                        <div className="text-gray-500 text-sm">Tiempo promedio de análisis</div>
+                        <div className="text-gray-500 text-sm">{t.landing.stats.time}</div>
                     </div>
                     <div>
                         <div className="text-4xl font-bold text-white mb-2">100%</div>
-                        <div className="text-gray-500 text-sm">Citas verificables</div>
+                        <div className="text-gray-500 text-sm">{t.landing.stats.verified}</div>
                     </div>
                 </div>
             </section>
@@ -183,9 +189,9 @@ export default function LandingPage() {
             <section id="como-funciona" className="py-24 px-6">
                 <div className="max-w-5xl mx-auto">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">¿Cómo Funciona?</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t.landing.howItWorks.title}</h2>
                         <p className="text-gray-400 max-w-2xl mx-auto">
-                            Tres pasos simples para descubrir tu próxima oportunidad de negocio
+                            {t.landing.howItWorks.subtitle}
                         </p>
                     </div>
 
@@ -196,9 +202,9 @@ export default function LandingPage() {
                             <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
                                 <Search size={28} className="text-blue-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-3">Ingresa tu Nicho</h3>
+                            <h3 className="text-xl font-bold text-white mb-3">{t.landing.howItWorks.step1.title}</h3>
                             <p className="text-gray-400">
-                                Escribe el mercado o industria que quieres explorar. Ejemplos: "software para dentistas", "apps de productividad"
+                                {t.landing.howItWorks.step1.desc}
                             </p>
                         </div>
 
@@ -208,9 +214,9 @@ export default function LandingPage() {
                             <div className="w-14 h-14 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6">
                                 <MessageSquare size={28} className="text-purple-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-3">IA Analiza Conversaciones</h3>
+                            <h3 className="text-xl font-bold text-white mb-3">{t.landing.howItWorks.step2.title}</h3>
                             <p className="text-gray-400">
-                                Nuestra IA escanea Reddit, foros y comunidades buscando quejas, frustraciones y necesidades no resueltas.
+                                {t.landing.howItWorks.step2.desc}
                             </p>
                         </div>
 
@@ -220,9 +226,9 @@ export default function LandingPage() {
                             <div className="w-14 h-14 bg-pink-500/10 rounded-xl flex items-center justify-center mb-6">
                                 <TrendingUp size={28} className="text-pink-400" />
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-3">Recibe Oportunidades</h3>
+                            <h3 className="text-xl font-bold text-white mb-3">{t.landing.howItWorks.step3.title}</h3>
                             <p className="text-gray-400">
-                                Obtén una lista priorizada de problemas reales con citas directas y sugerencias de MVP para cada uno.
+                                {t.landing.howItWorks.step3.desc}
                             </p>
                         </div>
                     </div>
@@ -233,9 +239,9 @@ export default function LandingPage() {
             <section className="py-24 px-6 bg-[#080808]">
                 <div className="max-w-5xl mx-auto">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Todo lo que Necesitas</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t.landing.features.title}</h2>
                         <p className="text-gray-400 max-w-2xl mx-auto">
-                            Herramientas diseñadas para validar ideas de negocio rápidamente
+                            {t.landing.features.subtitle}
                         </p>
                     </div>
 
@@ -245,8 +251,8 @@ export default function LandingPage() {
                                 <CheckCircle2 size={24} className="text-green-400" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-white mb-2">Citas Verificables</h3>
-                                <p className="text-gray-400 text-sm">Cada problema incluye citas textuales de usuarios reales que puedes verificar.</p>
+                                <h3 className="text-lg font-semibold text-white mb-2">{t.landing.features.f1.title}</h3>
+                                <p className="text-gray-400 text-sm">{t.landing.features.f1.desc}</p>
                             </div>
                         </div>
 
@@ -255,8 +261,8 @@ export default function LandingPage() {
                                 <Target size={24} className="text-blue-400" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-white mb-2">Puntuación de Señal</h3>
-                                <p className="text-gray-400 text-sm">Cada problema se puntúa por frecuencia, intensidad y potencial de monetización.</p>
+                                <h3 className="text-lg font-semibold text-white mb-2">{t.landing.features.f2.title}</h3>
+                                <p className="text-gray-400 text-sm">{t.landing.features.f2.desc}</p>
                             </div>
                         </div>
 
@@ -265,8 +271,8 @@ export default function LandingPage() {
                                 <Lightbulb size={24} className="text-yellow-400" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-white mb-2">Sugerencias de MVP</h3>
-                                <p className="text-gray-400 text-sm">Recibe ideas concretas de productos mínimos viables para cada problema identificado.</p>
+                                <h3 className="text-lg font-semibold text-white mb-2">{t.landing.features.f3.title}</h3>
+                                <p className="text-gray-400 text-sm">{t.landing.features.f3.desc}</p>
                             </div>
                         </div>
 
@@ -275,8 +281,8 @@ export default function LandingPage() {
                                 <Users size={24} className="text-purple-400" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-semibold text-white mb-2">Datos de Reddit y Foros</h3>
-                                <p className="text-gray-400 text-sm">Accede a conversaciones auténticas donde usuarios expresan sus frustraciones.</p>
+                                <h3 className="text-lg font-semibold text-white mb-2">{t.landing.features.f4.title}</h3>
+                                <p className="text-gray-400 text-sm">{t.landing.features.f4.desc}</p>
                             </div>
                         </div>
                     </div>
@@ -287,20 +293,20 @@ export default function LandingPage() {
             <section className="py-24 px-6">
                 <div className="max-w-3xl mx-auto text-center">
                     <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                        Deja de Adivinar,
+                        {t.landing.finalCta.title1}
                         <br />
                         <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                            Empieza a Validar
+                            {t.landing.finalCta.title2}
                         </span>
                     </h2>
                     <p className="text-gray-400 text-lg mb-10">
-                        Encuentra tu próxima idea de negocio basada en problemas reales que la gente tiene hoy.
+                        {t.landing.finalCta.description}
                     </p>
                     <Link
                         href={user ? "/app" : "/auth"}
                         className="group inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-5 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg shadow-purple-500/25"
                     >
-                        Comenzar Ahora — Es Gratis
+                        {t.landing.finalCta.button}
                         <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
                 </div>
@@ -316,7 +322,7 @@ export default function LandingPage() {
                         <span className="font-semibold text-white">Veta</span>
                     </div>
                     <p className="text-gray-500 text-sm">
-                        © 2025 Veta. Descubre problemas que puedes resolver.
+                        {t.landing.footer.tagline}
                     </p>
                 </div>
             </footer>

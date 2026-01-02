@@ -13,37 +13,83 @@ export const translations = {
             pro: 'Pro Plan',
             free: 'Free Plan',
         },
-        hero: {
-            title: 'Stop guessing ideas.',
-            subtitle: 'Find real problems.',
-            description: 'Type a niche. Get a ranked report of pain points with evidence, who has them, and a 7-day no-code build plan.',
-            bullets: [
-                'Real complaints (not hunches)',
-                'Scored by urgency',
-                'MVP Plan + 1st Customers'
-            ],
-            placeholder: 'e.g. AI tools',
-            button: 'Analyze',
-            analyzing: 'Analyzing...',
-            tip: 'Think of a group of people or industry you know well. What frustrates them?',
-            categories: {
-                professionals: 'Professionals',
-                smallBusiness: 'Small Businesses',
-                lifestyle: 'Lifestyle Niches',
+        landing: {
+            nav: {
+                pricing: 'Pricing',
+                dashboard: 'Dashboard',
+                login: 'Login',
             },
-            examples: {
-                freelancers: 'freelancer problems',
-                dentists: 'dentists frustrations',
-                accountants: 'accountant complaints',
-                realEstate: 'real estate agent problems',
-                restaurants: 'restaurant owner problems',
-                ecommerce: 'online store frustrations',
-                gyms: 'gym complaints',
-                vets: 'vet clinic problems',
-                remoteParents: 'remote working parents problems',
-                digitalNomads: 'digital nomad frustrations',
-                students: 'university student complaints',
-                creators: 'content creator problems',
+            hero: {
+                badge: 'AI Powered',
+                title1: 'Stop guessing startup ideas.',
+                title2: 'Find real problems',
+                title3: 'people are complaining about.',
+                description: 'Type a niche. Get a ranked report of pain points with evidence, who has them, and a 7-day no-code build plan.',
+                bullets: [
+                    'Real complaints + sources (no hunches)',
+                    'Scored by urgency and payment',
+                    'MVP plan + first customers',
+                ],
+                cta: 'Start Analysis',
+            },
+            demo: {
+                search: 'lawyer software',
+                problem1: '⚡ Fragmented case management',
+                problem1Desc: 'Lawyers use 5+ tools to manage a single case...',
+                problem2: '💰 Manual hourly billing',
+                problem3: '📄 Unorganized documents',
+                priority: 'HIGH PRIORITY',
+            },
+            stats: {
+                threads: 'Threads analyzed per search',
+                problems: 'Problems identified',
+                time: 'Avg. analysis time',
+                verified: 'Verifiable quotes',
+            },
+            howItWorks: {
+                title: 'How It Works?',
+                subtitle: 'Three simple steps to discover your next business opportunity',
+                step1: {
+                    title: 'Enter your Niche',
+                    desc: 'Type the market or industry you want to explore. Examples: "dentist software", "productivity apps"',
+                },
+                step2: {
+                    title: 'AI Analyzes Conversations',
+                    desc: 'Our AI scans Reddit, forums, and communities looking for complaints, frustrations, and unmet needs.',
+                },
+                step3: {
+                    title: 'Receive Opportunities',
+                    desc: 'Get a prioritized list of real problems with direct quotes and MVP suggestions for each.',
+                },
+            },
+            features: {
+                title: 'Everything You Need',
+                subtitle: 'Tools designed to validate business ideas quickly',
+                f1: {
+                    title: 'Verifiable Quotes',
+                    desc: 'Each problem includes text quotes from real users you can verify.',
+                },
+                f2: {
+                    title: 'Signal Score',
+                    desc: 'Each problem is scored by frequency, intensity, and monetization potential.',
+                },
+                f3: {
+                    title: 'MVP Suggestions',
+                    desc: 'Receive concrete ideas for minimum viable products for each identified problem.',
+                },
+                f4: {
+                    title: 'Reddit & Forum Data',
+                    desc: 'Access authentic conversations where users express their frustrations.',
+                },
+            },
+            finalCta: {
+                title1: 'Stop Guessing,',
+                title2: 'Start Validating',
+                description: 'Find your next business idea based on real problems people have today.',
+                button: 'Start Now — It\'s Free',
+            },
+            footer: {
+                tagline: 'Discover problems you can solve.',
             }
         },
         sidebar: {
@@ -178,37 +224,83 @@ export const translations = {
             pro: 'Plan Pro',
             free: 'Plan Gratuito',
         },
-        hero: {
-            title: 'Deja de adivinar ideas.',
-            subtitle: 'Encuentra problemas reales.',
-            description: 'Escribe un nicho. Obtén un reporte clasificado de puntos de dolor con pruebas, quién los tiene y un plan de construcción no-code de 7 días.',
-            bullets: [
-                'Quejas reales (no corazonadas)',
-                'Puntuado por urgencia',
-                'Plan MVP + 1ros Clientes'
-            ],
-            placeholder: 'ej. herramientas ia',
-            button: 'Analizar',
-            analyzing: 'Analizando...',
-            tip: 'Piensa en un grupo de personas o industria que conozcas bien. ¿Qué les frustra?',
-            categories: {
-                professionals: 'Profesionales',
-                smallBusiness: 'Negocios Pequeños',
-                lifestyle: 'Nichos de Vida',
+        landing: {
+            nav: {
+                pricing: 'Precios',
+                dashboard: 'Dashboard',
+                login: 'Ingresar',
             },
-            examples: {
-                freelancers: 'problemas de freelancers',
-                dentists: 'frustraciones de dentistas',
-                accountants: 'quejas de contadores',
-                realEstate: 'problemas de agentes inmobiliarios',
-                restaurants: 'problemas de dueños de restaurantes',
-                ecommerce: 'frustraciones de tiendas online',
-                gyms: 'quejas de gimnasios',
-                vets: 'problemas de clínicas veterinarias',
-                remoteParents: 'problemas de padres que trabajan desde casa',
-                digitalNomads: 'frustraciones de nómadas digitales',
-                students: 'quejas de estudiantes universitarios',
-                creators: 'problemas de creadores de contenido',
+            hero: {
+                badge: 'Impulsado por IA',
+                title1: 'Deja de adivinar ideas de startup.',
+                title2: 'Encuentra problemas reales',
+                title3: 'de los que la gente se queja.',
+                description: 'Escribe un nicho. Obtén un reporte clasificado de puntos de dolor con pruebas, quién los tiene y un plan de construcción no-code de 7 días.',
+                bullets: [
+                    'Quejas reales + fuentes (no corazonadas)',
+                    'Puntuado por urgencia y pago',
+                    'Plan de MVP + primeros clientes',
+                ],
+                cta: 'Comenzar Análisis',
+            },
+            demo: {
+                search: 'software para abogados',
+                problem1: '⚡ Gestión de casos fragmentada',
+                problem1Desc: 'Los abogados usan 5+ herramientas para gestionar un solo caso...',
+                problem2: '💰 Facturación manual de horas',
+                problem3: '📄 Documentos sin organizar',
+                priority: 'ALTA PRIORIDAD',
+            },
+            stats: {
+                threads: 'Hilos analizados por búsqueda',
+                problems: 'Problemas identificados',
+                time: 'Tiempo promedio de análisis',
+                verified: 'Citas verificables',
+            },
+            howItWorks: {
+                title: '¿Cómo Funciona?',
+                subtitle: 'Tres pasos simples para descubrir tu próxima oportunidad de negocio',
+                step1: {
+                    title: 'Ingresa tu Nicho',
+                    desc: 'Escribe el mercado o industria que quieres explorar. Ejemplos: "software para dentistas", "apps de productividad"',
+                },
+                step2: {
+                    title: 'IA Analiza Conversaciones',
+                    desc: 'Nuestra IA escanea Reddit, foros y comunidades buscando quejas, frustraciones y necesidades no resueltas.',
+                },
+                step3: {
+                    title: 'Recibe Oportunidades',
+                    desc: 'Obtén una lista priorizada de problemas reales con citas directas y sugerencias de MVP para cada uno.',
+                },
+            },
+            features: {
+                title: 'Todo lo que Necesitas',
+                subtitle: 'Herramientas diseñadas para validar ideas de negocio rápidamente',
+                f1: {
+                    title: 'Citas Verificables',
+                    desc: 'Cada problema incluye citas textuales de usuarios reales que puedes verificar.',
+                },
+                f2: {
+                    title: 'Puntuación de Señal',
+                    desc: 'Cada problema se puntúa por frecuencia, intensidad y potencial de monetización.',
+                },
+                f3: {
+                    title: 'Sugerencias de MVP',
+                    desc: 'Recibe ideas concretas de productos mínimos viables para cada problema identificado.',
+                },
+                f4: {
+                    title: 'Datos de Reddit y Foros',
+                    desc: 'Accede a conversaciones auténticas donde usuarios expresan sus frustraciones.',
+                },
+            },
+            finalCta: {
+                title1: 'Deja de Adivinar,',
+                title2: 'Empieza a Validar',
+                description: 'Encuentra tu próxima idea de negocio basada en problemas reales que la gente tiene hoy.',
+                button: 'Comenzar Ahora — Es Gratis',
+            },
+            footer: {
+                tagline: '© 2025 Veta. Descubre problemas que puedes resolver.',
             }
         },
         sidebar: {

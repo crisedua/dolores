@@ -30,10 +30,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Listen for changes
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
+        } = supabase.auth.onAuthStateChange(async (event, session) => {
             setSession(session);
             setUser(session?.user ?? null);
             setIsLoading(false);
+
+            // Initialize free subscription for new signups
+            if (event === 'SIGNED_IN' && session?.user) {
+                try {
+                    await fetch('/api/init-subscription', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ userId: session.user.id })
+                    });
+                } catch (error) {
+                    console.error('Failed to initialize subscription:', error);
+                }
+            }
 
             if (!session) {
                 router.push('/');

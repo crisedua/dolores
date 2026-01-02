@@ -40,23 +40,15 @@ export default function LandingPage() {
                                 href="/app"
                                 className="bg-white text-black px-5 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
                             >
-                                Ir al Dashboard
+                                Dashboard
                             </Link>
                         ) : (
-                            <>
-                                <Link
-                                    href="/auth"
-                                    className="text-gray-400 hover:text-white transition-colors"
-                                >
-                                    Iniciar Sesión
-                                </Link>
-                                <Link
-                                    href="/pricing"
-                                    className="bg-white text-black px-5 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
-                                >
-                                    Comenzar
-                                </Link>
-                            </>
+                            <Link
+                                href="/auth"
+                                className="bg-white text-black px-5 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                            >
+                                Iniciar Sesión
+                            </Link>
                         )}
                     </div>
                 </div>

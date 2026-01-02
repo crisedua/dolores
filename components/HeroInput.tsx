@@ -20,7 +20,7 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
             {/* Glow Effect Background */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-purple-600/20 blur-[100px] rounded-full pointer-events-none -z-10" />
 
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-tight">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight leading-tight">
                 Deja de adivinar ideas. <br />
                 <span className="text-gray-400">Encuentra problemas reales.</span>
             </h1>

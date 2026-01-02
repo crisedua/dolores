@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
@@ -22,6 +23,16 @@ export default function RootLayout({
           {children}
         </AuthProvider>
       </body>
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-62L3KYMF35" strategy="afterInteractive" />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-62L3KYMF35');
+        `}
+      </Script>
     </html>
   );
 }

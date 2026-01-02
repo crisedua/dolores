@@ -12,9 +12,9 @@ export async function perplexitySearch(topic: string) {
     // Create abort controller for timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
-        console.error('[Perplexity] Request timed out after 90 seconds');
+        console.error('[Perplexity] Request timed out after 180 seconds');
         controller.abort();
-    }, 90000);
+    }, 180000);
 
     try {
         const requestBody = {
@@ -194,7 +194,7 @@ Si el tema está en español, tradúcelo al inglés para buscar contenido (hay m
 
         if (error.name === 'AbortError') {
             console.error('[Perplexity] Request aborted due to timeout');
-            throw new Error('Perplexity API request timed out after 90 seconds');
+            throw new Error('Perplexity API request timed out after 180 seconds');
         }
 
         console.error('[Perplexity] Unexpected error:', error);

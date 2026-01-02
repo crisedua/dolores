@@ -33,8 +33,8 @@ export async function POST(req: NextRequest) {
                 console.log(`[API] PERPLEXITY_API_KEY status: ${hasPerplexity ? 'DETECTED' : 'NOT DETECTED'}`);
                 console.log(`[API] Key preview: ${keyPreview}`);
 
-                // Send visible debug info to frontend
-                sendUpdate(`[DEBUG] Perplexity: ${hasPerplexity ? '✓ HABILITADO' : '✗ DESHABILITADO (usando respaldo de Reddit)'}`, 'completed');
+                // Send visible debug info to frontend REMOVED
+                // sendUpdate(`[DEBUG] Perplexity: ${hasPerplexity ? '✓ HABILITADO' : '✗ DESHABILITADO (usando respaldo de Reddit)'}`, 'completed');
 
                 if (hasPerplexity) {
                     // --------------------------------------------------------------------------

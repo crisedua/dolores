@@ -21,8 +21,8 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-purple-600/20 blur-[100px] rounded-full pointer-events-none -z-10" />
 
             <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 tracking-tight">
-                Encuentra Problemas <br />
-                <span className="text-gray-400">Que Valgan la Pena</span>
+                Descubre Problemas <br />
+                <span className="text-gray-400">Que Puedes Resolver con IA</span>
             </h1>
 
             <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">

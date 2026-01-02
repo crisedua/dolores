@@ -28,7 +28,13 @@ export default function LandingPage() {
                         </div>
                         <span className="font-bold text-lg text-white">Veta</span>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-6">
+                        <Link
+                            href="/pricing"
+                            className="text-gray-400 hover:text-white transition-colors"
+                        >
+                            Precios
+                        </Link>
                         {user ? (
                             <Link
                                 href="/app"

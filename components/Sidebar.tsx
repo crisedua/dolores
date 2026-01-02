@@ -7,7 +7,8 @@ import {
     CheckSquare,
     Search,
     Gem, // Changed from BarChart3
-    LogOut
+    LogOut,
+    Zap
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { ReactNode } from 'react';
@@ -88,14 +89,23 @@ export function Sidebar() {
                         </div>
                     </div>
 
-                    <button
-                        onClick={() => signOut()}
-                        className="p-1.5 hover:bg-white/10 rounded-md text-gray-500 hover:text-white transition-colors"
-                        title="Cerrar Sesión"
+                    {/* Upgrade Button */}
+                    <Link
+                        href="/pricing"
+                        className="mt-3 w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2"
                     >
-                        <LogOut size={16} />
-                    </button>
+                        <Zap size={14} />
+                        Actualizar a Pro
+                    </Link>
                 </div>
+
+                <button
+                    onClick={() => signOut()}
+                    className="w-full text-xs text-gray-500 hover:text-white mt-3 flex items-center justify-center gap-2 py-2 transition-colors"
+                >
+                    <LogOut size={14} />
+                    Cerrar Sesión
+                </button>
             </div>
         </aside>
     );

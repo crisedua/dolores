@@ -54,7 +54,7 @@ export function AuthForm() {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}/auth/callback`, // Supabase will handle the redirect, ensuring we get back to the app
+                    redirectTo: window.location.origin,
                 },
             });
             if (error) throw error;

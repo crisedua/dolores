@@ -6,7 +6,6 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { ProblemCard, Problem } from '@/components/ProblemCard';
 import { ArrowLeft, Calendar, Download } from 'lucide-react';
-import jsPDF from 'jspdf';
 
 interface Report {
     id: string;
@@ -53,99 +52,73 @@ export default function ReportDetailsPage() {
         }
     };
 
-    const downloadReportPDF = () => {
+    const downloadReportPDF = async () => {
         if (!report) return;
 
-        const doc = new jsPDF();
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const margin = 20;
-        let yPos = 20;
+        // Dynamic import of html2pdf (client-side only)
+        const html2pdf = (await import('html2pdf.js')).default;
 
-        // Helper to add text with word wrap
-        const addWrappedText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number = 7) => {
-            const lines = doc.splitTextToSize(text, maxWidth);
-            doc.text(lines, x, y);
-            return y + (lines.length * lineHeight);
+        // Get the problems container element
+        const element = document.getElementById('problems-container');
+        if (!element) {
+            console.error('Problems container not found');
+            return;
+        }
+
+        // Create a wrapper with white background for PDF
+        const wrapper = document.createElement('div');
+        wrapper.style.backgroundColor = '#0a0a0a';
+        wrapper.style.padding = '20px';
+        wrapper.style.color = 'white';
+
+        // Add header
+        const header = document.createElement('div');
+        header.innerHTML = `
+            <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #333;">
+                <h1 style="font-size: 24px; color: white; margin-bottom: 10px;">Reporte de Análisis - Veta</h1>
+                <p style="color: #888; font-size: 14px;">Búsqueda: "${report.query}"</p>
+                <p style="color: #888; font-size: 12px;">Fecha: ${new Date(report.created_at).toLocaleDateString('es-ES')} | ${report.problem_count} problemas encontrados</p>
+            </div>
+        `;
+        wrapper.appendChild(header);
+
+        // Clone the problems content
+        const clone = element.cloneNode(true) as HTMLElement;
+        wrapper.appendChild(clone);
+
+        // Add footer
+        const footer = document.createElement('div');
+        footer.innerHTML = `
+            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
+                <p style="color: #666; font-size: 10px;">Generado por Veta - veta.lat</p>
+            </div>
+        `;
+        wrapper.appendChild(footer);
+
+        // Temporarily add to document for rendering
+        wrapper.style.position = 'absolute';
+        wrapper.style.left = '-9999px';
+        document.body.appendChild(wrapper);
+
+        const opt = {
+            margin: 10,
+            filename: `reporte-${report.query.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.pdf`,
+            image: { type: 'jpeg' as const, quality: 0.98 },
+            html2canvas: {
+                scale: 2,
+                backgroundColor: '#0a0a0a',
+                useCORS: true
+            },
+            jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const },
+            pagebreak: { mode: 'avoid-all' as const }
         };
 
-        // Title
-        doc.setFontSize(20);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Reporte de Análisis - Veta', margin, yPos);
-        yPos += 15;
-
-        // Report info
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Búsqueda: "${report.query}"`, margin, yPos);
-        yPos += 8;
-        doc.text(`Fecha: ${new Date(report.created_at).toLocaleDateString('es-ES')}`, margin, yPos);
-        yPos += 8;
-        doc.text(`Problemas encontrados: ${report.problem_count}`, margin, yPos);
-        yPos += 15;
-
-        // Separator line
-        doc.setDrawColor(200);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 10;
-
-        // Problems
-        const problems = report.results?.problems || [];
-        problems.forEach((problem, index) => {
-            // Check if we need a new page
-            if (yPos > 250) {
-                doc.addPage();
-                yPos = 20;
-            }
-
-            // Problem title
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(0, 102, 204);
-            yPos = addWrappedText(`${index + 1}. ${problem.description.slice(0, 100)}${problem.description.length > 100 ? '...' : ''}`, margin, yPos, pageWidth - margin * 2);
-            yPos += 5;
-
-            // Problem description
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(0, 0, 0);
-            if (problem.description) {
-                yPos = addWrappedText(problem.description, margin, yPos, pageWidth - margin * 2, 5);
-                yPos += 5;
-            }
-
-            // Severity & WTP
-            doc.setFontSize(9);
-            doc.setTextColor(100, 100, 100);
-            doc.text(`Puntuación: ${problem.signalScore || 'N/A'} | Disposición a Pagar: ${problem.willingnessToPay?.score || 'N/A'}`, margin, yPos);
-            yPos += 10;
-
-            if (problem.quotes && problem.quotes.length > 0) {
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'italic');
-                doc.setTextColor(80, 80, 80);
-                const topQuotes = problem.quotes.slice(0, 2);
-                topQuotes.forEach((quote: string | { text: string; url?: string }) => {
-                    if (yPos > 270) {
-                        doc.addPage();
-                        yPos = 20;
-                    }
-                    const quoteText = typeof quote === 'string' ? quote : quote.text;
-                    yPos = addWrappedText(`"${quoteText}"`, margin + 5, yPos, pageWidth - margin * 2 - 10, 5);
-                    yPos += 3;
-                });
-            }
-
-            yPos += 8;
-        });
-
-        // Footer
-        doc.setFontSize(8);
-        doc.setTextColor(150, 150, 150);
-        doc.text('Generado por Veta - veta.lat', margin, doc.internal.pageSize.getHeight() - 10);
-
-        // Save
-        doc.save(`reporte-${report.query.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.pdf`);
+        try {
+            await html2pdf().set(opt).from(wrapper).save();
+        } finally {
+            // Clean up
+            document.body.removeChild(wrapper);
+        }
     };
 
     const formatDate = (dateStr: string) => {
@@ -223,7 +196,7 @@ export default function ReportDetailsPage() {
 
             {/* Problems List */}
             {report.results?.problems && report.results.problems.length > 0 ? (
-                <div className="space-y-6">
+                <div id="problems-container" className="space-y-6">
                     {report.results.problems.map((problem) => (
                         <ProblemCard key={problem.id} problem={problem} />
                     ))}

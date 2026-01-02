@@ -20,12 +20,12 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
             {/* Glow Effect Background */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-purple-600/20 blur-[100px] rounded-full pointer-events-none -z-10" />
 
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 tracking-tight leading-tight">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-6 tracking-tight leading-tight">
                 Deja de adivinar ideas. <br />
                 <span className="text-gray-400">Encuentra problemas reales.</span>
             </h1>
 
-            <p className="text-gray-400 text-lg md:text-xl max-w-3xl mx-auto mb-8 leading-relaxed">
+            <p className="text-gray-400 text-base md:text-lg max-w-3xl mx-auto mb-8 leading-relaxed">
                 Escribe un nicho. Obtén un reporte clasificado de puntos de dolor con pruebas, quién los tiene y un plan de construcción no-code de 7 días.
             </p>
 

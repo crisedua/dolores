@@ -9,7 +9,10 @@ interface UpgradeModalProps {
     searchLimit: number;
 }
 
+import { useTranslation } from '@/context/LanguageContext';
+
 export function UpgradeModal({ isOpen, onClose, searchesUsed, searchLimit }: UpgradeModalProps) {
+    const { t } = useTranslation();
     if (!isOpen) return null;
 
     return (
@@ -28,34 +31,49 @@ export function UpgradeModal({ isOpen, onClose, searchesUsed, searchLimit }: Upg
                     </div>
 
                     <h2 className="text-2xl font-bold text-white mb-2">
-                        Límite de Búsquedas Alcanzado
+                        {t.upgradeModal.limitReached}
                     </h2>
 
                     <p className="text-gray-400 mb-1">
-                        Has usado <span className="text-white font-semibold">{searchesUsed} de {searchLimit}</span> búsquedas este mes.
+                        {t.upgradeModal.usedSearches
+                            .replace('{used}', searchesUsed.toString())
+                            .split('{limit}').map((part, i, arr) => (
+                                <span key={i}>
+                                    {part}
+                                    {i < arr.length - 1 && <span className="text-white font-semibold">{searchLimit}</span>}
+                                </span>
+                            ))}
+                        {/* More simple way if usedSearches just contains the whole string */}
+                        {/* {t.upgradeModal.usedSearches.replace('{used}', searchesUsed.toString()).replace('{limit}', searchLimit.toString())} */}
+                    </p>
+                    {/* Re-writing to be simpler and safer */}
+                    <p className="text-gray-400 mb-1">
+                        {t.upgradeModal.usedSearches
+                            .replace('{used}', searchesUsed.toString())
+                            .replace('{limit}', searchLimit.toString())}
                     </p>
                     <p className="text-gray-500 text-sm mb-6">
-                        Actualiza a Pro para búsquedas ilimitadas.
+                        {t.upgradeModal.upgradeForUnlimited}
                     </p>
 
                     <div className="bg-[#1A1A1A] border border-[#222] rounded-xl p-4 mb-6 text-left">
-                        <h3 className="text-white font-semibold mb-3">Con Veta Pro obtienes:</h3>
+                        <h3 className="text-white font-semibold mb-3">{t.upgradeModal.proBenefits}</h3>
                         <ul className="space-y-2 text-sm text-gray-300">
                             <li className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                                Búsquedas ilimitadas
+                                {t.upgradeModal.benefit1}
                             </li>
                             <li className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                                Análisis completo con IA
+                                {t.upgradeModal.benefit2}
                             </li>
                             <li className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                                Historial y reportes ilimitados
+                                {t.upgradeModal.benefit3}
                             </li>
                             <li className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                                Soporte prioritario
+                                {t.upgradeModal.benefit4}
                             </li>
                         </ul>
                         <div className="mt-4 pt-4 border-t border-[#333]">
@@ -63,10 +81,10 @@ export function UpgradeModal({ isOpen, onClose, searchesUsed, searchLimit }: Upg
                                 <div className="flex items-baseline gap-2">
                                     <span className="text-3xl font-bold text-white">$10</span>
                                     <span className="text-lg text-gray-500 line-through">$39</span>
-                                    <span className="text-gray-500">/mes</span>
+                                    <span className="text-gray-500">{t.upgradeModal.priceLabel}</span>
                                 </div>
                                 <span className="text-green-500 text-xs font-bold uppercase tracking-wider">
-                                    Oferta de Lanzamiento
+                                    {t.upgradeModal.launchOffer}
                                 </span>
                             </div>
                         </div>
@@ -76,7 +94,7 @@ export function UpgradeModal({ isOpen, onClose, searchesUsed, searchLimit }: Upg
                         href="/pricing"
                         className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
                     >
-                        Actualizar a Pro
+                        {t.upgradeModal.upgradeButton}
                         <ArrowRight size={20} />
                     </Link>
 
@@ -84,7 +102,7 @@ export function UpgradeModal({ isOpen, onClose, searchesUsed, searchLimit }: Upg
                         onClick={onClose}
                         className="mt-3 text-sm text-gray-500 hover:text-gray-400 transition-colors"
                     >
-                        Volver al dashboard
+                        {t.upgradeModal.backToDashboard}
                     </button>
                 </div>
             </div>

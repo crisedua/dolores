@@ -11,6 +11,8 @@ import { supabase } from '@/lib/supabase';
 import { useSubscription } from '@/hooks/useSubscription';
 import { UpgradeModal } from '@/components/UpgradeModal';
 
+import { useTranslation } from '@/context/LanguageContext';
+
 // Wrapper component to handle useSearchParams with Suspense
 function HomeContent() {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +23,7 @@ function HomeContent() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const { user } = useAuth();
   const { usage, incrementUsage } = useSubscription();
+  const { t, language } = useTranslation();
   const searchParams = useSearchParams();
 
   // Handle URL query parameter for templates/history
@@ -58,7 +61,7 @@ function HomeContent() {
     try {
       const { error } = await supabase.from('saved_reports').insert({
         user_id: user.id,
-        title: `Análisis: ${currentQuery}`,
+        title: language === 'es' ? `Análisis: ${currentQuery}` : `Analysis: ${currentQuery}`,
         query: currentQuery,
         problem_count: data.problems?.length || 0,
         results: data
@@ -98,7 +101,7 @@ function HomeContent() {
           ...(session?.access_token && { 'Authorization': `Bearer ${session.access_token}` })
         },
         credentials: 'include', // Include cookies
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ query, lang: language })
       });
 
       if (!response.ok) {
@@ -169,7 +172,7 @@ function HomeContent() {
 
     } catch (e: any) {
       console.error("Search Handler Error:", e);
-      setSearchSteps(prev => [...prev, { id: 'err', label: `Failed: ${e.message}`, status: 'completed' }]);
+      setSearchSteps(prev => [...prev, { id: 'err', label: language === 'es' ? `Error: ${e.message}` : `Failed: ${e.message}`, status: 'completed' }]);
       // Keep loading UI visible to show the error state? 
       // Actually, if we set isLoading(false) it hides the progress.
       // Let's keep it true but ensure user can reset.
@@ -189,6 +192,11 @@ function HomeContent() {
     }
   };
 
+  const currentDate = new Date().toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
+    month: 'short',
+    year: 'numeric'
+  });
+
   return (
     <div className="min-h-screen relative flex flex-col">
       {/* Upgrade Modal */}
@@ -204,9 +212,9 @@ function HomeContent() {
         <header className="flex justify-between items-center mb-8 pt-8 px-4 animate-in fade-in slide-in-from-top-4 duration-500">
           <div>
             <h1 className="text-2xl font-bold text-white mb-1">
-              Bienvenido de nuevo, {user?.email?.split('@')[0] || 'Invitado'} 👋
+              {t.dashboard.welcome}, {user?.email?.split('@')[0] || t.sidebar.guest} 👋
             </h1>
-            <p className="text-gray-500 text-sm">Aquí está tu panel de descubrimiento de problemas.</p>
+            <p className="text-gray-500 text-sm">{t.dashboard.description}</p>
           </div>
 
           <div className="flex items-center gap-4 text-gray-400">
@@ -215,7 +223,7 @@ function HomeContent() {
 
             <div className="flex items-center gap-2 text-sm text-gray-500 border-l border-[#333] pl-4">
               <Calendar size={16} />
-              <span>Dic 2025</span>
+              <span className="capitalize">{currentDate}</span>
             </div>
 
             <div className="w-8 h-8 rounded-full bg-gray-700 overflow-hidden border border-[#555]">
@@ -232,11 +240,11 @@ function HomeContent() {
             <HeroInput onSearch={handleSearch} isLoading={false} />
           ) : (
             <div className="w-full">
-              <h2 className="text-center text-2xl font-bold text-white mb-6">Descubrimiento en Progreso</h2>
+              <h2 className="text-center text-2xl font-bold text-white mb-6">{t.dashboard.discoveryInProgress}</h2>
               <SearchProgress steps={searchSteps} />
               {/* Add a reset button if stuck */}
               <div className="text-center mt-8">
-                <button onClick={() => setIsLoading(false)} className="text-xs text-gray-500 underline hover:text-white">Cancelar / Reiniciar</button>
+                <button onClick={() => setIsLoading(false)} className="text-xs text-gray-500 underline hover:text-white">{t.dashboard.cancelReset}</button>
               </div>
             </div>
           )}
@@ -250,15 +258,15 @@ function HomeContent() {
           {/* Validated Header */}
           <div className="flex justify-between items-end mb-8 border-b border-[#333] pb-6">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">Oportunidades Validadas</h2>
+              <h2 className="text-3xl font-bold text-white mb-2">{t.dashboard.validatedOpportunities}</h2>
               <p className="text-[#666] text-xs font-bold tracking-widest uppercase">
-                Ordenadas por Fuerza de Señal y Potencial Comercial
+                {t.dashboard.orderedBy}
               </p>
             </div>
             <div className="bg-[#1A1A1A] border border-[#333] px-4 py-2 rounded-full flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
               <span className="text-xs font-bold text-gray-300">
-                {data.problems.length} PROBLEMAS ENCONTRADOS
+                {data.problems.length} {t.dashboard.problemsFound}
               </span>
             </div>
           </div>
@@ -270,7 +278,7 @@ function HomeContent() {
                 onClick={() => { setData(null); setSearchSteps([]); setIsLoading(false); setCurrentQuery(''); }}
                 className="text-xs font-bold text-gray-500 hover:text-white uppercase tracking-widest"
               >
-                ← NUEVA BÚSQUEDA
+                ← {t.dashboard.newSearch}
               </button>
               <button
                 onClick={saveReport}
@@ -283,12 +291,12 @@ function HomeContent() {
                 {reportSaved ? (
                   <>
                     <Check size={16} />
-                    Guardado
+                    {t.dashboard.saved}
                   </>
                 ) : (
                   <>
                     <Save size={16} />
-                    Guardar Reporte
+                    {t.dashboard.saveReport}
                   </>
                 )}
               </button>

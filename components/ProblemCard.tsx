@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import { ChevronDown, ArrowRight, ExternalLink, User, AlertTriangle, Wallet, Users, Lightbulb } from 'lucide-react';
 
+import { useTranslation } from '@/context/LanguageContext';
+
 export interface Problem {
     id: string;
     rank: number;
@@ -45,6 +47,7 @@ export interface Problem {
 
 export function ProblemCard({ problem }: { problem: Problem }) {
     const [isExpanded, setIsExpanded] = useState(false);
+    const { t } = useTranslation();
 
     // Backward compatibility for existingSolutions (handle string[] vs object[])
     const normalizedSolutions = Array.isArray(problem.existingSolutions)
@@ -59,7 +62,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                     <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-3">
                             <span className="bg-[#1A1A1A] text-gray-400 text-xs font-bold px-3 py-1.5 rounded-lg tracking-wider">
-                                #{problem.rank} PUNTO DE DOLOR
+                                #{problem.rank} {t.problemCard.painPoint}
                             </span>
                             {problem.persona && (
                                 <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-2">
@@ -71,7 +74,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                     </div>
 
                     <div className="bg-[#151515] border border-[#222] rounded-xl px-5 py-3 text-center min-w-[100px]">
-                        <div className="text-[10px] text-gray-500 font-bold tracking-widest uppercase mb-1">Puntuación</div>
+                        <div className="text-[10px] text-gray-500 font-bold tracking-widest uppercase mb-1">{t.problemCard.score}</div>
                         <div className="text-3xl font-bold text-[#FF5A36]">
                             {problem.signalScore}<span className="text-gray-600 text-base">/10</span>
                         </div>
@@ -94,10 +97,10 @@ export function ProblemCard({ problem }: { problem: Problem }) {
 
                 {/* Metrics Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 border-b border-[#222] pb-8">
-                    <MetricBar label="FRECUENCIA" value={problem.metrics.frequency} color="bg-blue-500" />
-                    <MetricBar label="INTENSIDAD" value={problem.metrics.intensity} color="bg-red-500" />
-                    <MetricBar label="DISPOSICIÓN PAGO" value={problem.willingnessToPay?.score || problem.metrics.monetizability} color="bg-green-500" />
-                    <MetricBar label="MONETIZACIÓN" value={problem.metrics.monetizability} color="bg-amber-500" />
+                    <MetricBar label={t.problemCard.metrics.frequency} value={problem.metrics.frequency} color="bg-blue-500" />
+                    <MetricBar label={t.problemCard.metrics.intensity} value={problem.metrics.intensity} color="bg-red-500" />
+                    <MetricBar label={t.problemCard.metrics.wtp} value={problem.willingnessToPay?.score || problem.metrics.monetizability} color="bg-green-500" />
+                    <MetricBar label={t.problemCard.metrics.monetization} value={problem.metrics.monetizability} color="bg-amber-500" />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-8">
@@ -107,7 +110,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                         {problem.willingnessToPay && (
                             <div className="bg-[#111] rounded-xl p-5 border border-[#222]">
                                 <h4 className="flex items-center gap-2 text-green-400 text-xs font-bold tracking-widest uppercase mb-3">
-                                    <Wallet size={14} /> DISPOSICIÓN A PAGAR
+                                    <Wallet size={14} /> {t.problemCard.wtpHeader}
                                 </h4>
                                 <p className="text-gray-300 text-sm leading-relaxed">
                                     {problem.willingnessToPay.evidence}
@@ -118,7 +121,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                         {/* Existing Solutions Table */}
                         {normalizedSolutions.length > 0 && (
                             <div>
-                                <h4 className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-4">Lo que usan ahora (y odian)</h4>
+                                <h4 className="text-gray-500 text-xs font-bold tracking-widest uppercase mb-4">{t.problemCard.existingSolutions}</h4>
                                 <div className="space-y-3">
                                     {normalizedSolutions.map((sol, idx) => (
                                         <div key={idx} className="bg-[#161616] rounded-lg p-3 border border-white/5 flex flex-col md:flex-row md:items-center gap-3">
@@ -139,7 +142,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                         {(problem.mvpIdeas || (problem.solution?.mvpFeatures && problem.solution.mvpFeatures.length > 0)) && (
                             <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-6">
                                 <h4 className="flex items-center gap-2 text-blue-400 text-xs font-bold tracking-widest uppercase mb-4">
-                                    <Lightbulb size={14} /> 3 Ideas de MVP
+                                    <Lightbulb size={14} /> {t.problemCard.mvpIdeas}
                                 </h4>
                                 <ul className="space-y-4">
                                     {(problem.mvpIdeas || problem.solution?.mvpFeatures || []).map((idea, idx) => (
@@ -158,7 +161,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                         {problem.contactStrategy && (
                             <div className="bg-[#111] rounded-xl p-5 border border-[#222]">
                                 <h4 className="flex items-center gap-2 text-purple-400 text-xs font-bold tracking-widest uppercase mb-3">
-                                    <Users size={14} /> Primeros 20 Clientes
+                                    <Users size={14} /> {t.problemCard.firstCustomers}
                                 </h4>
                                 <p className="text-gray-300 text-sm leading-relaxed">
                                     {problem.contactStrategy}
@@ -173,13 +176,13 @@ export function ProblemCard({ problem }: { problem: Problem }) {
             {/* Footer Accordion Toggle */}
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="w-full bg-[#111] border-t border-[#222] p-4 flex items-center justify-center gap-2 text-gray-500 text-xs font-bold tracking-widest hover:bg-[#161616] transition-colors"
+                className="w-full bg-[#111] border-t border-[#222] p-4 flex items-center justify-center gap-2 text-gray-500 text-xs font-bold tracking-widest hover:bg-[#161616] transition-colors uppercase"
             >
                 <ChevronDown
                     size={14}
                     className={`transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
                 />
-                {isExpanded ? 'OCULTAR' : 'VER'} EVIDENCIA (CITAS Y FUENTES)
+                {isExpanded ? t.problemCard.hideEvidence : t.problemCard.showEvidence}
             </button>
 
             {/* Expandable Evidence Section */}
@@ -188,7 +191,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                     {/* Quotes */}
                     {problem.quotes && problem.quotes.length > 0 && (
                         <div>
-                            <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">Citas Clave</h3>
+                            <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4">{t.problemCard.keyQuotes}</h3>
                             <div className="grid md:grid-cols-2 gap-4">
                                 {problem.quotes.map((quote, idx) => {
                                     const quoteText = typeof quote === 'string' ? quote : quote.text;
@@ -206,7 +209,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                                             {quoteUrl && (
                                                 <div className="flex items-center gap-1 text-xs text-blue-500 opacity-60 group-hover:opacity-100">
                                                     <ExternalLink size={10} />
-                                                    <span>Ver fuente</span>
+                                                    <span>{t.problemCard.viewSource}</span>
                                                 </div>
                                             )}
                                         </a>
@@ -218,7 +221,7 @@ export function ProblemCard({ problem }: { problem: Problem }) {
                 </div>
             )}
         </div>
-    )
+    );
 }
 
 function MetricBar({ label, value, color }: { label: string, value: number, color: string }) {

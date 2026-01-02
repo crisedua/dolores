@@ -8,13 +8,17 @@ export interface ProgressStep {
     status: 'pending' | 'active' | 'completed';
 }
 
+import { useTranslation } from '@/context/LanguageContext';
+
 export function SearchProgress({ steps }: { steps: ProgressStep[] }) {
+    const { t } = useTranslation();
     return (
         <div className="w-full max-w-2xl mx-auto mt-8 bg-[#0F0F0F] border border-[#222] rounded-xl p-6 shadow-2xl">
             <div className="flex items-center gap-3 mb-6 border-b border-[#222] pb-4">
                 <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase">Motor de Investigación Activo</h3>
+                <h3 className="text-xs font-bold text-gray-400 tracking-widest uppercase">{t.dashboard.discoveryInProgress}</h3>
             </div>
+            {/* ... rest of the file ... */}
 
             <div className="space-y-4">
                 <AnimatePresence mode='popLayout'>

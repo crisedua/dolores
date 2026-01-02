@@ -12,19 +12,19 @@ interface HistoryItem {
     created_at: string;
 }
 
+import { useTranslation } from '@/context/LanguageContext';
+
 export default function HistoryPage() {
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const { user } = useAuth();
+    const { t, language } = useTranslation();
 
     useEffect(() => {
         if (user) {
             fetchHistory();
         } else {
-            // Fallback to local storage if guest? Or just wait for auth?
-            // Since layout wraps everything in AuthProvider and we are in protected /app, 
-            // user should be there or loading.
-            if (user === null) setIsLoading(false); // Guest user or not logged in
+            if (user === null) setIsLoading(false);
         }
     }, [user]);
 
@@ -64,7 +64,7 @@ export default function HistoryPage() {
             const { error } = await supabase
                 .from('search_history')
                 .delete()
-                .eq('user_id', user.id); // Although RLS handles this, being specific is safe
+                .eq('user_id', user.id);
 
             if (error) throw error;
             setHistory([]);
@@ -75,7 +75,7 @@ export default function HistoryPage() {
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
-        return date.toLocaleDateString('es-ES', {
+        return date.toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
             day: 'numeric',
             month: 'short',
             year: 'numeric',
@@ -89,15 +89,15 @@ export default function HistoryPage() {
             {/* Header */}
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-white mb-2">Historial de Búsquedas</h1>
-                    <p className="text-gray-500 text-sm">Tus búsquedas recientes y resultados guardados.</p>
+                    <h1 className="text-2xl font-bold text-white mb-2">{t.history.title}</h1>
+                    <p className="text-gray-500 text-sm">{t.history.description}</p>
                 </div>
                 {history.length > 0 && (
                     <button
                         onClick={clearAll}
                         className="text-xs text-red-400 hover:text-red-300 uppercase tracking-wider font-bold"
                     >
-                        Limpiar Todo
+                        {t.history.clearAll}
                     </button>
                 )}
             </div>
@@ -112,13 +112,13 @@ export default function HistoryPage() {
                     <div className="w-16 h-16 rounded-full bg-[#222] flex items-center justify-center mx-auto mb-4">
                         <Search size={24} className="text-gray-500" />
                     </div>
-                    <h3 className="text-lg font-semibold text-white mb-2">Sin historial aún</h3>
-                    <p className="text-gray-500 mb-6">Tus búsquedas aparecerán aquí después de realizar una.</p>
+                    <h3 className="text-lg font-semibold text-white mb-2">{t.history.empty}</h3>
+                    <p className="text-gray-500 mb-6">{t.history.emptyDescription}</p>
                     <Link
                         href="/app"
                         className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                     >
-                        Iniciar Búsqueda
+                        {t.history.startSearch}
                         <ArrowRight size={18} />
                     </Link>
                 </div>
@@ -142,7 +142,7 @@ export default function HistoryPage() {
                                             <Calendar size={12} />
                                             {formatDate(item.created_at)}
                                         </span>
-                                        <span>{item.result_count} problemas encontrados</span>
+                                        <span>{item.result_count} {t.history.resultsFound}</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">

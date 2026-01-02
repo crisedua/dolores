@@ -18,6 +18,8 @@ interface Report {
     created_at: string;
 }
 
+import { useTranslation } from '@/context/LanguageContext';
+
 export default function ReportDetailsPage() {
     const params = useParams();
     const reportId = params.id as string;
@@ -25,6 +27,7 @@ export default function ReportDetailsPage() {
     const [report, setReport] = useState<Report | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const { t, language } = useTranslation();
 
     useEffect(() => {
         if (user && reportId) {
@@ -46,7 +49,7 @@ export default function ReportDetailsPage() {
             if (data) setReport(data);
         } catch (err: any) {
             console.error('Error fetching report:', err);
-            setError(err.message || 'No se pudo cargar el reporte');
+            setError(err.message || t.reports.notFound);
         } finally {
             setIsLoading(false);
         }
@@ -75,9 +78,9 @@ export default function ReportDetailsPage() {
         const header = document.createElement('div');
         header.innerHTML = `
             <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #333;">
-                <h1 style="font-size: 24px; color: white; margin-bottom: 10px;">Reporte de Análisis - Veta</h1>
-                <p style="color: #888; font-size: 14px;">Búsqueda: "${report.query}"</p>
-                <p style="color: #888; font-size: 12px;">Fecha: ${new Date(report.created_at).toLocaleDateString('es-ES')} | ${report.problem_count} problemas encontrados</p>
+                <h1 style="font-size: 24px; color: white; margin-bottom: 10px;">${t.reports.pdfHeader}</h1>
+                <p style="color: #888; font-size: 14px;">${t.reports.searchPrefix}: "${report.query}"</p>
+                <p style="color: #888; font-size: 12px;">Fecha: ${new Date(report.created_at).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US')} | ${report.problem_count} ${t.reports.problems}</p>
             </div>
         `;
         wrapper.appendChild(header);
@@ -90,7 +93,7 @@ export default function ReportDetailsPage() {
         const footer = document.createElement('div');
         footer.innerHTML = `
             <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
-                <p style="color: #666; font-size: 10px;">Generado por Veta - veta.lat</p>
+                <p style="color: #666; font-size: 10px;">${t.reports.pdfFooter}</p>
             </div>
         `;
         wrapper.appendChild(footer);
@@ -102,7 +105,7 @@ export default function ReportDetailsPage() {
 
         const opt = {
             margin: 10,
-            filename: `reporte-${report.query.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.pdf`,
+            filename: `report-${report.query.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.pdf`,
             image: { type: 'jpeg' as const, quality: 0.98 },
             html2canvas: {
                 scale: 2,
@@ -123,7 +126,7 @@ export default function ReportDetailsPage() {
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
-        return date.toLocaleDateString('es-ES', {
+        return date.toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
             day: 'numeric',
             month: 'long',
             year: 'numeric',
@@ -144,14 +147,14 @@ export default function ReportDetailsPage() {
         return (
             <div className="min-h-screen flex items-center justify-center p-8">
                 <div className="text-center">
-                    <h2 className="text-xl font-bold text-white mb-2">Reporte No Encontrado</h2>
-                    <p className="text-gray-500 mb-6">{error || 'Este reporte no existe o fue eliminado.'}</p>
+                    <h2 className="text-xl font-bold text-white mb-2">{t.reports.notFound}</h2>
+                    <p className="text-gray-500 mb-6">{error || t.reports.notFoundDescription}</p>
                     <Link
                         href="/app/reports"
                         className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                     >
                         <ArrowLeft size={18} />
-                        Volver a Reportes
+                        {t.reports.back}
                     </Link>
                 </div>
             </div>
@@ -167,7 +170,7 @@ export default function ReportDetailsPage() {
                     className="inline-flex items-center gap-2 text-gray-400 hover:text-white text-sm mb-6 transition-colors"
                 >
                     <ArrowLeft size={16} />
-                    Volver a Reportes
+                    {t.reports.back}
                 </Link>
 
                 <div className="flex items-center justify-between">
@@ -177,7 +180,7 @@ export default function ReportDetailsPage() {
                         className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
                     >
                         <Download size={18} />
-                        Descargar PDF
+                        {t.reports.downloadPDF}
                     </button>
                 </div>
                 <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -186,10 +189,10 @@ export default function ReportDetailsPage() {
                         {formatDate(report.created_at)}
                     </span>
                     <span>•</span>
-                    <span>Búsqueda: "{report.query}"</span>
+                    <span>{t.reports.searchPrefix}: "{report.query}"</span>
                     <span>•</span>
                     <span className="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">
-                        {report.problem_count} problemas
+                        {report.problem_count} {t.reports.problems}
                     </span>
                 </div>
             </div>
@@ -203,7 +206,7 @@ export default function ReportDetailsPage() {
                 </div>
             ) : (
                 <div className="text-center py-16 text-gray-500">
-                    <p>No hay problemas guardados en este reporte.</p>
+                    <p>{t.reports.noProblems}</p>
                 </div>
             )}
         </div>

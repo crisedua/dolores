@@ -16,8 +16,12 @@ const supabase = createClient(
 // Hardcoded Pro users (same as frontend for consistency)
 const PRO_USER_EMAILS = ['ed@eduardoescalante.com', 'ed@acme.com', 'sicruzat1954@gmail.com'];
 
+import { translations } from '@/lib/translations';
+
 export async function POST(req: NextRequest) {
     const encoder = new TextEncoder();
+    const { query, lang = 'es' } = await req.json();
+    const t = (translations as any)[lang] || translations.es;
 
     // --- SERVER-SIDE USAGE ENFORCEMENT ---
     const authHeader = req.headers.get('authorization');
@@ -66,10 +70,10 @@ export async function POST(req: NextRequest) {
             .single();
 
         const searchCount = usage?.search_count || 0;
-        if (searchCount >= 1) {
-            console.log(`[API] ❌ User ${userId} blocked: ${searchCount}/1 searches used`);
+        if (searchCount >= 5) { // Updated to match usage.searchLimit (5)
+            console.log(`[API] ❌ User ${userId} blocked: ${searchCount}/5 searches used`);
             return new Response(
-                JSON.stringify({ error: 'Límite de búsquedas alcanzado. Actualiza a Pro para búsquedas ilimitadas.' }),
+                JSON.stringify({ error: t.upgradeModal.limitReached }),
                 { status: 403, headers: { 'Content-Type': 'application/json' } }
             );
         }
@@ -114,44 +118,29 @@ export async function POST(req: NextRequest) {
             };
 
             try {
-                const { query } = await req.json();
-                console.log(`[API] Received query: "${query}"`);
+                console.log(`[API] Received query: "${query}" (lang: ${lang})`);
 
                 const hasPerplexity = !!process.env.PERPLEXITY_API_KEY;
-                const keyPreview = process.env.PERPLEXITY_API_KEY ?
-                    `${process.env.PERPLEXITY_API_KEY.substring(0, 8)}...` : 'NOT SET';
-
-                console.log(`[API] PERPLEXITY_API_KEY status: ${hasPerplexity ? 'DETECTED' : 'NOT DETECTED'}`);
-                console.log(`[API] Key preview: ${keyPreview}`);
-
-                // Send visible debug info to frontend REMOVED
-                // sendUpdate(`[DEBUG] Perplexity: ${hasPerplexity ? '✓ HABILITADO' : '✗ DESHABILITADO (usando respaldo de Reddit)'}`, 'completed');
 
                 if (hasPerplexity) {
-                    // --------------------------------------------------------------------------
-                    // PATH A: PERPLEXITY AI RESEARCH (Fast & Reliable)
-                    // --------------------------------------------------------------------------
                     const { perplexitySearch } = await import('@/lib/perplexity');
 
-                    sendUpdate("Inicializando Motor de Investigación Global...", 'completed');
-                    const researchLabel = `Analizando la web en busca de puntos de dolor sobre "${query}"...`;
+                    sendUpdate(t.search.initializing, 'completed');
+                    const researchLabel = `${t.search.analyzingWeb} "${query}"...`;
                     sendUpdate(researchLabel, 'active');
 
                     console.log(`[API] Starting Perplexity search for: ${query}`);
 
-                    // Start heartbeat to keep connection alive and show activity
                     const heartbeat = setInterval(() => {
-                        console.log("[API] Sending heartbeat...");
-                        sendUpdate(researchLabel, 'active'); // Re-sending active status keeps UI alive
+                        sendUpdate(researchLabel, 'active');
                     }, 10000);
 
                     try {
                         const result = await perplexitySearch(query);
                         clearInterval(heartbeat);
 
-                        console.log("[API] Perplexity search completed successfully");
                         sendUpdate(researchLabel, 'completed');
-                        sendUpdate("Análisis completo. Generando reporte...", 'completed');
+                        sendUpdate(t.search.analysisComplete, 'completed');
 
                         const finalPayload = JSON.stringify({ type: 'result', data: result });
                         controller.enqueue(encoder.encode(finalPayload + '\n'));
@@ -169,13 +158,12 @@ export async function POST(req: NextRequest) {
 
                     // STEP 1: RESEARCH STRATEGY (Agentic Planner)
                     // --------------------------------------------------------------------------
-                    sendUpdate(`Generating research strategy for "${query}"...`, 'active');
+                    sendUpdate(`${t.search.initializing} agentic strategy...`, 'active');
                     const researchPlan = await planResearch(query); // Returns array of queries
                     console.log("[DEBUG] Research Plan Generated:", researchPlan);
-                    sendUpdate(`[DEBUG] Planner output: ${JSON.stringify(researchPlan)}`, 'completed');
+                    // sendUpdate(`[DEBUG] Planner output: ${JSON.stringify(researchPlan)}`, 'completed');
 
-                    sendUpdate(`Searching Reddit for ${researchPlan.length} queries...`, 'completed');
-                    sendUpdate(`Searching parallel (${researchPlan.length} queries)...`, 'active');
+                    sendUpdate(`${t.search.analyzingWeb} (reddit)...`, 'active');
 
                     // execute searches in parallel for the generated queries
                     const searchPromises = researchPlan.map(async (subQuery: string) => {
@@ -216,13 +204,11 @@ export async function POST(req: NextRequest) {
                     });
 
                     const searchResults = await Promise.all(searchPromises);
-                    sendUpdate(`Searching parallel (${researchPlan.length} queries)...`, 'completed');
 
                     let allSearchResults: any[] = [];
                     searchResults.forEach(res => {
                         if (res.results.length > 0) {
                             allSearchResults.push(...res.results);
-                            sendUpdate(`[DEBUG] Found ${res.results.length} for "${res.query}"`, 'active');
                         }
                     });
 
@@ -233,7 +219,7 @@ export async function POST(req: NextRequest) {
 
                     // FALLBACK: Hacker News Search (Last Resort)
                     if (uniqueResults.length === 0) {
-                        sendUpdate("[LAST RESORT] Trying Hacker News search...", 'active');
+                        sendUpdate("Trying backup sources...", 'active');
                         try {
                             const encodedQuery = encodeURIComponent(query);
                             // HN Algolia is public and reliable
@@ -253,20 +239,16 @@ export async function POST(req: NextRequest) {
                                     snippet: hit.title
                                 }));
                                 uniqueResults.push(...hnResults);
-                                sendUpdate(`[LAST RESORT] Found ${hnResults.length} Hacker News discussions.`, 'completed');
                             }
                         } catch (e: any) {
                             console.error("HN fallback failed", e);
-                            sendUpdate(`[LAST RESORT] HN search failed: ${e.message}`, 'active');
                         }
                     }
 
                     if (uniqueResults.length === 0) {
-                        sendError("No relevant discussions found. Try a broader topic.");
+                        sendError(t.search.noResults);
                         return;
                     }
-
-                    sendUpdate(`Found ${uniqueResults.length} unique discussion threads`, 'completed');
 
                     // --------------------------------------------------------------------------
                     // STEP 3: ANALYST SYNTHESIS (Market Research Analyst)
@@ -278,13 +260,11 @@ export async function POST(req: NextRequest) {
                         Content: ${(r.markdown || r.content || '').substring(0, 10000)}
                     `).join("\n\n");
 
-                    const analysisLabel = `Analyzing ${uniqueResults.length} discussions with Market Research Analyst...`;
-                    sendUpdate(analysisLabel, 'active');
+                    sendUpdate(t.search.analysisComplete, 'active');
 
                     const result = await synthesizePatterns(combinedMarkdown);
 
-                    sendUpdate(analysisLabel, 'completed');
-                    sendUpdate("Analysis complete. Generating report...", 'completed');
+                    sendUpdate(t.search.analysisComplete, 'completed');
 
                     // Final Result
                     const finalPayload = JSON.stringify({ type: 'result', data: result });

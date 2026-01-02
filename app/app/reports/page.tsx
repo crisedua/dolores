@@ -13,10 +13,13 @@ interface Report {
     created_at: string;
 }
 
+import { useTranslation } from '@/context/LanguageContext';
+
 export default function ReportsPage() {
     const [reports, setReports] = useState<Report[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const { user } = useAuth();
+    const { t, language } = useTranslation();
 
     useEffect(() => {
         if (user) {
@@ -30,7 +33,7 @@ export default function ReportsPage() {
         try {
             const { data, error } = await supabase
                 .from('saved_reports')
-                .select('id, title, query, problem_count, created_at') // Don't fetch heavy 'results' JSON for list
+                .select('id, title, query, problem_count, created_at')
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
@@ -58,7 +61,7 @@ export default function ReportsPage() {
 
     const formatDate = (dateStr: string) => {
         const date = new Date(dateStr);
-        return date.toLocaleDateString('es-ES', {
+        return date.toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
             day: 'numeric',
             month: 'short',
             year: 'numeric'
@@ -70,12 +73,12 @@ export default function ReportsPage() {
             {/* Header */}
             <div className="flex justify-between items-center mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-white mb-2">Reportes Guardados</h1>
-                    <p className="text-gray-500 text-sm">Tus análisis guardados para referencia futura.</p>
+                    <h1 className="text-2xl font-bold text-white mb-2">{t.reports.title}</h1>
+                    <p className="text-gray-500 text-sm">{t.reports.description}</p>
                 </div>
                 <div className="bg-[#1A1A1A] border border-[#333] px-4 py-2 rounded-full">
                     <span className="text-xs font-bold text-gray-300">
-                        {reports.length} {reports.length === 1 ? 'REPORTE' : 'REPORTES'}
+                        {reports.length} {t.reports.reportCount}
                     </span>
                 </div>
             </div>
@@ -90,13 +93,13 @@ export default function ReportsPage() {
                     <div className="w-16 h-16 rounded-full bg-[#222] flex items-center justify-center mx-auto mb-4">
                         <FileText size={24} className="text-gray-500" />
                     </div>
-                    <h3 className="text-lg font-semibold text-white mb-2">Sin reportes guardados</h3>
-                    <p className="text-gray-500 mb-6">Cuando guardes un análisis, aparecerá aquí.</p>
+                    <h3 className="text-lg font-semibold text-white mb-2">{t.reports.empty}</h3>
+                    <p className="text-gray-500 mb-6">{t.reports.emptyDescription}</p>
                     <Link
                         href="/app"
                         className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                     >
-                        Crear Nueva Búsqueda
+                        {t.reports.createSearch}
                         <ArrowRight size={18} />
                     </Link>
                 </div>
@@ -110,14 +113,14 @@ export default function ReportsPage() {
                             <div className="flex items-start justify-between">
                                 <div className="flex-1">
                                     <h3 className="text-lg font-semibold text-white mb-1">{report.title}</h3>
-                                    <p className="text-sm text-gray-400 mb-3">Búsqueda: "{report.query}"</p>
+                                    <p className="text-sm text-gray-400 mb-3">{t.reports.searchPrefix}: "{report.query}"</p>
                                     <div className="flex items-center gap-4 text-xs text-gray-500">
                                         <span className="flex items-center gap-1">
                                             <Calendar size={12} />
                                             {formatDate(report.created_at)}
                                         </span>
                                         <span className="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">
-                                            {report.problem_count} problemas
+                                            {report.problem_count} {t.reports.problems}
                                         </span>
                                     </div>
                                 </div>

@@ -88,9 +88,16 @@ function HomeContent() {
     setReportSaved(false);
 
     try {
+      // Get the session token for server-side auth
+      const { data: { session } } = await supabase.auth.getSession();
+
       const response = await fetch('/api/discover', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token && { 'Authorization': `Bearer ${session.access_token}` })
+        },
+        credentials: 'include', // Include cookies
         body: JSON.stringify({ query })
       });
 
@@ -146,8 +153,8 @@ function HomeContent() {
               console.log("Got results:", update.data);
               setData(update.data);
 
-              // Increment usage count for free users
-              await incrementUsage();
+              // NOTE: Usage is already incremented server-side in /api/discover
+              // Do NOT call incrementUsage() here - it would cause double counting!
 
               // Auto-save to history (with error handling)
               saveToHistory(query, update.data.problems?.length || 0).catch(err => {

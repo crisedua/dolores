@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Loader2, ArrowRight, Github } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export function AuthForm() {
@@ -112,16 +112,7 @@ export function AuthForm() {
                 </button>
             </div>
 
-            <div className="mt-8 border-t border-[#222] pt-6">
-                <p className="text-xs text-center text-gray-600 mb-4">O CONTINUAR CON</p>
-                <button
-                    type="button"
-                    className="w-full bg-[#1A1A1A] text-white font-medium py-3 rounded-xl border border-[#333] hover:bg-[#222] transition-colors flex items-center justify-center gap-2"
-                    onClick={() => alert("GitHub auth requires additional setup in Supabase dashboard.")}
-                >
-                    <Github size={20} /> GitHub
-                </button>
-            </div>
+
         </div>
     );
 }

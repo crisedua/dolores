@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setIsLoading(false);
 
             if (!session) {
-                router.push('/auth');
+                router.push('/');
             }
         });
 

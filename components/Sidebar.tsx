@@ -10,7 +10,8 @@ import {
     LogOut,
     X,
     Zap,
-    FileText
+    FileText,
+    Shield
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -106,6 +107,21 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                             />
                         </nav>
                     </div>
+
+                    {/* Admin Section - Only visible to admin */}
+                    {user?.email === 'ed@eduardoescalante.com' && (
+                        <div>
+                            <h3 className="text-xs font-semibold text-[#666] uppercase mb-3 px-2">Admin</h3>
+                            <nav className="space-y-1">
+                                <NavItem
+                                    href="/app/admin"
+                                    icon={<Shield size={18} />}
+                                    label="Panel Admin"
+                                    active={pathname === '/app/admin'}
+                                />
+                            </nav>
+                        </div>
+                    )}
                 </div>
 
                 {/* Footer / User */}

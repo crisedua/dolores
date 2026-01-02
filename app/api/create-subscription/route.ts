@@ -24,8 +24,8 @@ export async function POST(request: Request) {
                     title: 'Veta Pro - Suscripción Mensual',
                     description: 'Búsquedas ilimitadas de problemas de negocio',
                     quantity: 1,
-                    unit_price: 10,
-                    currency_id: 'USD'
+                    unit_price: 9900,
+                    currency_id: 'CLP'
                 }
             ],
             back_urls: {

@@ -149,9 +149,12 @@ Si el tema está en español, tradúcelo al inglés para buscar contenido (hay m
         }
 
         // All strategies failed
-        console.error('[Perplexity] All parsing strategies failed. Full content:');
-        console.error(content);
-        throw new Error('Perplexity returned invalid JSON format');
+        console.error('[Perplexity] ❌ All parsing strategies failed!');
+        console.error('[Perplexity] Response length:', content.length);
+        console.error('[Perplexity] First 500 chars:', content.substring(0, 500));
+        console.error('[Perplexity] Last 500 chars:', content.substring(Math.max(0, content.length - 500)));
+        console.error('[Perplexity] Full content:', content);
+        throw new Error(`Perplexity returned invalid JSON format. Response length: ${content.length} chars. See server logs for full response.`);
     } catch (error: any) {
         clearTimeout(timeoutId);
 

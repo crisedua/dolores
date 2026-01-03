@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Sidebar } from "@/components/Sidebar";
 import { useAuth } from "@/context/AuthContext";
 import { LogOut, Menu } from "lucide-react";
+import { useTranslation } from "@/context/LanguageContext";
 
 export default function DashboardLayout({
     children,
@@ -10,6 +11,7 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     const { user, signOut } = useAuth();
+    const { t } = useTranslation();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     return (
@@ -47,7 +49,7 @@ export default function DashboardLayout({
                                 className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                             >
                                 <LogOut size={16} />
-                                <span className="hidden sm:inline">Cerrar Sesión</span>
+                                <span className="hidden sm:inline">{t.sidebar.logout}</span>
                             </button>
                         </div>
                     </div>

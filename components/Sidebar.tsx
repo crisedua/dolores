@@ -34,7 +34,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     const { usage, subscription } = useSubscription();
     const { t, language, setLanguage } = useTranslation();
 
-    const planName = usage.isProUser ? 'Pro' : (language === 'es' ? 'Gratuito' : 'Free');
+    const planName = usage.isProUser ? t.common.pro : t.common.free;
     const usagePercentage = usage.isProUser ? 100 : (usage.search_count / usage.limit) * 100;
 
     const pathname = usePathname();

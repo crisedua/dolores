@@ -37,19 +37,6 @@ export function UpgradeModal({ isOpen, onClose, searchesUsed, searchLimit }: Upg
                     <p className="text-gray-400 mb-1">
                         {t.upgradeModal.usedSearches
                             .replace('{used}', searchesUsed.toString())
-                            .split('{limit}').map((part, i, arr) => (
-                                <span key={i}>
-                                    {part}
-                                    {i < arr.length - 1 && <span className="text-white font-semibold">{searchLimit}</span>}
-                                </span>
-                            ))}
-                        {/* More simple way if usedSearches just contains the whole string */}
-                        {/* {t.upgradeModal.usedSearches.replace('{used}', searchesUsed.toString()).replace('{limit}', searchLimit.toString())} */}
-                    </p>
-                    {/* Re-writing to be simpler and safer */}
-                    <p className="text-gray-400 mb-1">
-                        {t.upgradeModal.usedSearches
-                            .replace('{used}', searchesUsed.toString())
                             .replace('{limit}', searchLimit.toString())}
                     </p>
                     <p className="text-gray-500 text-sm mb-6">

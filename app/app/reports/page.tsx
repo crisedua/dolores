@@ -128,14 +128,14 @@ export default function ReportsPage() {
                                     <Link
                                         href={`/app/reports/${report.id}`}
                                         className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-all"
-                                        title="Ver Reporte"
+                                        title={t.reports.viewReport}
                                     >
                                         <Eye size={18} />
                                     </Link>
                                     <button
                                         onClick={() => deleteReport(report.id)}
                                         className="text-gray-400 hover:text-red-400 p-2 rounded-lg hover:bg-white/10 transition-all"
-                                        title="Eliminar"
+                                        title={t.reports.delete}
                                     >
                                         <Trash2 size={18} />
                                     </button>

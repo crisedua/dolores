@@ -80,7 +80,7 @@ export default function ReportDetailsPage() {
             <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #333;">
                 <h1 style="font-size: 24px; color: white; margin-bottom: 10px;">${t.reports.pdfHeader}</h1>
                 <p style="color: #888; font-size: 14px;">${t.reports.searchPrefix}: "${report.query}"</p>
-                <p style="color: #888; font-size: 12px;">Fecha: ${new Date(report.created_at).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US')} | ${report.problem_count} ${t.reports.problems}</p>
+                <p style="color: #888; font-size: 12px;">${t.reports.dateLabel}: ${new Date(report.created_at).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US')} | ${report.problem_count} ${t.reports.problems}</p>
             </div>
         `;
         wrapper.appendChild(header);

@@ -246,6 +246,47 @@ export const translations = {
             upgradeButton: 'Upgrade to Pro',
             backToDashboard: 'Back to dashboard',
         },
+        pricing: {
+            title1: 'Simple Plans,',
+            title2: 'Transparent Pricing',
+            subtitle: 'Start for free. Upgrade when you need more.',
+            free: {
+                title: 'Free',
+                price: '$0',
+                unit: '/month',
+                button: 'Start for Free',
+                features: [
+                    '1 search per month',
+                    'Full AI analysis',
+                    'No history',
+                ]
+            },
+            pro: {
+                title: 'Pro',
+                price: '$10',
+                oldPrice: '$39',
+                unit: '/month',
+                badge: 'MOST POPULAR',
+                offer: 'Launch Offer',
+                button: 'Upgrade to Pro',
+                features: [
+                    'Unlimited searches',
+                    'Full AI analysis',
+                    'Unlimited history',
+                    'Saved reports',
+                    'Priority support',
+                ]
+            },
+            faq: {
+                title: 'Frequently Asked Questions',
+                q1: 'Can I cancel at any time?',
+                a1: 'Yes, you can cancel your subscription at any time. It will not renew automatically.',
+                q2: 'What payment methods do you accept?',
+                a2: 'We accept credit/debit cards and other methods through MercadoPago.',
+                q3: 'Are there refunds?',
+                a3: 'We offer a full refund if you are not satisfied within the first 7 days.',
+            }
+        },
     },
     es: {
         common: {

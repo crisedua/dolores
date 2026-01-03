@@ -6,11 +6,14 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
+import { useTranslation } from '@/context/LanguageContext';
+
 function PricingContent() {
     const { user } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
     const [loading, setLoading] = useState(false);
+    const { t } = useTranslation();
 
     // Auto-trigger payment if user just signed up with upgrade intent
     useEffect(() => {
@@ -75,7 +78,7 @@ function PricingContent() {
                             href="/app"
                             className="text-gray-400 hover:text-white transition-colors"
                         >
-                            Dashboard
+                            {t.sidebar.discovery}
                         </Link>
                     )}
                 </div>
@@ -86,14 +89,14 @@ function PricingContent() {
                 <div className="max-w-5xl mx-auto">
                     <div className="text-center mb-16">
                         <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-                            Planes Simples,
+                            {t.pricing.title1}
                             <br />
                             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                                Precios Transparentes
+                                {t.pricing.title2}
                             </span>
                         </h1>
                         <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-                            Comienza gratis. Actualiza cuando necesites más.
+                            {t.pricing.subtitle}
                         </p>
                     </div>
 
@@ -101,70 +104,52 @@ function PricingContent() {
                     <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                         {/* Free Plan */}
                         <div className="bg-[#111] border border-[#222] rounded-2xl p-8 relative">
-                            <h3 className="text-2xl font-bold text-white mb-2">Gratuito</h3>
+                            <h3 className="text-2xl font-bold text-white mb-2">{t.pricing.free.title}</h3>
                             <div className="flex items-baseline gap-2 mb-6">
-                                <span className="text-4xl font-bold text-white">$0</span>
-                                <span className="text-gray-500">/mes</span>
+                                <span className="text-4xl font-bold text-white">{t.pricing.free.price}</span>
+                                <span className="text-gray-500">{t.pricing.free.unit}</span>
                             </div>
                             <ul className="space-y-4 mb-8">
-                                <li className="flex items-start gap-3">
-                                    <Check size={20} className="text-green-500 mt-0.5 shrink-0" />
-                                    <span className="text-gray-300">3 búsquedas por mes</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <Check size={20} className="text-green-500 mt-0.5 shrink-0" />
-                                    <span className="text-gray-300">Análisis completo con IA</span>
-                                </li>
-
+                                {t.pricing.free.features.map((feature: string, idx: number) => (
+                                    <li key={idx} className="flex items-start gap-3">
+                                        <Check size={20} className="text-green-500 mt-0.5 shrink-0" />
+                                        <span className="text-gray-300">{feature}</span>
+                                    </li>
+                                ))}
                             </ul>
                             <Link
                                 href={user ? '/app' : '/auth'}
                                 className="block w-full text-center bg-white/5 text-white px-6 py-3 rounded-lg font-medium hover:bg-white/10 transition-colors"
                             >
-                                Comenzar Gratis
+                                {t.pricing.free.button}
                             </Link>
                         </div>
 
                         {/* Pro Plan */}
                         <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 border-2 border-blue-500 rounded-2xl p-8 relative">
                             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                                <span className="bg-blue-600 text-white text-xs font-bold px-4 py-1 rounded-full">
-                                    MÁS POPULAR
+                                <span className="bg-blue-600 text-white text-xs font-bold px-4 py-1 rounded-full uppercase">
+                                    {t.pricing.pro.badge}
                                 </span>
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">Pro</h3>
+                            <h3 className="text-2xl font-bold text-white mb-2">{t.pricing.pro.title}</h3>
                             <div className="flex flex-col mb-6">
                                 <div className="flex items-baseline gap-2">
-                                    <span className="text-4xl font-bold text-white">$10</span>
-                                    <span className="text-xl text-gray-500 line-through">$39</span>
-                                    <span className="text-gray-400">/mes</span>
+                                    <span className="text-4xl font-bold text-white">{t.pricing.pro.price}</span>
+                                    <span className="text-xl text-gray-500 line-through">{t.pricing.pro.oldPrice}</span>
+                                    <span className="text-gray-400">{t.pricing.pro.unit}</span>
                                 </div>
                                 <span className="text-green-400 text-xs font-bold mt-1 uppercase tracking-wider">
-                                    Oferta de Lanzamiento
+                                    {t.pricing.pro.offer}
                                 </span>
                             </div>
                             <ul className="space-y-4 mb-8">
-                                <li className="flex items-start gap-3">
-                                    <Check size={20} className="text-blue-400 mt-0.5 shrink-0" />
-                                    <span className="text-white font-medium">Búsquedas ilimitadas</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <Check size={20} className="text-blue-400 mt-0.5 shrink-0" />
-                                    <span className="text-white font-medium">Análisis completo con IA</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <Check size={20} className="text-blue-400 mt-0.5 shrink-0" />
-                                    <span className="text-white font-medium">Historial ilimitado</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <Check size={20} className="text-blue-400 mt-0.5 shrink-0" />
-                                    <span className="text-white font-medium">Reportes guardados</span>
-                                </li>
-
-                                <li className="flex items-start gap-3">
-                                    <Check size={20} className="text-blue-400 mt-0.5 shrink-0" />
-                                    <span className="text-white font-medium">Soporte prioritario</span>
-                                </li>
+                                {t.pricing.pro.features.map((feature: string, idx: number) => (
+                                    <li key={idx} className="flex items-start gap-3">
+                                        <Check size={20} className="text-blue-400 mt-0.5 shrink-0" />
+                                        <span className="text-white font-medium">{feature}</span>
+                                    </li>
+                                ))}
                             </ul>
                             <button
                                 onClick={handleSubscribe}
@@ -174,11 +159,11 @@ function PricingContent() {
                                 {loading ? (
                                     <>
                                         <Loader2 size={20} className="animate-spin" />
-                                        Procesando...
+                                        {t.common.loading}
                                     </>
                                 ) : (
                                     <>
-                                        Actualizar a Pro
+                                        {t.pricing.pro.button}
                                         <ArrowRight size={20} />
                                     </>
                                 )}
@@ -188,24 +173,24 @@ function PricingContent() {
 
                     {/* FAQ */}
                     <div className="mt-20 max-w-2xl mx-auto">
-                        <h2 className="text-2xl font-bold text-white mb-8 text-center">Preguntas Frecuentes</h2>
+                        <h2 className="text-2xl font-bold text-white mb-8 text-center">{t.pricing.faq.title}</h2>
                         <div className="space-y-6">
                             <div className="bg-[#111] border border-[#222] rounded-xl p-6">
-                                <h3 className="text-white font-semibold mb-2">¿Puedo cancelar en cualquier momento?</h3>
+                                <h3 className="text-white font-semibold mb-2">{t.pricing.faq.q1}</h3>
                                 <p className="text-gray-400 text-sm">
-                                    Sí, puedes cancelar tu suscripción en cualquier momento. No se renovará automáticamente.
+                                    {t.pricing.faq.a1}
                                 </p>
                             </div>
                             <div className="bg-[#111] border border-[#222] rounded-xl p-6">
-                                <h3 className="text-white font-semibold mb-2">¿Qué métodos de pago aceptan?</h3>
+                                <h3 className="text-white font-semibold mb-2">{t.pricing.faq.q2}</h3>
                                 <p className="text-gray-400 text-sm">
-                                    Aceptamos tarjetas de crédito/débito y otros métodos a través de MercadoPago.
+                                    {t.pricing.faq.a2}
                                 </p>
                             </div>
                             <div className="bg-[#111] border border-[#222] rounded-xl p-6">
-                                <h3 className="text-white font-semibold mb-2">¿Hay reembolsos?</h3>
+                                <h3 className="text-white font-semibold mb-2">{t.pricing.faq.q3}</h3>
                                 <p className="text-gray-400 text-sm">
-                                    Ofrecemos reembolso completo si no estás satisfecho en los primeros 7 días.
+                                    {t.pricing.faq.a3}
                                 </p>
                             </div>
                         </div>

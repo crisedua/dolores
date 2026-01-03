@@ -1,3 +1,5 @@
+'use client';
+
 import { AuthForm } from '@/components/auth/AuthForm';
 import { Gem } from 'lucide-react';
 import { useTranslation } from '@/context/LanguageContext';

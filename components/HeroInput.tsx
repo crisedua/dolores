@@ -86,10 +86,10 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
                 <div className="mb-6">
                     <span className="block text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-3 text-center">👔 {t.hero.categories.professionals}</span>
                     <div className="flex flex-wrap justify-center gap-2">
-                        <button onClick={() => setQuery(t.hero.examples.freelancers)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Freelancers</button>
-                        <button onClick={() => setQuery(t.hero.examples.dentists)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Dentistas</button>
-                        <button onClick={() => setQuery(t.hero.examples.accountants)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Contadores</button>
-                        <button onClick={() => setQuery(t.hero.examples.realEstate)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Agentes Inmobiliarios</button>
+                        <button onClick={() => setQuery(t.hero.examples.freelancers)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">{t.hero.exampleLabels.freelancers}</button>
+                        <button onClick={() => setQuery(t.hero.examples.dentists)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">{t.hero.exampleLabels.dentists}</button>
+                        <button onClick={() => setQuery(t.hero.examples.accountants)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">{t.hero.exampleLabels.accountants}</button>
+                        <button onClick={() => setQuery(t.hero.examples.realEstate)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">{t.hero.exampleLabels.realEstate}</button>
                     </div>
                 </div>
 
@@ -97,10 +97,10 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
                 <div className="mb-6">
                     <span className="block text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-3 text-center">🏪 {t.hero.categories.smallBusiness}</span>
                     <div className="flex flex-wrap justify-center gap-2">
-                        <button onClick={() => setQuery(t.hero.examples.restaurants)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Restaurantes</button>
-                        <button onClick={() => setQuery(t.hero.examples.ecommerce)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">E-commerce</button>
-                        <button onClick={() => setQuery(t.hero.examples.gyms)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Gimnasios</button>
-                        <button onClick={() => setQuery(t.hero.examples.vets)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Veterinarias</button>
+                        <button onClick={() => setQuery(t.hero.examples.restaurants)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">{t.hero.exampleLabels.restaurants}</button>
+                        <button onClick={() => setQuery(t.hero.examples.ecommerce)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">{t.hero.exampleLabels.ecommerce}</button>
+                        <button onClick={() => setQuery(t.hero.examples.gyms)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">{t.hero.exampleLabels.gyms}</button>
+                        <button onClick={() => setQuery(t.hero.examples.vets)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">{t.hero.exampleLabels.vets}</button>
                     </div>
                 </div>
 
@@ -108,10 +108,10 @@ export function HeroInput({ onSearch, isLoading }: HeroInputProps) {
                 <div className="mb-6">
                     <span className="block text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-3 text-center">🎯 {t.hero.categories.lifestyle}</span>
                     <div className="flex flex-wrap justify-center gap-2">
-                        <button onClick={() => setQuery(t.hero.examples.remoteParents)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Padres Remotos</button>
-                        <button onClick={() => setQuery(t.hero.examples.digitalNomads)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Nómadas Digitales</button>
-                        <button onClick={() => setQuery(t.hero.examples.students)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Estudiantes</button>
-                        <button onClick={() => setQuery(t.hero.examples.creators)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">Creadores</button>
+                        <button onClick={() => setQuery(t.hero.examples.remoteParents)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">{t.hero.exampleLabels.remoteParents}</button>
+                        <button onClick={() => setQuery(t.hero.examples.digitalNomads)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">{t.hero.exampleLabels.digitalNomads}</button>
+                        <button onClick={() => setQuery(t.hero.examples.students)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">{t.hero.exampleLabels.students}</button>
+                        <button onClick={() => setQuery(t.hero.examples.creators)} className="px-4 py-2 rounded-full bg-[#1a1a1a] border border-[#333] text-gray-300 text-xs hover:border-purple-500 hover:text-purple-400 transition-all hover:bg-[#222]">{t.hero.exampleLabels.creators}</button>
                     </div>
                 </div>
             </div>

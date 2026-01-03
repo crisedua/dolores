@@ -50,6 +50,20 @@ export const translations = {
                 digitalNomads: 'digital nomad frustrations',
                 students: 'university student complaints',
                 creators: 'content creator problems',
+            },
+            exampleLabels: {
+                freelancers: 'Freelancers',
+                dentists: 'Dentists',
+                accountants: 'Accountants',
+                realEstate: 'Real Estate Agents',
+                restaurants: 'Restaurants',
+                ecommerce: 'E-commerce',
+                gyms: 'Gyms',
+                vets: 'Vet Clinics',
+                remoteParents: 'Remote Parents',
+                digitalNomads: 'Digital Nomads',
+                students: 'Students',
+                creators: 'Creators',
             }
         },
         landing: {
@@ -361,6 +375,20 @@ export const translations = {
                 digitalNomads: 'frustraciones de nómadas digitales',
                 students: 'quejas de estudiantes universitarios',
                 creators: 'problemas de creadores de contenido',
+            },
+            exampleLabels: {
+                freelancers: 'Freelancers',
+                dentists: 'Dentistas',
+                accountants: 'Contadores',
+                realEstate: 'Agentes Inmobiliarios',
+                restaurants: 'Restaurantes',
+                ecommerce: 'E-commerce',
+                gyms: 'Gimnasios',
+                vets: 'Veterinarias',
+                remoteParents: 'Padres Remotos',
+                digitalNomads: 'Nómadas Digitales',
+                students: 'Estudiantes',
+                creators: 'Creadores',
             }
         },
         landing: {

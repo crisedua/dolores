@@ -533,6 +533,47 @@ export const translations = {
             upgradeButton: 'Actualizar a Pro',
             backToDashboard: 'Volver al dashboard',
         },
+        pricing: {
+            title1: 'Planes Simples,',
+            title2: 'Precios Transparentes',
+            subtitle: 'Comienza gratis. Actualiza cuando necesites más.',
+            free: {
+                title: 'Gratuito',
+                price: '$0',
+                unit: '/mes',
+                button: 'Comenzar Gratis',
+                features: [
+                    '1 búsqueda por mes',
+                    'Análisis completo con IA',
+                    'Sin historial',
+                ]
+            },
+            pro: {
+                title: 'Pro',
+                price: '$10',
+                oldPrice: '$39',
+                unit: '/mes',
+                badge: 'MÁS POPULAR',
+                offer: 'Oferta de Lanzamiento',
+                button: 'Actualizar a Pro',
+                features: [
+                    'Búsquedas ilimitadas',
+                    'Análisis completo con IA',
+                    'Historial ilimitado',
+                    'Reportes guardados',
+                    'Soporte prioritario',
+                ]
+            },
+            faq: {
+                title: 'Preguntas Frecuentes',
+                q1: '¿Puedo cancelar en cualquier momento?',
+                a1: 'Sí, puedes cancelar tu suscripción en cualquier momento. No se renovará automáticamente.',
+                q2: '¿Qué métodos de pago aceptan?',
+                a2: 'Aceptamos tarjetas de crédito/débito y otros métodos a través de MercadoPago.',
+                q3: '¿Hay reembolsos?',
+                a3: 'Ofrecemos reembolso completo si no estás satisfecho en los primeros 7 días.',
+            }
+        },
     },
 };
 

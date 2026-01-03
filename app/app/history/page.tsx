@@ -1,9 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Search, Calendar, ArrowRight, Trash2 } from 'lucide-react';
+import { Search, Calendar, ArrowRight, Trash2, Lock, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
+import { useSubscription } from '@/hooks/useSubscription';
 
 interface HistoryItem {
     id: string;
@@ -18,15 +19,21 @@ export default function HistoryPage() {
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const { user } = useAuth();
+    const { usage } = useSubscription();
     const { t, language } = useTranslation();
 
     useEffect(() => {
         if (user) {
-            fetchHistory();
+            // Only fetch history for Pro users
+            if (usage.isProUser) {
+                fetchHistory();
+            } else {
+                setIsLoading(false);
+            }
         } else {
             if (user === null) setIsLoading(false);
         }
-    }, [user]);
+    }, [user, usage.isProUser]);
 
     const fetchHistory = async () => {
         try {
@@ -106,6 +113,21 @@ export default function HistoryPage() {
             {isLoading ? (
                 <div className="flex items-center justify-center h-64">
                     <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+            ) : !usage.isProUser ? (
+                <div className="text-center py-16">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30 flex items-center justify-center mx-auto mb-4">
+                        <Lock size={28} className="text-purple-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-2">{t.history.proOnly}</h3>
+                    <p className="text-gray-500 mb-6">{t.history.upgradeToSee}</p>
+                    <Link
+                        href="/pricing"
+                        className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                    >
+                        <Zap size={18} />
+                        {t.sidebar.upgrade}
+                    </Link>
                 </div>
             ) : history.length === 0 ? (
                 <div className="text-center py-16">

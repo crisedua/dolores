@@ -178,6 +178,8 @@ export const translations = {
             emptyDescription: 'Your searches will appear here after you perform one.',
             startSearch: 'Start Search',
             resultsFound: 'problems found',
+            proOnly: 'History is available only for Pro users.',
+            upgradeToSee: 'Upgrade to Pro to access your search history.',
         },
         reports: {
             title: 'Saved Reports',
@@ -422,6 +424,8 @@ export const translations = {
             emptyDescription: 'Tus búsquedas aparecerán aquí después de realizar una.',
             startSearch: 'Iniciar Búsqueda',
             resultsFound: 'problemas encontrados',
+            proOnly: 'El historial solo está disponible para usuarios Pro.',
+            upgradeToSee: 'Actualizar a Pro para acceder a tu historial.',
         },
         reports: {
             title: 'Reportes Guardados',

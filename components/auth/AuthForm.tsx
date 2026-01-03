@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Loader2, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from '@/context/LanguageContext';
 
 export function AuthForm() {
     const [isLogin, setIsLogin] = useState(true);
@@ -11,6 +12,7 @@ export function AuthForm() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const { t } = useTranslation();
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -37,7 +39,7 @@ export function AuthForm() {
                     router.push('/');
                 } else {
                     // Otherwise, we still need to verify
-                    alert('Check your email for the confirmation link!');
+                    alert(t.auth.checkEmail);
                 }
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,16 +70,16 @@ export function AuthForm() {
         <div className="w-full max-w-md p-8 bg-[#0F0F0F] border border-[#222] rounded-2xl shadow-2xl">
             <div className="mb-8 text-center">
                 <h1 className="text-2xl font-bold text-white mb-2">
-                    {isLogin ? 'Bienvenido de nuevo' : 'Crear cuenta'}
+                    {isLogin ? t.auth.welcomeBack : t.auth.createAccount}
                 </h1>
                 <p className="text-gray-500 text-sm">
-                    {isLogin ? 'Ingresa tus datos para acceder.' : 'Comienza a descubrir oportunidades hoy.'}
+                    {isLogin ? t.auth.loginDescription : t.auth.signupDescription}
                 </p>
             </div>
 
             <form onSubmit={handleAuth} className="space-y-4">
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Correo Electrónico</label>
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.auth.email}</label>
                     <input
                         type="email"
                         value={email}
@@ -89,7 +91,7 @@ export function AuthForm() {
                 </div>
 
                 <div>
-                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Contraseña</label>
+                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.auth.password}</label>
                     <input
                         type="password"
                         value={password}
@@ -113,7 +115,7 @@ export function AuthForm() {
                 >
                     {loading ? <Loader2 className="animate-spin" size={20} /> : (
                         <>
-                            {isLogin ? 'Iniciar Sesión' : 'Registrarse'} <ArrowRight size={18} />
+                            {isLogin ? t.auth.login : t.auth.signup} <ArrowRight size={18} />
                         </>
                     )}
                 </button>
@@ -124,12 +126,12 @@ export function AuthForm() {
                     onClick={() => setIsLogin(!isLogin)}
                     className="text-sm text-gray-500 hover:text-white transition-colors"
                 >
-                    {isLogin ? "¿No tienes cuenta? Regístrate" : '¿Ya tienes cuenta? Inicia sesión'}
+                    {isLogin ? t.auth.noAccount : t.auth.hasAccount}
                 </button>
             </div>
 
             <div className="mt-8 border-t border-[#222] pt-6">
-                <p className="text-xs text-center text-gray-600 mb-4 uppercase tracking-widest">O continuar con</p>
+                <p className="text-xs text-center text-gray-600 mb-4 uppercase tracking-widest">{t.auth.orContinueWith}</p>
                 <button
                     type="button"
                     onClick={handleGoogleLogin}
@@ -157,8 +159,6 @@ export function AuthForm() {
                     Google
                 </button>
             </div>
-
-
         </div>
     );
 }

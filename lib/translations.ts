@@ -287,6 +287,21 @@ export const translations = {
                 a3: 'We offer a full refund if you are not satisfied within the first 7 days.',
             }
         },
+        auth: {
+            discoverOpportunities: 'Discover Opportunities',
+            welcomeBack: 'Welcome back',
+            loginDescription: 'Enter your details to access.',
+            createAccount: 'Create account',
+            signupDescription: 'Start discovering opportunities today.',
+            email: 'Email Address',
+            password: 'Password',
+            login: 'Login',
+            signup: 'Sign Up',
+            noAccount: "Don't have an account? Sign Up",
+            hasAccount: 'Already have an account? Login',
+            orContinueWith: 'Or continue with',
+            checkEmail: 'Check your email for the confirmation link!',
+        },
     },
     es: {
         common: {
@@ -573,6 +588,21 @@ export const translations = {
                 q3: '¿Hay reembolsos?',
                 a3: 'Ofrecemos reembolso completo si no estás satisfecho en los primeros 7 días.',
             }
+        },
+        auth: {
+            discoverOpportunities: 'Descubre Oportunidades',
+            welcomeBack: 'Bienvenido de nuevo',
+            loginDescription: 'Ingresa tus datos para acceder.',
+            createAccount: 'Crear cuenta',
+            signupDescription: 'Comienza a descubrir oportunidades hoy.',
+            email: 'Correo Electrónico',
+            password: 'Contraseña',
+            login: 'Iniciar Sesión',
+            signup: 'Registrarse',
+            noAccount: "¿No tienes cuenta? Regístrate",
+            hasAccount: '¿Ya tienes cuenta? Inicia sesión',
+            orContinueWith: 'O continuar con',
+            checkEmail: '¡Revisa tu correo para el enlace de confirmación!',
         },
     },
 };

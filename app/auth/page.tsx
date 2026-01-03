@@ -1,7 +1,10 @@
 import { AuthForm } from '@/components/auth/AuthForm';
 import { Gem } from 'lucide-react';
+import { useTranslation } from '@/context/LanguageContext';
 
 export default function AuthPage() {
+    const { t } = useTranslation();
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-black relative">
             {/* Background Elements */}
@@ -18,7 +21,9 @@ export default function AuthPage() {
                     <div className="text-3xl font-bold text-white mb-2">
                         Veta
                     </div>
-                    <div className="text-gray-500 text-sm tracking-widest uppercase font-bold">Descubre Oportunidades</div>
+                    <div className="text-gray-500 text-sm tracking-widest uppercase font-bold">
+                        {t.auth.discoverOpportunities}
+                    </div>
                 </div>
 
                 <AuthForm />

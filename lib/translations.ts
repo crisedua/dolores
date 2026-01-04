@@ -280,8 +280,8 @@ export const translations = {
                 button: 'Start for Free',
                 features: [
                     '1 search per month',
-                    'Full AI analysis',
-                    'No history',
+                    'Preview analysis only',
+                    'Key metrics locked',
                 ]
             },
             pro: {
@@ -638,8 +638,8 @@ export const translations = {
                 button: 'Comenzar Gratis',
                 features: [
                     '1 búsqueda por mes',
-                    'Análisis completo con IA',
-                    'Sin historial',
+                    'Análisis preview',
+                    'Métricas clave bloqueadas',
                 ]
             },
             pro: {

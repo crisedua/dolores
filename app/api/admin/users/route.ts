@@ -29,8 +29,11 @@ export async function GET(req: NextRequest) {
             return Response.json({ error: 'Admin access required' }, { status: 403 });
         }
 
-        // Fetch all users from auth.users
-        const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+        // Fetch all users from auth.users (with pagination to get all)
+        const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers({
+            page: 1,
+            perPage: 1000
+        });
 
         if (authError) {
             console.error('Error fetching users:', authError);

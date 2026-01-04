@@ -173,10 +173,8 @@ function HomeContent() {
               if (!usage.isProUser) {
                 analytics.searchCompletedFree(query, update.data.problems?.length || 0);
                 setHasCompletedFirstSearch(true);
-                // Show first search paywall for free users after a brief delay
-                setTimeout(() => {
-                  setShowFirstSearchPaywall(true);
-                }, 1500);
+                // Let users see results with blurred Pro content
+                // Paywall only shows on second search attempt or locked content clicks
               }
 
               // NOTE: Usage is already incremented server-side in /api/discover

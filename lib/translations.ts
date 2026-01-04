@@ -9,7 +9,7 @@ export const translations = {
             cancel: 'Cancel',
             search: 'Search',
             logout: 'Log Out',
-            upgrade: 'Upgrade to Pro',
+            upgrade: 'Validate before building',
             pro: 'Pro Plan',
             free: 'Free Plan',
             errorLabel: 'Error',
@@ -156,7 +156,7 @@ export const translations = {
             searches: 'Searches',
             unlimited: 'Unlimited Searches',
             logout: 'Log Out',
-            upgrade: 'Upgrade to Pro',
+            upgrade: 'Validate before building',
             guest: 'Guest User',
             plan: 'Plan',
         },
@@ -266,7 +266,7 @@ export const translations = {
             benefit4: 'Priority support',
             priceLabel: '/month',
             launchOffer: 'Launch Offer',
-            upgradeButton: 'Upgrade to Pro',
+            upgradeButton: 'Validate before building',
             backToDashboard: 'Back to dashboard',
         },
         pricing: {
@@ -291,7 +291,7 @@ export const translations = {
                 unit: '/month',
                 badge: 'MOST POPULAR',
                 offer: 'Launch Offer',
-                button: 'Upgrade to Pro',
+                button: 'Unlock decision',
                 features: [
                     'Unlimited searches',
                     'Full AI analysis',
@@ -325,6 +325,39 @@ export const translations = {
             orContinueWith: 'Or continue with',
             checkEmail: 'Check your email for the confirmation link!',
         },
+        paywalls: {
+            firstSearch: {
+                title: 'You found a real problem.',
+                subtitle: 'Most founders stop here… and start guessing.',
+                bullet1: 'They build without knowing if anyone will pay',
+                bullet2: 'They waste weeks on mediocre ideas',
+                bullet3: 'They launch without customers',
+                ctaDescription: 'Veta Pro shows you if this problem is worth your time.',
+                primaryButton: 'Unlock Pro – Build with evidence',
+                secondaryButton: 'Back to start'
+            },
+            comparison: {
+                headline: 'One problem is not a startup.\nThe best problem is.',
+                description: 'Pro lets you compare niches and choose where to start.',
+                button: 'Compare with Pro'
+            },
+            founderNextSteps: {
+                title: 'What do founders do after this?',
+                badSteps: ['Guess features', 'Build too much', 'Launch to nobody'],
+                goodSteps: ['Validate payment before building', 'Define minimum MVP', 'Go straight to first customers'],
+                cta: 'See the full plan with Pro'
+            },
+            earlyAccess: {
+                badge: '🎯 Early access — price goes up with more users',
+                tooltip: 'Early users get priority access and direct feedback.'
+            },
+            locked: {
+                whoPaysBuyer: 'Who pays for this',
+                firstCustomers: 'Where to find first customers',
+                mvpPlan: '7-day MVP plan',
+                unlockWithPro: 'Unlock with Pro'
+            }
+        },
     },
     es: {
         common: {
@@ -334,7 +367,7 @@ export const translations = {
             cancel: 'Cancelar',
             search: 'Buscar',
             logout: 'Cerrar Sesión',
-            upgrade: 'Actualizar a Pro',
+            upgrade: 'Validar antes de construir',
             pro: 'Plan Pro',
             free: 'Plan Gratuito',
             errorLabel: 'Error',
@@ -481,7 +514,7 @@ export const translations = {
             searches: 'Búsquedas',
             unlimited: 'Búsquedas Ilimitadas',
             logout: 'Cerrar Sesión',
-            upgrade: 'Actualizar a Pro',
+            upgrade: 'Validar antes de construir',
             guest: 'Invitado',
             plan: 'Plan',
         },
@@ -591,7 +624,7 @@ export const translations = {
             benefit4: 'Soporte prioritario',
             priceLabel: '/mes',
             launchOffer: 'Oferta de Lanzamiento',
-            upgradeButton: 'Actualizar a Pro',
+            upgradeButton: 'Validar antes de construir',
             backToDashboard: 'Volver al dashboard',
         },
         pricing: {
@@ -616,7 +649,7 @@ export const translations = {
                 unit: '/mes',
                 badge: 'MÁS POPULAR',
                 offer: 'Oferta de Lanzamiento',
-                button: 'Actualizar a Pro',
+                button: 'Desbloquear decisión',
                 features: [
                     'Búsquedas ilimitadas',
                     'Análisis completo con IA',
@@ -649,6 +682,39 @@ export const translations = {
             hasAccount: '¿Ya tienes cuenta? Inicia sesión',
             orContinueWith: 'O continuar con',
             checkEmail: '¡Revisa tu correo para el enlace de confirmación!',
+        },
+        paywalls: {
+            firstSearch: {
+                title: 'Encontraste un problema real.',
+                subtitle: 'La mayoría de los founders se queda aquí… y empieza a adivinar.',
+                bullet1: 'Construyen sin saber si alguien pagará',
+                bullet2: 'Pierden semanas en ideas mediocres',
+                bullet3: 'Lanzan sin clientes',
+                ctaDescription: 'Veta Pro te muestra si este problema vale tu tiempo.',
+                primaryButton: 'Desbloquear Pro – Construir con evidencia',
+                secondaryButton: 'Volver al inicio'
+            },
+            comparison: {
+                headline: 'Un problema no es una startup.\nEl mejor problema, sí.',
+                description: 'Pro te permite comparar nichos y elegir dónde empezar.',
+                button: 'Comparar con Pro'
+            },
+            founderNextSteps: {
+                title: '¿Qué hacen los founders después de esto?',
+                badSteps: ['Adivinar features', 'Construir demasiado', 'Lanzar a nadie'],
+                goodSteps: ['Validar pago antes de construir', 'Definir MVP mínimo', 'Ir directo a primeros clientes'],
+                cta: 'Ver el plan completo con Pro'
+            },
+            earlyAccess: {
+                badge: '🎯 Acceso early — precio sube con más usuarios',
+                tooltip: 'Los primeros usuarios tienen acceso preferente y feedback directo.'
+            },
+            locked: {
+                whoPaysBuyer: 'Quién paga por esto',
+                firstCustomers: 'Dónde encontrar primeros clientes',
+                mvpPlan: 'Plan MVP de 7 días',
+                unlockWithPro: 'Desbloquear con Pro'
+            }
         },
     },
 };

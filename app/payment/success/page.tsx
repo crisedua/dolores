@@ -1,8 +1,19 @@
 'use client';
 import Link from 'next/link';
 import { CheckCircle, ArrowRight } from 'lucide-react';
+import { useEffect } from 'react';
+import { analytics } from '@/lib/analytics';
+import { useAuth } from '@/context/AuthContext';
 
 export default function PaymentSuccessPage() {
+    const { user } = useAuth();
+
+    useEffect(() => {
+        // Track successful upgrade
+        if (user?.id) {
+            analytics.upgradeCompleted(user.id);
+        }
+    }, [user]);
     return (
         <div className="min-h-screen bg-black flex items-center justify-center p-6">
             <div className="max-w-md w-full text-center">

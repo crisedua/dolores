@@ -1,20 +1,26 @@
 import { createClient } from '@supabase/supabase-js';
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY! // Use service role for server-side
-);
+// Lazy initialization to avoid build-time errors with server-only env vars
+function getSupabaseAdmin() {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+}
 
-// Initialize MercadoPago client
-const mpClient = new MercadoPagoConfig({
-    accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!,
-    options: { timeout: 5000 }
-});
-
-const paymentApi = new Payment(mpClient);
+function getMercadoPagoPaymentApi() {
+    const mpClient = new MercadoPagoConfig({
+        accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!,
+        options: { timeout: 5000 }
+    });
+    return new Payment(mpClient);
+}
 
 export async function POST(request: Request) {
+    const supabase = getSupabaseAdmin();
+    const paymentApi = getMercadoPagoPaymentApi();
+
     try {
         const body = await request.json();
 

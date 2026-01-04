@@ -10,6 +10,10 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/lib/supabase';
 import { useSubscription } from '@/hooks/useSubscription';
 import { UpgradeModal } from '@/components/UpgradeModal';
+import { FirstSearchPaywall } from '@/components/FirstSearchPaywall';
+import { ComparisonPaywall } from '@/components/ComparisonPaywall';
+import { FounderNextSteps } from '@/components/FounderNextSteps';
+import { analytics } from '@/lib/analytics';
 
 import { useTranslation } from '@/context/LanguageContext';
 
@@ -21,6 +25,9 @@ function HomeContent() {
   const [currentQuery, setCurrentQuery] = useState('');
   const [reportSaved, setReportSaved] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showFirstSearchPaywall, setShowFirstSearchPaywall] = useState(false);
+  const [showComparisonPaywall, setShowComparisonPaywall] = useState(false);
+  const [hasCompletedFirstSearch, setHasCompletedFirstSearch] = useState(false);
   const { user } = useAuth();
   const { usage, incrementUsage } = useSubscription();
   const { t, language } = useTranslation();
@@ -77,7 +84,13 @@ function HomeContent() {
   };
 
   const handleSearch = async (query: string) => {
-    // Check if user can search
+    // For free users who already completed their first search, show comparison paywall
+    if (!usage.isProUser && hasCompletedFirstSearch) {
+      setShowComparisonPaywall(true);
+      return;
+    }
+
+    // Check if user can search (limit reached)
     if (!usage.canSearch) {
       setShowUpgradeModal(true);
       return;
@@ -156,6 +169,16 @@ function HomeContent() {
               console.log("Got results:", update.data);
               setData(update.data);
 
+              // Track analytics for free users
+              if (!usage.isProUser) {
+                analytics.searchCompletedFree(query, update.data.problems?.length || 0);
+                setHasCompletedFirstSearch(true);
+                // Show first search paywall for free users after a brief delay
+                setTimeout(() => {
+                  setShowFirstSearchPaywall(true);
+                }, 1500);
+              }
+
               // NOTE: Usage is already incremented server-side in /api/discover
               // Do NOT call incrementUsage() here - it would cause double counting!
 
@@ -192,6 +215,19 @@ function HomeContent() {
     }
   };
 
+  const handleFirstSearchPaywallClose = () => {
+    setShowFirstSearchPaywall(false);
+    // Reset to initial state
+    setData(null);
+    setSearchSteps([]);
+    setIsLoading(false);
+    setCurrentQuery('');
+  };
+
+  const handleComparisonPaywallClose = () => {
+    setShowComparisonPaywall(false);
+  };
+
   const currentDate = new Date().toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
     month: 'short',
     year: 'numeric'
@@ -205,6 +241,18 @@ function HomeContent() {
         onClose={() => setShowUpgradeModal(false)}
         searchesUsed={usage.search_count}
         searchLimit={usage.limit}
+      />
+
+      {/* First Search Paywall - Blocking */}
+      <FirstSearchPaywall
+        isOpen={showFirstSearchPaywall}
+        onClose={handleFirstSearchPaywallClose}
+      />
+
+      {/* Comparison Paywall - For second search attempts */}
+      <ComparisonPaywall
+        isOpen={showComparisonPaywall}
+        onClose={handleComparisonPaywallClose}
       />
 
       {/* Dashboard Header - Only show when we have results */}
@@ -305,10 +353,17 @@ function HomeContent() {
               {data.problems
                 .sort((a: any, b: any) => (b.signalScore || 0) - (a.signalScore || 0))
                 .map((p: any) => (
-                  <ProblemCard key={p.id} problem={p} />
+                  <ProblemCard
+                    key={p.id}
+                    problem={p}
+                    isProUser={usage.isProUser}
+                  />
                 ))
               }
             </div>
+
+            {/* Founder Next Steps Section */}
+            <FounderNextSteps isProUser={usage.isProUser} />
           </div>
         </div>
       )}

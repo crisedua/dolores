@@ -7,11 +7,13 @@ import { planResearch, extractSignals, synthesizePatterns } from '@/lib/openai';
 export const maxDuration = 120;
 export const dynamic = 'force-dynamic';
 
-// Server-side Supabase client
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Lazy initialization to avoid build-time errors with server-only env vars
+function getSupabaseAdmin() {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+}
 
 // Hardcoded Pro users (same as frontend for consistency)
 const PRO_USER_EMAILS = ['ed@eduardoescalante.com', 'ed@acme.com', 'sicruzat1954@gmail.com'];
@@ -19,6 +21,7 @@ const PRO_USER_EMAILS = ['ed@eduardoescalante.com', 'ed@acme.com', 'sicruzat1954
 import { translations } from '@/lib/translations';
 
 export async function POST(req: NextRequest) {
+    const supabase = getSupabaseAdmin();
     const encoder = new TextEncoder();
     const { query, lang = 'es' } = await req.json();
     const t = (translations as any)[lang] || translations.es;

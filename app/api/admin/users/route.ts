@@ -1,15 +1,20 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest } from 'next/server';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Lazy initialization to avoid build-time errors with server-only env vars
+function getSupabaseAdmin() {
+    return createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+}
 
 // Admin emails allowed to access this endpoint
 const ADMIN_EMAILS = ['ed@eduardoescalante.com'];
 
 export async function GET(req: NextRequest) {
+    const supabase = getSupabaseAdmin();
+
     try {
         // Verify admin access via auth header
         const authHeader = req.headers.get('authorization');
@@ -45,15 +50,16 @@ export async function GET(req: NextRequest) {
             .eq('month_year', currentMonth);
 
         // Combine user data with subscription and usage
-        const users = authUsers.users.map(user => {
-            const subscription = subscriptions?.find(s => s.user_id === user.id);
-            const userUsage = usage?.find(u => u.user_id === user.id);
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        const users = authUsers.users.map((authUser: any) => {
+            const subscription = subscriptions?.find((s: any) => s.user_id === authUser.id);
+            const userUsage = usage?.find((u: any) => u.user_id === authUser.id);
 
             return {
-                id: user.id,
-                email: user.email,
-                created_at: user.created_at,
-                last_sign_in_at: user.last_sign_in_at,
+                id: authUser.id,
+                email: authUser.email,
+                created_at: authUser.created_at,
+                last_sign_in_at: authUser.last_sign_in_at,
                 plan_type: subscription?.plan_type || 'free',
                 subscription_status: subscription?.status || 'none',
                 search_count: userUsage?.search_count || 0
@@ -63,10 +69,11 @@ export async function GET(req: NextRequest) {
         // Calculate stats
         const stats = {
             total_users: users.length,
-            pro_users: users.filter(u => u.plan_type === 'pro').length,
-            free_users: users.filter(u => u.plan_type !== 'pro').length,
-            total_searches_this_month: usage?.reduce((sum, u) => sum + (u.search_count || 0), 0) || 0
+            pro_users: users.filter((u: any) => u.plan_type === 'pro').length,
+            free_users: users.filter((u: any) => u.plan_type !== 'pro').length,
+            total_searches_this_month: usage?.reduce((sum: number, u: any) => sum + (u.search_count || 0), 0) || 0
         };
+        /* eslint-enable @typescript-eslint/no-explicit-any */
 
         return Response.json({ users, stats });
 
@@ -77,6 +84,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+    const supabase = getSupabaseAdmin();
+
     try {
         // Verify admin access
         const authHeader = req.headers.get('authorization');

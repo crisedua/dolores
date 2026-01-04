@@ -7,6 +7,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { useTranslation } from '@/context/LanguageContext';
+import { EarlyAccessBadge } from '@/components/EarlyAccessBadge';
+import { analytics } from '@/lib/analytics';
 
 function PricingContent() {
     const { user } = useAuth();
@@ -29,6 +31,9 @@ function PricingContent() {
     }, [user, searchParams]);
 
     const handleSubscribe = async () => {
+        // Track upgrade click
+        analytics.upgradeClicked('pricing_page');
+
         if (!user) {
             // Redirect to auth with return URL to complete payment after signup
             router.push('/auth?returnTo=/pricing&action=subscribe');
@@ -168,6 +173,10 @@ function PricingContent() {
                                     </>
                                 )}
                             </button>
+                            {/* Early Access Badge */}
+                            <div className="flex justify-center mt-4">
+                                <EarlyAccessBadge />
+                            </div>
                         </div>
                     </div>
 

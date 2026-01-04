@@ -1,6 +1,11 @@
 'use client';
 import Link from 'next/link';
 import { X, Zap, ArrowRight } from 'lucide-react';
+import { useEffect } from 'react';
+
+import { useTranslation } from '@/context/LanguageContext';
+import { EarlyAccessBadge } from './EarlyAccessBadge';
+import { analytics } from '@/lib/analytics';
 
 interface UpgradeModalProps {
     isOpen: boolean;
@@ -9,11 +14,20 @@ interface UpgradeModalProps {
     searchLimit: number;
 }
 
-import { useTranslation } from '@/context/LanguageContext';
-
 export function UpgradeModal({ isOpen, onClose, searchesUsed, searchLimit }: UpgradeModalProps) {
     const { t } = useTranslation();
+
+    useEffect(() => {
+        if (isOpen) {
+            analytics.paywallViewed('limit_reached');
+        }
+    }, [isOpen]);
+
     if (!isOpen) return null;
+
+    const handleUpgradeClick = () => {
+        analytics.upgradeClicked('upgrade_modal');
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
@@ -77,8 +91,14 @@ export function UpgradeModal({ isOpen, onClose, searchesUsed, searchLimit }: Upg
                         </div>
                     </div>
 
+                    {/* Early Access Badge */}
+                    <div className="flex justify-center mb-4">
+                        <EarlyAccessBadge />
+                    </div>
+
                     <Link
                         href="/pricing"
+                        onClick={handleUpgradeClick}
                         className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
                     >
                         {t.upgradeModal.upgradeButton}

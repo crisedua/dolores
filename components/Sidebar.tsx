@@ -16,6 +16,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { ReactNode } from 'react';
+import { EarlyAccessBadge } from './EarlyAccessBadge';
 
 interface SidebarProps {
     isOpen?: boolean;
@@ -174,15 +175,19 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                         </div>
                     </div>
 
-                    {/* Upgrade Button - Only for Free Users */}
                     {!usage.isProUser && (
-                        <Link
-                            href="/pricing"
-                            className="mt-3 w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2"
-                        >
-                            <Zap size={14} />
-                            {t.sidebar.upgrade}
-                        </Link>
+                        <div className="mt-3 space-y-2">
+                            <Link
+                                href="/pricing"
+                                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2"
+                            >
+                                <Zap size={14} />
+                                {t.sidebar.upgrade}
+                            </Link>
+                            <div className="flex justify-center transform scale-90">
+                                <EarlyAccessBadge />
+                            </div>
+                        </div>
                     )}
 
                     <button

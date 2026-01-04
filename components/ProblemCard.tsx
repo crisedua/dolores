@@ -372,22 +372,24 @@ function LockedSection({ title, icon, onClick, unlockText }: LockedSectionProps)
             onClick={onClick}
             className="relative bg-[#111] rounded-xl p-6 border border-[#222] overflow-hidden group hover:border-blue-500/30 transition-all"
         >
-            {/* Blurred fake content */}
-            <div className="blur-sm select-none">
-                <h4 className="flex items-center gap-2 text-gray-400 text-xs font-bold tracking-widest uppercase mb-3">
-                    {icon} {title}
-                </h4>
+            {/* Visible title - NOT blurred */}
+            <h4 className="flex items-center gap-2 text-gray-400 text-xs font-bold tracking-widest uppercase mb-4">
+                {icon} {title}
+            </h4>
+
+            {/* Blurred fake content preview */}
+            <div className="blur-sm select-none mb-6">
                 <div className="space-y-2">
-                    <div className="h-3 bg-gray-700/30 rounded w-full" />
-                    <div className="h-3 bg-gray-700/30 rounded w-4/5" />
-                    <div className="h-3 bg-gray-700/30 rounded w-3/5" />
+                    <div className="h-3 bg-gray-600/40 rounded w-full" />
+                    <div className="h-3 bg-gray-600/40 rounded w-4/5" />
+                    <div className="h-3 bg-gray-600/40 rounded w-3/5" />
                 </div>
             </div>
 
-            {/* Lock overlay */}
-            <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-2 group-hover:bg-blue-900/20 transition-colors">
-                <Lock className="text-gray-500 group-hover:text-blue-400 transition-colors" size={24} />
-                <span className="text-xs text-gray-500 group-hover:text-blue-400 font-medium flex items-center gap-1 transition-colors">
+            {/* Unlock CTA - visible at bottom */}
+            <div className="flex items-center justify-center gap-2 text-gray-500 group-hover:text-blue-400 transition-colors">
+                <Lock size={16} />
+                <span className="text-xs font-medium flex items-center gap-1">
                     {unlockText}
                     <ArrowRight size={12} />
                 </span>

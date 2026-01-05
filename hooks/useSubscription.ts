@@ -22,51 +22,46 @@ export function useSubscription() {
         search_count: 0,
         limit: 1,
         canSearch: true,
-        isProUser: false
+        isProUser: true  // Always true - no content blurring for anyone
     });
     const [isLoading, setIsLoading] = useState(true);
-    const [refreshKey, setRefreshKey] = useState(0); // Force re-render trigger
+    const [refreshKey, setRefreshKey] = useState(0);
 
     useEffect(() => {
         if (user) {
             fetchSubscriptionData();
 
-            // Set up real-time subscription to usage_tracking changes
-            // Set up real-time subscription for both usage and subscription status
             const channel = supabase
                 .channel('subscription_changes')
                 .on(
                     'postgres_changes',
                     {
-                        event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+                        event: '*',
                         schema: 'public',
                         table: 'usage_tracking',
                         filter: `user_id=eq.${user.id}`
                     },
                     (payload) => {
                         console.log('🔴 REALTIME: Usage tracking changed!', payload);
-                        // Refresh subscription data when usage changes
                         fetchSubscriptionData();
                     }
                 )
                 .on(
                     'postgres_changes',
                     {
-                        event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+                        event: '*',
                         schema: 'public',
                         table: 'subscriptions',
                         filter: `user_id=eq.${user.id}`
                     },
                     (payload) => {
                         console.log('🔴 REALTIME: Subscription status changed!', payload);
-                        // Refresh subscription data when subscription status changes
                         fetchSubscriptionData();
                     }
                 )
                 .subscribe();
 
             return () => {
-                console.log('🔴 REALTIME: Unsubscribing from usage_tracking');
                 supabase.removeChannel(channel);
             };
         }
@@ -78,32 +73,15 @@ export function useSubscription() {
             return;
         }
 
-        // Hardcoded Pro User Access (backup for paid users if DB is not updated)
-        const proUserEmails = ['ed@eduardoescalante.com', 'ed@acme.com', 'sicruzat1954@gmail.com'];
-        if (proUserEmails.includes(user.email || '')) {
-            console.log('useSubscription: Pro user detected, granting unlimited access:', user.email);
-            setUsage({
-                search_count: 0,
-                limit: Infinity,
-                canSearch: true,
-                isProUser: true
-            });
-            setSubscription({ plan_type: 'pro', status: 'active' });
-            setIsLoading(false);
-            return;
-        }
-
         console.log('useSubscription: Fetching data for user:', user.id);
 
         try {
-            // Get subscription
-            const { data: subData, error: subError } = await supabase
+            // Check if user has pro subscription
+            const { data: subData } = await supabase
                 .from('subscriptions')
                 .select('plan_type, status')
                 .eq('user_id', user.id)
                 .single();
-
-            console.log('useSubscription: Subscription query result:', { subData, subError });
 
             setSubscription(subData);
 
@@ -122,43 +100,52 @@ export function useSubscription() {
             }
 
             // Get usage for free users
-            const currentMonth = new Date().toISOString().slice(0, 7); // 'YYYY-MM'
-            console.log('useSubscription: Fetching usage for month:', currentMonth);
-
-            const { data: usageData, error: usageError } = await supabase
+            const currentMonth = new Date().toISOString().slice(0, 7);
+            const { data: usageData } = await supabase
                 .from('usage_tracking')
                 .select('search_count')
                 .eq('user_id', user.id)
                 .eq('month_year', currentMonth)
                 .single();
 
-            console.log('useSubscription: Usage query result:', { usageData, usageError });
-
             const searchCount = usageData?.search_count || 0;
-            const canSearch = searchCount < 1;
+            const canSearch = searchCount < 1; // Free users get 1 search
 
-            console.log('useSubscription: Final usage state:', { searchCount, canSearch });
+            console.log('useSubscription: Free user usage:', { searchCount, canSearch });
 
             setUsage({
                 search_count: searchCount,
                 limit: 1,
                 canSearch,
-                isProUser: false
+                isProUser: true  // Always true - free users see ALL content, no blur
             });
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('useSubscription: ERROR fetching subscription:', error);
         } finally {
             setIsLoading(false);
-            setRefreshKey(prev => prev + 1); // Force re-render
+            setRefreshKey(prev => prev + 1);
         }
     };
 
     const incrementUsage = async () => {
-        console.log('🔵 incrementUsage called!', { user: user?.id, isProUser: usage.isProUser });
+        console.log('🔵 incrementUsage called!', { user: user?.id });
 
-        if (!user || usage.isProUser) {
-            console.log('🟡 Skipping increment:', !user ? 'No user' : 'Pro user');
+        if (!user) {
+            console.log('🟡 Skipping increment: No user');
+            return true;
+        }
+
+        // Check if actually pro (by subscription, not the display flag)
+        const { data: subData } = await supabase
+            .from('subscriptions')
+            .select('plan_type, status')
+            .eq('user_id', user.id)
+            .single();
+
+        const isPro = subData?.plan_type === 'pro' && subData?.status === 'active';
+        if (isPro) {
+            console.log('🟡 Skipping increment: Pro user');
             return true;
         }
 
@@ -166,18 +153,15 @@ export function useSubscription() {
         console.log('🔵 Incrementing for month:', currentMonth);
 
         try {
-            const { data: existing, error: fetchError } = await supabase
+            const { data: existing } = await supabase
                 .from('usage_tracking')
                 .select('search_count')
                 .eq('user_id', user.id)
                 .eq('month_year', currentMonth)
                 .single();
 
-            console.log('🔵 Existing usage:', { existing, fetchError });
-
             if (existing) {
-                // Update existing
-                const { error: updateError } = await supabase
+                await supabase
                     .from('usage_tracking')
                     .update({
                         search_count: existing.search_count + 1,
@@ -186,10 +170,9 @@ export function useSubscription() {
                     .eq('user_id', user.id)
                     .eq('month_year', currentMonth);
 
-                console.log('🟢 Updated usage to:', existing.search_count + 1, { updateError });
+                console.log('🟢 Updated usage to:', existing.search_count + 1);
             } else {
-                // Create new
-                const { error: insertError } = await supabase
+                await supabase
                     .from('usage_tracking')
                     .insert({
                         user_id: user.id,
@@ -197,11 +180,9 @@ export function useSubscription() {
                         search_count: 1
                     });
 
-                console.log('🟢 Created new usage record with count: 1', { insertError });
+                console.log('🟢 Created new usage record with count: 1');
             }
 
-            // Refresh data
-            console.log('🔵 Refreshing subscription data...');
             await fetchSubscriptionData();
             return true;
 
@@ -217,6 +198,6 @@ export function useSubscription() {
         isLoading,
         incrementUsage,
         refreshSubscription: fetchSubscriptionData,
-        refreshKey // Export to force re-renders
+        refreshKey
     };
 }

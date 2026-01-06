@@ -26,21 +26,18 @@ export default function WorkshopPage() {
     const [loading, setLoading] = useState(false);
 
     const handleReserve = async () => {
-        if (!user) {
-            // Redirect to auth with return URL
-            router.push('/auth?returnTo=/workshop&action=reserve');
-            return;
-        }
-
         setLoading(true);
 
         try {
+            const userId = user?.id || 'guest';
+            const userEmail = user?.email || 'guest@veta.lat';
+
             const response = await fetch('/api/create-workshop-payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    userId: user.id,
-                    userEmail: user.email
+                    userId,
+                    userEmail
                 })
             });
 

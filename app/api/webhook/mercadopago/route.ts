@@ -57,6 +57,12 @@ export async function POST(request: Request) {
                 if (status === 'approved') {
                     console.log('✅ Payment APPROVED for user:', userId);
 
+                    // Skip subscription logic for workshop payments
+                    if (userId.startsWith('workshop-')) {
+                        console.log('🎓 Workshop payment received. Skipping subscription creation.');
+                        return Response.json({ received: true, type: 'workshop' }, { status: 200 });
+                    }
+
                     // Create or update subscription
                     const endDate = new Date();
                     endDate.setMonth(endDate.getMonth() + 1); // 1 month from now

@@ -60,6 +60,12 @@ export default function LandingPage() {
                             </button>
                         </div>
                         <Link
+                            href="/workshop"
+                            className="text-amber-400 hover:text-amber-300 transition-colors text-sm md:text-base font-medium"
+                        >
+                            🎓 Workshop
+                        </Link>
+                        <Link
                             href="/pricing"
                             className="text-gray-400 hover:text-white transition-colors text-sm md:text-base"
                         >

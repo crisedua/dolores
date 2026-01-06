@@ -286,8 +286,8 @@ export const translations = {
             },
             pro: {
                 title: 'Pro',
-                price: '$10',
-                oldPrice: '$39',
+                price: '$150',
+                oldPrice: '$299',
                 unit: '/month',
                 badge: 'MOST POPULAR',
                 offer: 'Launch Offer',
@@ -644,8 +644,8 @@ export const translations = {
             },
             pro: {
                 title: 'Pro',
-                price: '$10',
-                oldPrice: '$39',
+                price: '$150',
+                oldPrice: '$299',
                 unit: '/mes',
                 badge: 'MÁS POPULAR',
                 offer: 'Oferta de Lanzamiento',

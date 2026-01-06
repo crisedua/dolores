@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     try {
         const { userId, userEmail } = await request.json();
 
-        console.log('📦 Create subscription request:', { userId, userEmail });
+        console.log('📦 Create workshop payment request:', { userId, userEmail });
 
         if (!userId || !userEmail) {
             console.error('❌ Missing user data:', { userId, userEmail });
@@ -21,39 +21,38 @@ export async function POST(request: Request) {
 
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://veta.lat';
 
-        // Create preference for $150 USD subscription
+        // Create preference for $19 USD workshop
         const preferenceData = {
             items: [
                 {
-                    id: 'veta-pro-monthly',
-                    title: 'Veta Pro - Monthly Subscription',
-                    description: 'Unlimited business problem searches',
+                    id: 'veta-workshop-validacion',
+                    title: 'Workshop: Cómo elegir un buen problema y validarlo',
+                    description: 'Workshop en vivo sobre selección y validación de problemas usando Veta',
                     quantity: 1,
-                    unit_price: 150,
+                    unit_price: 19,
                     currency_id: 'USD'
                 }
             ],
             back_urls: {
-                success: `${appUrl}/payment/success`,
-                failure: `${appUrl}/payment/failure`,
-                pending: `${appUrl}/payment/pending`
+                success: `${appUrl}/workshop/success`,
+                failure: `${appUrl}/workshop?payment=failed`,
+                pending: `${appUrl}/workshop?payment=pending`
             },
             auto_return: 'approved' as const,
-            notification_url: `${appUrl}/api/webhook/mercadopago`,
-            external_reference: userId,
+            external_reference: `workshop-${userId}`,
             payer: {
                 email: userEmail
             },
             payment_methods: {
-                installments: 1 // No installments for subscriptions
+                installments: 1
             },
-            statement_descriptor: 'VETA PRO',
+            statement_descriptor: 'VETA WORKSHOP',
             binary_mode: true
         };
 
         const response = await preference.create({ body: preferenceData });
 
-        console.log('✅ MercadoPago preference created:', {
+        console.log('✅ MercadoPago workshop preference created:', {
             preferenceId: response.id,
             external_reference: response.external_reference,
             initPoint: response.init_point

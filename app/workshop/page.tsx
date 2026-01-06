@@ -107,20 +107,14 @@ export default function WorkshopPage() {
                         Cómo elegir un buen problema
                         <br />
                         <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                            y validarlo sin construir de más
-                        </span>
-                        <br />
-                        <span className="text-xl md:text-2xl text-gray-300">
-                            (usando Veta)
+                            y validarlo creando una aplicación web simple (sin programar)
                         </span>
                     </h1>
 
                     {/* Subheadline */}
-                    <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-4">
-                        Aprende a tomar una decisión clara antes de invertir tiempo, energía o dinero.
-                    </p>
-                    <p className="text-sm text-amber-400 font-medium mb-8">
-                        Enfocado en LATAM. Sin humo.
+                    <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+                        Aprende a construir una app mínima solo para validar una idea<br />
+                        antes de invertir tiempo, energía o dinero.
                     </p>
 
                     {/* Quick CTA */}
@@ -142,6 +136,9 @@ export default function WorkshopPage() {
                             </>
                         )}
                     </button>
+                    <p className="text-xs text-amber-400 font-medium mt-4">
+                        (precio fundador)
+                    </p>
                 </div>
             </section>
 
@@ -161,16 +158,16 @@ export default function WorkshopPage() {
                                     </div>
                                     <div>
                                         <p className="text-xs text-gray-500">Qué es</p>
-                                        <p className="text-sm text-white font-medium">Workshop en vivo, práctico</p>
+                                        <p className="text-sm text-white font-medium">Workshop práctico en vivo</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center">
-                                        <Clock size={20} className="text-purple-400" />
+                                        <Target size={20} className="text-purple-400" />
                                     </div>
                                     <div>
-                                        <p className="text-xs text-gray-500">Duración</p>
-                                        <p className="text-sm text-white font-medium">60–75 minutos</p>
+                                        <p className="text-xs text-gray-500">Qué aprenderás</p>
+                                        <p className="text-sm text-white font-medium">Elegir problema + crear app web de validación</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
@@ -218,128 +215,164 @@ export default function WorkshopPage() {
                 </div>
             </section>
 
-            {/* For Whom Section */}
+            {/* Type of App Section */}
             <section className="py-12 px-6">
-                <div className="max-w-4xl mx-auto">
-                    <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-10">
-                        ¿Para quién es este workshop?
+                <div className="max-w-4xl mx-auto text-center">
+                    <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">
+                        ¿Qué tipo de app vas a aprender a crear?
                     </h2>
+                    <p className="text-gray-400 mb-8">Durante el workshop verás ejemplos de apps como:</p>
 
-                    <div className="grid md:grid-cols-2 gap-6">
-                        {/* Es para ti */}
-                        <div className="bg-[#111] border border-green-500/30 rounded-2xl p-6">
-                            <h3 className="text-lg font-bold text-green-400 mb-4 flex items-center gap-2">
-                                <CheckCircle2 size={20} />
-                                Este workshop es para ti si:
-                            </h3>
-                            <ul className="space-y-3">
-                                {[
-                                    'Ya usaste Veta y encontraste problemas reales',
-                                    'No sabes cuál elegir ni si vale la pena avanzar',
-                                    'Quieres validar ideas sin construir de más',
-                                    'Te interesa monetizar en LATAM',
-                                    'Prefieres claridad antes que teoría'
-                                ].map((item, idx) => (
-                                    <li key={idx} className="flex items-start gap-3">
-                                        <CheckCircle2 size={16} className="text-green-500 mt-0.5 shrink-0" />
-                                        <span className="text-gray-300 text-sm">{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
+                    <div className="grid md:grid-cols-3 gap-6 text-left mb-12">
+                        <div className="bg-[#111] border border-[#222] p-5 rounded-xl">
+                            <div className="w-2 h-2 rounded-full bg-blue-500 mb-3" />
+                            <p className="text-gray-300 text-sm">Una app web básica con una sola función clara</p>
                         </div>
-
-                        {/* No es para ti */}
-                        <div className="bg-[#111] border border-red-500/30 rounded-2xl p-6">
-                            <h3 className="text-lg font-bold text-red-400 mb-4 flex items-center gap-2">
-                                <XCircle size={20} />
-                                No es para ti si:
-                            </h3>
-                            <ul className="space-y-3">
-                                {[
-                                    'Buscas un curso largo',
-                                    'Quieres aprender programación',
-                                    'No tienes intención de ejecutar nada'
-                                ].map((item, idx) => (
-                                    <li key={idx} className="flex items-start gap-3">
-                                        <XCircle size={16} className="text-red-500 mt-0.5 shrink-0" />
-                                        <span className="text-gray-300 text-sm">{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
+                        <div className="bg-[#111] border border-[#222] p-5 rounded-xl">
+                            <div className="w-2 h-2 rounded-full bg-purple-500 mb-3" />
+                            <p className="text-gray-300 text-sm">Una app mínima que simula el producto final</p>
+                        </div>
+                        <div className="bg-[#111] border border-[#222] p-5 rounded-xl">
+                            <div className="w-2 h-2 rounded-full bg-pink-500 mb-3" />
+                            <p className="text-gray-300 text-sm">Una app usada solo para medir interés o intención de pago</p>
                         </div>
                     </div>
+
+                    <p className="text-white font-medium">Todo enfocado en: <span className="text-green-400">rapidez, simplicidad y validación real</span>.</p>
                 </div>
             </section>
+
+
+
+
 
             {/* What You'll Learn */}
             <section className="py-12 px-6 bg-[#080808]">
                 <div className="max-w-4xl mx-auto">
                     <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-4">
-                        ¿Qué vas a aprender?
+                        ¿Qué vas a aprender EXACTAMENTE?
                     </h2>
                     <p className="text-gray-400 text-center mb-10">
-                        En esta sesión en vivo vamos a ver:
+                        En este workshop voy a mostrar, paso a paso:
                     </p>
 
-                    <div className="grid md:grid-cols-3 gap-6">
-                        {/* Topic 1 */}
-                        <div className="bg-[#111] border border-[#222] rounded-2xl p-6 relative group hover:border-blue-500/50 transition-colors">
-                            <div className="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold text-white text-sm">1️⃣</div>
-                            <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4">
+                    <div className="space-y-6">
+                        {/* Item 1 */}
+                        <div className="bg-[#111] border border-[#222] rounded-2xl p-6 group hover:border-blue-500/50 transition-colors flex gap-4">
+                            <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center shrink-0">
                                 <Target size={24} className="text-blue-400" />
                             </div>
-                            <h3 className="text-lg font-bold text-white mb-3">Cómo elegir el problema correcto</h3>
-                            <ul className="space-y-2 text-sm text-gray-400">
-                                <li>• Por qué muchos problemas "interesantes" no valen la pena</li>
-                                <li>• Qué señales mirar para decidir si conviene validar</li>
-                                <li>• Qué problemas descartar sin dudar</li>
-                            </ul>
+                            <div>
+                                <h3 className="text-lg font-bold text-white mb-2">Qué problemas sí valen la pena atacar</h3>
+                                <p className="text-gray-400 text-sm">(y cuáles descartar aunque suenen bien)</p>
+                            </div>
                         </div>
 
-                        {/* Topic 2 */}
-                        <div className="bg-[#111] border border-[#222] rounded-2xl p-6 relative group hover:border-purple-500/50 transition-colors">
-                            <div className="absolute -top-4 -left-4 w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center font-bold text-white text-sm">2️⃣</div>
-                            <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mb-4">
+                        {/* Item 2 */}
+                        <div className="bg-[#111] border border-[#222] rounded-2xl p-6 group hover:border-purple-500/50 transition-colors flex gap-4">
+                            <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center shrink-0">
                                 <Lightbulb size={24} className="text-purple-400" />
                             </div>
-                            <h3 className="text-lg font-bold text-white mb-3">Qué significa "validar" de verdad</h3>
-                            <ul className="space-y-2 text-sm text-gray-400">
-                                <li>• Explicado en simple, sin jerga</li>
-                                <li>• Qué preguntas debe responder una validación</li>
-                                <li>• Qué señales indican interés real</li>
-                                <li>• Qué señales son solo ruido</li>
-                            </ul>
+                            <div>
+                                <h3 className="text-lg font-bold text-white mb-2">Qué es un MVP, explicado fácil y sin jerga</h3>
+                                <p className="text-gray-400 text-sm">(una versión mínima solo para validar, no un producto completo)</p>
+                            </div>
                         </div>
 
-                        {/* Topic 3 */}
-                        <div className="bg-[#111] border border-[#222] rounded-2xl p-6 relative group hover:border-pink-500/50 transition-colors">
-                            <div className="absolute -top-4 -left-4 w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center font-bold text-white text-sm">3️⃣</div>
-                            <div className="w-12 h-12 bg-pink-500/10 rounded-xl flex items-center justify-center mb-4">
+                        {/* Item 3 - Highlighted */}
+                        <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-500/30 rounded-2xl p-6 flex gap-4">
+                            <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
+                                <Zap size={24} className="text-blue-400" />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-white mb-2">Cómo crear una aplicación web muy simple</h3>
+                                <ul className="space-y-1 text-gray-300 text-sm">
+                                    <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-green-500" /> solo con lo necesario para validar una idea</li>
+                                    <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-green-500" /> sin programar</li>
+                                    <li className="flex items-center gap-2"><CheckCircle2 size={14} className="text-green-500" /> usando herramientas no-code</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* Item 4 */}
+                        <div className="bg-[#111] border border-[#222] rounded-2xl p-6 group hover:border-pink-500/50 transition-colors flex gap-4">
+                            <div className="w-12 h-12 bg-pink-500/10 rounded-xl flex items-center justify-center shrink-0">
                                 <TrendingUp size={24} className="text-pink-400" />
                             </div>
-                            <h3 className="text-lg font-bold text-white mb-3">Cómo evitar construir de más</h3>
-                            <ul className="space-y-2 text-sm text-gray-400">
-                                <li>• Técnicas prácticas para validar rápido</li>
-                                <li>• Cómo testear sin código</li>
-                                <li>• Errores comunes que hacen perder meses</li>
-                            </ul>
+                            <div>
+                                <h3 className="text-lg font-bold text-white mb-2">Cómo usar esa app para validar</h3>
+                                <p className="text-gray-400 text-sm mb-2">si alguien realmente estaría interesado o pagaría</p>
+                                <div className="bg-white/5 p-3 rounded-lg border border-white/10 text-xs text-gray-300">
+                                    <p className="mb-1">👉 El objetivo NO es construir un SaaS.</p>
+                                    <p>👉 El objetivo es aprender a crear una app mínima para validar.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            </section >
+
+            {/* Modalidad & Guarantee */}
+            < section className="py-12 px-6" >
+                <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
+                    {/* Modalidad */}
+                    <div>
+                        <h3 className="text-xl font-bold text-white mb-6">Modalidad</h3>
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                                    <Video size={16} />
+                                </div>
+                                <span className="text-gray-300">100% en vivo (Pantalla + voz)</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                                    <TrendingUp size={16} />
+                                </div>
+                                <span className="text-gray-300">Se muestra el proceso en tiempo real</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                                    <Users size={16} />
+                                </div>
+                                <span className="text-gray-300">Espacio para preguntas</span>
+                            </div>
+                            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 flex gap-3 mt-4">
+                                <Video size={20} className="text-red-400 shrink-0" />
+                                <div>
+                                    <p className="text-red-400 text-sm font-semibold">⚠️ No habrá grabación</p>
+                                    <p className="text-red-300/70 text-xs">Si estás, estás.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Guarantee */}
+                    <div className="bg-[#111] border border-[#222] rounded-2xl p-6">
+                        <h3 className="text-xl font-bold text-white mb-4">Garantía simple</h3>
+                        <p className="text-gray-400 text-sm mb-4">
+                            Si en los primeros 15 minutos sientes que no es para ti, me escribes y te devuelvo el dinero.
+                        </p>
+                        <p className="text-white font-medium">Sin preguntas.</p>
+                    </div>
+                </div>
+            </section >
 
             {/* Final CTA */}
-            <section className="py-20 px-6">
+            < section className="py-20 px-6" >
                 <div className="max-w-3xl mx-auto text-center">
                     <div className="relative">
                         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-3xl" />
                         <div className="relative bg-gradient-to-br from-[#1a1a2e] to-[#0f0f1a] border border-white/10 rounded-3xl p-10">
                             <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                                ¿Listo para tomar mejores decisiones?
+                                🔓 Reserva tu cupo — USD $19
                             </h2>
-                            <p className="text-gray-400 mb-8">
-                                Cupos limitados. Precio fundador por tiempo limitado.
-                            </p>
+                            <div className="flex flex-wrap justify-center gap-4 mb-8 text-sm text-gray-300">
+                                <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-green-400" /> En vivo</span>
+                                <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-green-400" /> App web simple</span>
+                                <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-green-400" /> Sin programación</span>
+                                <span className="flex items-center gap-1"><CheckCircle2 size={14} className="text-green-400" /> Enfocado en validación real</span>
+                            </div>
                             <button
                                 onClick={handleReserve}
                                 disabled={loading}
@@ -352,8 +385,8 @@ export default function WorkshopPage() {
                                     </>
                                 ) : (
                                     <>
-                                        👉 Reservar mi cupo - USD $19
-                                        <span className="text-sm font-normal text-white/60 line-through ml-1">$49</span>
+                                        👉 Quiero mi cupo
+                                        <span className="text-sm font-normal text-white/50 line-through ml-1">$49</span>
                                         <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform ml-2" />
                                     </>
                                 )}
@@ -364,10 +397,10 @@ export default function WorkshopPage() {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section >
 
             {/* Footer */}
-            <footer className="py-8 px-6 border-t border-white/5">
+            < footer className="py-8 px-6 border-t border-white/5" >
                 <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                         <div className="w-6 h-6 bg-blue-600 text-white font-bold flex items-center justify-center rounded text-xs">
@@ -379,7 +412,7 @@ export default function WorkshopPage() {
                         Encuentra problemas reales que puedes resolver.
                     </p>
                 </div>
-            </footer>
-        </div>
+            </footer >
+        </div >
     );
 }

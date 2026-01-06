@@ -137,7 +137,8 @@ export default function WorkshopPage() {
                         ) : (
                             <>
                                 Reservar mi cupo - USD $19
-                                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                                <span className="text-sm font-normal text-white/50 line-through ml-1">$49</span>
+                                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform ml-2" />
                             </>
                         )}
                     </button>
@@ -196,7 +197,10 @@ export default function WorkshopPage() {
                                     </div>
                                     <div>
                                         <p className="text-xs text-gray-500">Precio</p>
-                                        <p className="text-sm text-white font-medium">USD $19 <span className="text-amber-400 text-xs">(precio fundador)</span></p>
+                                        <p className="text-sm text-white font-medium">
+                                            USD $19 <span className="text-gray-500 line-through text-xs">$49</span>
+                                            <span className="text-amber-400 text-xs block">(precio fundador)</span>
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
@@ -349,7 +353,8 @@ export default function WorkshopPage() {
                                 ) : (
                                     <>
                                         👉 Reservar mi cupo - USD $19
-                                        <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                                        <span className="text-sm font-normal text-white/60 line-through ml-1">$49</span>
+                                        <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform ml-2" />
                                     </>
                                 )}
                             </button>

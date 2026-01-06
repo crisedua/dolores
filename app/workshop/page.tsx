@@ -24,15 +24,33 @@ export default function WorkshopPage() {
     const { user } = useAuth();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [showRegisterModal, setShowRegisterModal] = useState(false);
+    const [formData, setFormData] = useState({ fullName: '', email: '', mobile: '' });
 
-    const handleReserve = async () => {
+    const handleReserve = () => {
+        setShowRegisterModal(true);
+    };
+
+    const handlePayment = async (e: React.FormEvent) => {
+        e.preventDefault();
         setLoading(true);
 
         try {
-            const userId = user?.id || 'guest';
-            const userEmail = user?.email || 'guest@veta.lat';
+            // 1. Save Registration
+            const registerResponse = await fetch('/api/workshop/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
 
-            const response = await fetch('/api/create-workshop-payment', {
+            if (!registerResponse.ok) throw new Error('Error en el registro');
+
+            // 2. Create Payment
+            const userId = user?.id || 'guest';
+            // Use the email entered in the form for the payment payer info
+            const userEmail = formData.email;
+
+            const paymentResponse = await fetch('/api/create-workshop-payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -41,22 +59,93 @@ export default function WorkshopPage() {
                 })
             });
 
-            const data = await response.json();
+            const paymentData = await paymentResponse.json();
 
-            if (data.initPoint) {
-                window.location.href = data.initPoint;
+            if (paymentData.initPoint) {
+                window.location.href = paymentData.initPoint;
             } else {
                 throw new Error('No init point received');
             }
         } catch (error) {
-            console.error('Payment initiation failed:', error);
-            alert('Error al iniciar el pago. Por favor, intenta de nuevo.');
+            console.error('Process failed:', error);
+            alert('Hubo un error al procesar tu solicitud. Por favor intenta de nuevo.');
             setLoading(false);
         }
     };
 
     return (
         <div className="min-h-screen bg-[#0A0A0A]">
+            {/* Registration Modal */}
+            {showRegisterModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <div className="bg-[#111] border border-white/10 rounded-2xl w-full max-w-md p-6 relative animate-in fade-in zoom-in duration-200">
+                        <button
+                            onClick={() => setShowRegisterModal(false)}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-white"
+                        >
+                            <XCircle size={20} />
+                        </button>
+
+                        <h3 className="text-xl font-bold text-white mb-2">Casi listo... 🚀</h3>
+                        <p className="text-gray-400 text-sm mb-6">Completa tus datos para enviarte el acceso.</p>
+
+                        <form onSubmit={handlePayment} className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-medium text-gray-400 mb-1">Nombre completo</label>
+                                <input
+                                    type="text"
+                                    required
+                                    className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-blue-500 focus:outline-none transition-colors"
+                                    placeholder="Ej. Juan Pérez"
+                                    value={formData.fullName}
+                                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-400 mb-1">Tu mejor email</label>
+                                <input
+                                    type="email"
+                                    required
+                                    className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-blue-500 focus:outline-none transition-colors"
+                                    placeholder="juan@ejemplo.com"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-gray-400 mb-1">WhatsApp / Móvil</label>
+                                <input
+                                    type="tel"
+                                    required
+                                    className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-2.5 text-white focus:border-blue-500 focus:outline-none transition-colors"
+                                    placeholder="+54 9 11..."
+                                    value={formData.mobile}
+                                    onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 text-white py-3 rounded-xl font-semibold mt-4 flex items-center justify-center gap-2"
+                            >
+                                {loading ? (
+                                    <>
+                                        <Loader2 size={18} className="animate-spin" />
+                                        Procesando...
+                                    </>
+                                ) : (
+                                    <>
+                                        Ir al pago
+                                        <ArrowRight size={18} />
+                                    </>
+                                )}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
+
             {/* Navigation */}
             <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0A0A0A]/80 backdrop-blur-xl border-b border-white/5">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">

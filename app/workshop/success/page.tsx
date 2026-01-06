@@ -1,31 +1,8 @@
 'use client';
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Gem, CheckCircle2, ExternalLink, Loader2 } from 'lucide-react';
+import { Gem, CheckCircle2 } from 'lucide-react';
 
 export default function WorkshopSuccessPage() {
-    const [countdown, setCountdown] = useState(5);
-
-    // Redirect to Google Form after countdown
-    useEffect(() => {
-        const googleFormUrl = 'https://forms.gle/6SvKi3LovVotAzp99';
-
-        const timer = setInterval(() => {
-            setCountdown((prev) => {
-                if (prev <= 1) {
-                    clearInterval(timer);
-                    window.location.href = googleFormUrl;
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, []);
-
-    const googleFormUrl = 'https://forms.gle/6SvKi3LovVotAzp99';
-
     return (
         <div className="min-h-screen bg-[#0A0A0A] flex flex-col">
             {/* Navigation */}
@@ -52,39 +29,31 @@ export default function WorkshopSuccessPage() {
                             </div>
 
                             <h1 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                                ¡Pago exitoso! 🎉
+                                ¡Todo listo! 🎉
                             </h1>
 
                             <p className="text-gray-400 mb-6">
-                                Tu lugar en el workshop está reservado.
+                                Tu registro y pago se han completado con éxito.
                             </p>
 
-                            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 mb-6">
-                                <p className="text-amber-400 text-sm font-medium mb-2">
-                                    📋 Último paso: Completa tu inscripción
+                            <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 mb-8">
+                                <p className="text-white text-sm font-medium mb-2">
+                                    📩 Revisa tu email
                                 </p>
                                 <p className="text-gray-400 text-xs">
-                                    Serás redirigido automáticamente en {countdown} segundos...
+                                    Te enviaremos los detalles de acceso al workshop pronto.
                                 </p>
                             </div>
 
-                            <div className="flex items-center justify-center gap-2 text-gray-500 mb-6">
-                                <Loader2 size={16} className="animate-spin" />
-                                <span className="text-sm">Redirigiendo al formulario...</span>
-                            </div>
-
-                            <a
-                                href={googleFormUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all"
+                            <Link
+                                href="/"
+                                className="inline-flex items-center gap-2 bg-white text-black hover:bg-gray-200 px-6 py-3 rounded-xl font-semibold transition-all"
                             >
-                                Completar inscripción ahora
-                                <ExternalLink size={18} />
-                            </a>
+                                Volver al inicio
+                            </Link>
 
                             <p className="text-xs text-gray-500 mt-6">
-                                Si no eres redirigido automáticamente, haz clic en el botón.
+                                Si tienes dudas, escríbenos por WhatsApp.
                             </p>
                         </div>
                     </div>

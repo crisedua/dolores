@@ -50,11 +50,16 @@ export default function AdminPage() {
         }
     }, [user, isAdmin]);
 
-    // Close dropdown on outside click
+    // Close dropdown on outside click - use mousedown to prevent interference
     useEffect(() => {
-        const handleClickOutside = () => setOpenDropdown(null);
-        document.addEventListener('click', handleClickOutside);
-        return () => document.removeEventListener('click', handleClickOutside);
+        const handleClickOutside = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (!target.closest('.plan-dropdown')) {
+                setOpenDropdown(null);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
     const fetchUsers = async () => {
@@ -304,7 +309,7 @@ export default function AdminPage() {
                                         {formatDate(u.last_sign_in_at)}
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className="relative inline-block">
+                                        <div className="relative inline-block plan-dropdown">
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();

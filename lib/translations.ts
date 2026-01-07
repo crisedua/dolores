@@ -300,6 +300,22 @@ export const translations = {
                     'Priority support',
                 ]
             },
+            builder: {
+                title: 'Builder',
+                price: '$19',
+                oldPrice: '$49',
+                unit: '/month',
+                badge: 'FOR BUILDERS',
+                offer: 'Launch Offer',
+                button: 'Start Building',
+                features: [
+                    'Everything in Pro',
+                    'Prototype Prompt Generator',
+                    'AI prompts for Lovable, Bolt, Antigravity',
+                    'Copy-paste ready prompts',
+                    'Validation-focused prototypes',
+                ]
+            },
             faq: {
                 title: 'Frequently Asked Questions',
                 q1: 'Can I cancel at any time?',
@@ -668,6 +684,22 @@ export const translations = {
                     'Historial ilimitado',
                     'Reportes guardados',
                     'Soporte prioritario',
+                ]
+            },
+            builder: {
+                title: 'Builder',
+                price: '$19',
+                oldPrice: '$49',
+                unit: '/mes',
+                badge: 'PARA BUILDERS',
+                offer: 'Oferta de Lanzamiento',
+                button: 'Empezar a Construir',
+                features: [
+                    'Todo lo de Pro',
+                    'Generador de Prompts para Prototipos',
+                    'Prompts IA para Lovable, Bolt, Antigravity',
+                    'Prompts listos para copiar',
+                    'Prototipos enfocados en validación',
                 ]
             },
             faq: {

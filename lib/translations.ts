@@ -310,7 +310,6 @@ export const translations = {
                     'Full AI analysis',
                     'Direct source links',
                     'Export results',
-                    'Prototype Prompt Generator',
                 ]
             },
             advanced: {
@@ -325,6 +324,7 @@ export const translations = {
                     '15 scans per month',
                     'Everything in Pro',
                     'Priority support',
+                    'Prototype Prompt Generator',
                 ]
             },
             faq: {
@@ -709,7 +709,6 @@ export const translations = {
                     'Análisis completo con IA',
                     'Enlaces directos a fuentes',
                     'Exportar resultados',
-                    'Generador de Prompts para Prototipos',
                 ]
             },
             advanced: {
@@ -724,6 +723,7 @@ export const translations = {
                     '15 escaneos por mes',
                     'Todo lo de Pro',
                     'Soporte prioritario',
+                    'Generador de Prompts para Prototipos',
                 ]
             },
             faq: {

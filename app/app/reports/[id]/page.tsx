@@ -57,70 +57,95 @@ export default function ReportDetailsPage() {
 
     const downloadReportPDF = async () => {
         if (!report) return;
-
-        // Dynamic import of html2pdf (client-side only)
-        const html2pdf = (await import('html2pdf.js')).default;
-
-        // Get the problems container element
-        const element = document.getElementById('problems-container');
-        if (!element) {
-            console.error('Problems container not found');
-            return;
-        }
-
-        // Create a wrapper with white background for PDF
-        const wrapper = document.createElement('div');
-        wrapper.style.backgroundColor = '#0a0a0a';
-        wrapper.style.padding = '20px';
-        wrapper.style.color = 'white';
-
-        // Add header
-        const header = document.createElement('div');
-        header.innerHTML = `
-            <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #333;">
-                <h1 style="font-size: 24px; color: white; margin-bottom: 10px;">${t.reports.pdfHeader}</h1>
-                <p style="color: #888; font-size: 14px;">${t.reports.searchPrefix}: "${report.query}"</p>
-                <p style="color: #888; font-size: 12px;">${t.reports.dateLabel}: ${new Date(report.created_at).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US')} | ${report.problem_count} ${t.reports.problems}</p>
-            </div>
-        `;
-        wrapper.appendChild(header);
-
-        // Clone the problems content
-        const clone = element.cloneNode(true) as HTMLElement;
-        wrapper.appendChild(clone);
-
-        // Add footer
-        const footer = document.createElement('div');
-        footer.innerHTML = `
-            <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
-                <p style="color: #666; font-size: 10px;">${t.reports.pdfFooter}</p>
-            </div>
-        `;
-        wrapper.appendChild(footer);
-
-        // Temporarily add to document for rendering
-        wrapper.style.position = 'absolute';
-        wrapper.style.left = '-9999px';
-        document.body.appendChild(wrapper);
-
-        const opt = {
-            margin: 10,
-            filename: `report-${report.query.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().slice(0, 10)}.pdf`,
-            image: { type: 'jpeg' as const, quality: 0.98 },
-            html2canvas: {
-                scale: 2,
-                backgroundColor: '#0a0a0a',
-                useCORS: true
-            },
-            jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const },
-            pagebreak: { mode: 'avoid-all' as const }
-        };
+        setIsLoading(true); // Reuse loading state to show activity
 
         try {
+            // Dynamic import with fallback for module structure
+            const module = await import('html2pdf.js');
+            const html2pdf = module.default || module;
+
+            // Get the problems container element
+            const element = document.getElementById('problems-container');
+            if (!element) {
+                throw new Error('Content not found');
+            }
+
+            // Create a wrapper with consistent styling for PDF
+            const wrapper = document.createElement('div');
+            wrapper.className = 'pdf-wrapper'; // Helper class if needed
+            Object.assign(wrapper.style, {
+                backgroundColor: '#0a0a0a',
+                padding: '40px',
+                color: 'white',
+                width: '800px', // Fixed width for A4 consistency
+                position: 'fixed',
+                left: '-9999px',
+                top: '0',
+                fontFamily: 'sans-serif'
+            });
+
+            // Add header
+            const header = document.createElement('div');
+            header.innerHTML = `
+                <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #333;">
+                    <h1 style="font-size: 24px; color: white; margin-bottom: 10px; font-weight: bold;">${t.reports.pdfHeader}</h1>
+                    <p style="color: #888; font-size: 14px; margin-bottom: 5px;">${t.reports.searchPrefix}: "${report.query}"</p>
+                    <p style="color: #666; font-size: 12px;">
+                        ${new Date(report.created_at).toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US')} • ${report.problem_count} ${t.reports.problems}
+                    </p>
+                </div>
+            `;
+            wrapper.appendChild(header);
+
+            // Clone content
+            const clone = element.cloneNode(true) as HTMLElement;
+            // Ensure clone is visible and text is white
+            clone.style.display = 'block';
+            clone.style.color = 'white';
+
+            // Fix text colors in clone if they rely on dark mode classes that might break
+            // (Optional: naive fix for common gray text)
+            const lightTextElements = clone.querySelectorAll('.text-gray-400, .text-gray-500');
+            lightTextElements.forEach((el: any) => {
+                el.style.color = '#a0a0a0';
+            });
+
+            wrapper.appendChild(clone);
+
+            // Add footer
+            const footer = document.createElement('div');
+            footer.innerHTML = `
+                <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #333;">
+                    <p style="color: #444; font-size: 10px;">${t.reports.pdfFooter} • ${window.location.origin}</p>
+                </div>
+            `;
+            wrapper.appendChild(footer);
+
+            document.body.appendChild(wrapper);
+
+            const opt = {
+                margin: [10, 10] as [number, number], // top/bottom margin
+                filename: `veta-report-${report.id.slice(0, 8)}.pdf`,
+                image: { type: 'jpeg' as const, quality: 0.98 },
+                html2canvas: {
+                    scale: 2,
+                    logging: false,
+                    useCORS: true,
+                    backgroundColor: '#0a0a0a',
+                    windowWidth: 800 // Trick to force layout width
+                },
+                jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
+            };
+
             await html2pdf().set(opt).from(wrapper).save();
-        } finally {
-            // Clean up
+
+            // Cleanup
             document.body.removeChild(wrapper);
+        } catch (err) {
+            console.error('PDF Generation failed:', err);
+            alert('Failed to generate PDF. Please try again.');
+        } finally {
+            setIsLoading(false);
         }
     };
 

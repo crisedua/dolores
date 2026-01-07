@@ -190,10 +190,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                                 </p>
                                 <div className="flex items-center gap-1.5">
                                     <span className={`text-xs font-medium ${usage.planType === 'advanced'
-                                            ? 'text-purple-400'
-                                            : usage.planType === 'pro'
-                                                ? 'text-blue-400'
-                                                : 'text-gray-400'
+                                        ? 'text-purple-400'
+                                        : usage.planType === 'pro'
+                                            ? 'text-blue-400'
+                                            : 'text-gray-400'
                                         }`}>
                                         {getPlanDisplayName(usage.planType)}
                                     </span>
@@ -218,12 +218,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                             <div className="h-2 w-full bg-[#222] rounded-full overflow-hidden">
                                 <div
                                     className={`h-full rounded-full transition-all ${usage.planType === 'advanced'
-                                            ? 'bg-purple-500/80'
-                                            : usage.planType === 'pro'
-                                                ? 'bg-blue-500/80'
-                                                : usage.scansUsed >= usage.scanLimit
-                                                    ? 'bg-red-500/80'
-                                                    : 'bg-green-500/80'
+                                        ? 'bg-purple-500/80'
+                                        : usage.planType === 'pro'
+                                            ? 'bg-blue-500/80'
+                                            : usage.scansUsed >= usage.scanLimit
+                                                ? 'bg-red-500/80'
+                                                : 'bg-green-500/80'
                                         }`}
                                     style={{
                                         width: usage.planType === 'free'
@@ -264,14 +264,14 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                             <Link
                                 href="/pricing"
                                 className={`w-full text-white text-xs font-semibold py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2 ${usage.planType === 'pro'
-                                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-                                        : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+                                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                                    : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
                                     }`}
                             >
                                 <Zap size={14} />
                                 {usage.planType === 'pro'
-                                    ? (language === 'es' ? 'Actualizar a Avanzado' : 'Upgrade to Advanced')
-                                    : (language === 'es' ? 'Actualizar a Pro' : 'Upgrade to Pro')
+                                    ? (language === 'es' ? 'Actualizar Plan' : 'Upgrade Plan')
+                                    : (language === 'es' ? 'Actualizar Plan' : 'Upgrade Plan')
                                 }
                             </Link>
                             {usage.planType === 'free' && (

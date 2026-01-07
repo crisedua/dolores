@@ -1,9 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { FileText, Calendar, Eye, Trash2, ArrowRight } from 'lucide-react';
+import { FileText, Calendar, Eye, Trash2, ArrowRight, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
+import { useSubscription } from '@/hooks/useSubscription';
 
 interface Report {
     id: string;
@@ -20,6 +21,7 @@ export default function ReportsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const { user } = useAuth();
     const { t, language } = useTranslation();
+    const { usage, isLoading: subsLoading } = useSubscription();
 
     useEffect(() => {
         if (user) {
@@ -84,9 +86,30 @@ export default function ReportsPage() {
             </div>
 
             {/* Content */}
-            {isLoading ? (
+            {isLoading || subsLoading ? (
                 <div className="flex items-center justify-center h-64">
                     <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+            ) : usage.planType === 'free' ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-[#333] rounded-2xl bg-[#111111]/50 p-12">
+                    <div className="w-16 h-16 rounded-full bg-blue-900/20 text-blue-400 flex items-center justify-center mb-6">
+                        <Lock size={32} />
+                    </div>
+                    <h2 className="text-xl font-bold text-white mb-2">
+                        {language === 'es' ? 'Función Exclusiva de Pro' : 'Pro Feature Only'}
+                    </h2>
+                    <p className="text-gray-400 max-w-md mb-8">
+                        {language === 'es'
+                            ? 'Los reportes guardados están disponibles solo para usuarios Pro. Actualiza tu plan para guardar y acceder a tu historial de análisis.'
+                            : 'Saved reports are available for Pro users only. Upgrade your plan to save and access your analysis history.'}
+                    </p>
+                    <Link
+                        href="/pricing?plan=pro&action=subscribe"
+                        className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-blue-900/20"
+                    >
+                        {t.upgradeModal.upgradeButton}
+                        <ArrowRight size={18} />
+                    </Link>
                 </div>
             ) : reports.length === 0 ? (
                 <div className="text-center py-16">

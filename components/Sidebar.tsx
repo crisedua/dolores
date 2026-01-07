@@ -3,27 +3,21 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
     LayoutGrid,
-    Folder,
-    CheckSquare,
     Search,
-    Gem, // Changed from BarChart3
+    Gem,
     LogOut,
     X,
     Zap,
     FileText,
-    Shield
+    Shield,
+    Calendar
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { ReactNode } from 'react';
 import { EarlyAccessBadge } from './EarlyAccessBadge';
-
-interface SidebarProps {
-    isOpen?: boolean;
-    onClose?: () => void;
-}
-
 import { useTranslation } from '@/context/LanguageContext';
+import { PlanType } from '@/lib/plans';
 
 interface SidebarProps {
     isOpen?: boolean;
@@ -32,13 +26,58 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
     const { user, signOut } = useAuth();
-    const { usage, subscription } = useSubscription();
+    const { usage, isLoading } = useSubscription();
     const { t, language, setLanguage } = useTranslation();
 
-    const planName = usage.isProUser ? t.common.pro : t.common.free;
-    const usagePercentage = usage.isProUser ? 100 : (usage.search_count / usage.limit) * 100;
-
     const pathname = usePathname();
+
+    // Get plan display name based on type
+    const getPlanDisplayName = (planType: PlanType): string => {
+        switch (planType) {
+            case 'pro':
+                return 'Pro';
+            case 'advanced':
+                return language === 'es' ? 'Avanzado' : 'Advanced';
+            default:
+                return language === 'es' ? 'Gratuito' : 'Free';
+        }
+    };
+
+    // Format usage text based on plan type
+    const getUsageText = (): string => {
+        if (usage.planType === 'free') {
+            const template = language === 'es'
+                ? 'Escaneo gratuito usado: {used} / {limit}'
+                : 'Free scan used: {used} / {limit}';
+            return template
+                .replace('{used}', usage.scansUsed.toString())
+                .replace('{limit}', usage.scanLimit.toString());
+        } else {
+            const template = language === 'es'
+                ? 'Escaneos: {remaining} / {limit}'
+                : 'Scans: {remaining} / {limit}';
+            return template
+                .replace('{remaining}', usage.scansRemaining.toString())
+                .replace('{limit}', usage.scanLimit.toString());
+        }
+    };
+
+    // Calculate usage percentage for progress bar
+    const usagePercentage = usage.planType === 'free'
+        ? (usage.scansUsed / usage.scanLimit) * 100
+        : (usage.scansUsed / usage.scanLimit) * 100;
+
+    // Format next reset date
+    const formatResetDate = (): string | null => {
+        if (!usage.nextResetDate || usage.planType === 'free') return null;
+
+        return usage.nextResetDate.toLocaleDateString(
+            language === 'es' ? 'es-ES' : 'en-US',
+            { month: 'short', day: 'numeric' }
+        );
+    };
+
+    const nextResetDate = formatResetDate();
 
     return (
         <>
@@ -142,51 +181,104 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
                 {/* Footer / User */}
                 <div className="pt-4 border-t border-[#333]">
-                    <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 cursor-pointer group relative">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500" />
-                        <div className="flex-1 w-full overflow-hidden">
-                            <p className="text-sm font-semibold text-white truncate" title={user?.email}>{user?.email || t.sidebar.guest}</p>
-                            <p className="text-sm text-gray-400 mb-2">{t.sidebar.plan} {planName}</p>
-
-                            {/* Usage for Free Plan */}
-                            {!usage.isProUser && (
-                                <div className="pr-2">
-                                    <div className="flex justify-between text-xs text-gray-300 mb-1">
-                                        <span>{t.sidebar.searches}</span>
-                                        <span className="font-semibold">{usage.search_count}/{usage.limit}</span>
-                                    </div>
-                                    <div className="h-2 w-full bg-[#222] rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-blue-500/80 rounded-full transition-all"
-                                            style={{ width: `${usagePercentage}%` }}
-                                        />
-                                    </div>
+                    <div className="p-2 rounded-lg">
+                        <div className="flex items-center gap-3 mb-3">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 shrink-0" />
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-semibold text-white truncate" title={user?.email}>
+                                    {user?.email || t.sidebar.guest}
+                                </p>
+                                <div className="flex items-center gap-1.5">
+                                    <span className={`text-xs font-medium ${usage.planType === 'advanced'
+                                            ? 'text-purple-400'
+                                            : usage.planType === 'pro'
+                                                ? 'text-blue-400'
+                                                : 'text-gray-400'
+                                        }`}>
+                                        {getPlanDisplayName(usage.planType)}
+                                    </span>
+                                    {usage.isPaidUser && (
+                                        <span className="text-xs text-gray-500">✨</span>
+                                    )}
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Usage Display - All Plans */}
+                        <div className="mb-3">
+                            <div className="flex justify-between text-xs text-gray-300 mb-1.5">
+                                <span>{language === 'es' ? 'Escaneos' : 'Scans'}</span>
+                                <span className="font-semibold">
+                                    {usage.planType === 'free'
+                                        ? `${usage.scansUsed}/${usage.scanLimit}`
+                                        : `${usage.scansRemaining}/${usage.scanLimit}`
+                                    }
+                                </span>
+                            </div>
+                            <div className="h-2 w-full bg-[#222] rounded-full overflow-hidden">
+                                <div
+                                    className={`h-full rounded-full transition-all ${usage.planType === 'advanced'
+                                            ? 'bg-purple-500/80'
+                                            : usage.planType === 'pro'
+                                                ? 'bg-blue-500/80'
+                                                : usage.scansUsed >= usage.scanLimit
+                                                    ? 'bg-red-500/80'
+                                                    : 'bg-green-500/80'
+                                        }`}
+                                    style={{
+                                        width: usage.planType === 'free'
+                                            ? `${usagePercentage}%`
+                                            : `${100 - usagePercentage}%` // Show remaining for paid plans
+                                    }}
+                                />
+                            </div>
+
+                            {/* Usage status text */}
+                            {usage.planType === 'free' && usage.scansUsed >= usage.scanLimit && (
+                                <p className="text-xs text-amber-400 mt-1.5">
+                                    {language === 'es'
+                                        ? 'Escaneo gratuito usado'
+                                        : 'Free scan used'
+                                    }
+                                </p>
                             )}
 
-                            {/* Pro Badge */}
-                            {usage.isProUser && (
-                                <div className="pr-2">
-                                    <div className="text-xs text-blue-400 font-semibold">
-                                        ✨ {t.sidebar.unlimited}
-                                    </div>
+                            {/* Next reset date for paid plans */}
+                            {usage.isPaidUser && nextResetDate && (
+                                <div className="flex items-center gap-1 text-xs text-gray-500 mt-1.5">
+                                    <Calendar size={10} />
+                                    <span>
+                                        {language === 'es'
+                                            ? `Reinicio: ${nextResetDate}`
+                                            : `Reset: ${nextResetDate}`
+                                        }
+                                    </span>
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    {!usage.isProUser && (
-                        <div className="mt-3 space-y-2">
+                    {/* Upgrade CTA - Only for non-Advanced users with limited or no scans */}
+                    {usage.planType !== 'advanced' && (
+                        <div className="space-y-2">
                             <Link
                                 href="/pricing"
-                                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs font-semibold py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2"
+                                className={`w-full text-white text-xs font-semibold py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-2 ${usage.planType === 'pro'
+                                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                                        : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+                                    }`}
                             >
                                 <Zap size={14} />
-                                {t.sidebar.upgrade}
+                                {usage.planType === 'pro'
+                                    ? (language === 'es' ? 'Actualizar a Avanzado' : 'Upgrade to Advanced')
+                                    : (language === 'es' ? 'Actualizar a Pro' : 'Upgrade to Pro')
+                                }
                             </Link>
-                            <div className="flex justify-center transform scale-90">
-                                <EarlyAccessBadge />
-                            </div>
+                            {usage.planType === 'free' && (
+                                <div className="flex justify-center transform scale-90">
+                                    <EarlyAccessBadge />
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -222,4 +314,3 @@ function NavItem({ href, icon, label, active = false, badge }: { href: string, i
         </Link>
     )
 }
-

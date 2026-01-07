@@ -1,7 +1,7 @@
 'use client';
 import { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { Check, Zap, ArrowRight, Loader2 } from 'lucide-react';
+import { Check, Zap, ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -20,22 +20,27 @@ function PricingContent() {
     // Auto-trigger payment if user just signed up with upgrade intent
     useEffect(() => {
         const action = searchParams.get('action');
+        const plan = searchParams.get('plan');
 
         if (user && action === 'subscribe' && !loading) {
             // User returned after signup, trigger payment
-            handleSubscribe();
+            if (plan === 'advanced') {
+                handleAdvancedSubscribe();
+            } else {
+                handleProSubscribe();
+            }
 
             // Clean URL
             window.history.replaceState({}, '', '/pricing');
         }
     }, [user, searchParams]);
 
-    const handleSubscribe = async () => {
+    const handleProSubscribe = async () => {
         // Track upgrade click
         analytics.upgradeClicked('pricing_page_pro');
 
         if (!user) {
-            router.push('/auth?returnTo=/pricing&action=subscribe');
+            router.push('/auth?returnTo=/pricing&action=subscribe&plan=pro');
             return;
         }
 
@@ -47,7 +52,8 @@ function PricingContent() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     userId: user.id,
-                    userEmail: user.email
+                    userEmail: user.email,
+                    planType: 'pro'
                 })
             });
 
@@ -65,23 +71,24 @@ function PricingContent() {
         }
     };
 
-    const handleBuilderSubscribe = async () => {
-        analytics.upgradeClicked('pricing_page_builder');
+    const handleAdvancedSubscribe = async () => {
+        analytics.upgradeClicked('pricing_page_advanced');
 
         if (!user) {
-            router.push('/auth?returnTo=/pricing&action=subscribe-builder');
+            router.push('/auth?returnTo=/pricing&action=subscribe&plan=advanced');
             return;
         }
 
-        setLoading('builder');
+        setLoading('advanced');
 
         try {
-            const response = await fetch('/api/create-builder-subscription', {
+            const response = await fetch('/api/create-subscription', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     userId: user.id,
-                    userEmail: user.email
+                    userEmail: user.email,
+                    planType: 'advanced'
                 })
             });
 
@@ -93,7 +100,7 @@ function PricingContent() {
                 throw new Error('No init point received');
             }
         } catch (error) {
-            console.error('Builder payment initiation failed:', error);
+            console.error('Advanced payment initiation failed:', error);
             alert('Error al iniciar el pago. Por favor, intenta de nuevo.');
             setLoading(null);
         }
@@ -189,7 +196,7 @@ function PricingContent() {
                                 ))}
                             </ul>
                             <button
-                                onClick={handleSubscribe}
+                                onClick={handleProSubscribe}
                                 disabled={loading === 'pro'}
                                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                             >
@@ -210,31 +217,30 @@ function PricingContent() {
                             </div>
                         </div>
 
-                        {/* Builder Plan */}
+                        {/* Advanced Plan */}
                         <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 border-2 border-purple-500 rounded-2xl p-8 relative">
                             <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                                <span className="bg-purple-600 text-white text-xs font-bold px-4 py-1 rounded-full uppercase">
-                                    {(t.pricing as any).builder?.badge || 'FOR BUILDERS'}
+                                <span className="bg-purple-600 text-white text-xs font-bold px-4 py-1 rounded-full uppercase flex items-center gap-1">
+                                    <Sparkles size={12} />
+                                    {(t.pricing as any).advanced?.badge || 'FOR POWER USERS'}
                                 </span>
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-2">{(t.pricing as any).builder?.title || 'Builder'}</h3>
+                            <h3 className="text-2xl font-bold text-white mb-2">{(t.pricing as any).advanced?.title || 'Advanced'}</h3>
                             <div className="flex flex-col mb-6">
                                 <div className="flex items-baseline gap-2">
-                                    <span className="text-4xl font-bold text-white">{(t.pricing as any).builder?.price || '$19'}</span>
-                                    <span className="text-xl text-gray-500 line-through">{(t.pricing as any).builder?.oldPrice || '$49'}</span>
-                                    <span className="text-gray-400">{(t.pricing as any).builder?.unit || '/month'}</span>
+                                    <span className="text-4xl font-bold text-white">{(t.pricing as any).advanced?.price || '$29'}</span>
+                                    <span className="text-xl text-gray-500 line-through">{(t.pricing as any).advanced?.oldPrice || '$79'}</span>
+                                    <span className="text-gray-400">{(t.pricing as any).advanced?.unit || '/month'}</span>
                                 </div>
                                 <span className="text-green-400 text-xs font-bold mt-1 uppercase tracking-wider">
-                                    {(t.pricing as any).builder?.offer || 'Launch Offer'}
+                                    {(t.pricing as any).advanced?.offer || 'Launch Offer'}
                                 </span>
                             </div>
                             <ul className="space-y-4 mb-8">
-                                {((t.pricing as any).builder?.features || [
+                                {((t.pricing as any).advanced?.features || [
+                                    '15 scans per month',
                                     'Everything in Pro',
-                                    'Prototype Prompt Generator',
-                                    'AI prompts for Lovable, Bolt, Antigravity',
-                                    'Copy-paste ready prompts',
-                                    'Validation-focused prototypes'
+                                    'Priority support'
                                 ]).map((feature: string, idx: number) => (
                                     <li key={idx} className="flex items-start gap-3">
                                         <Check size={20} className="text-purple-400 mt-0.5 shrink-0" />
@@ -243,18 +249,18 @@ function PricingContent() {
                                 ))}
                             </ul>
                             <button
-                                onClick={handleBuilderSubscribe}
-                                disabled={loading === 'builder'}
+                                onClick={handleAdvancedSubscribe}
+                                disabled={loading === 'advanced'}
                                 className="w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                             >
-                                {loading === 'builder' ? (
+                                {loading === 'advanced' ? (
                                     <>
                                         <Loader2 size={20} className="animate-spin" />
                                         {t.common.loading}
                                     </>
                                 ) : (
                                     <>
-                                        {(t.pricing as any).builder?.button || 'Start Building'}
+                                        {(t.pricing as any).advanced?.button || 'Upgrade to Advanced'}
                                         <ArrowRight size={20} />
                                     </>
                                 )}
@@ -285,6 +291,12 @@ function PricingContent() {
                                 <h3 className="text-white font-semibold mb-2">{t.pricing.faq.q3}</h3>
                                 <p className="text-gray-400 text-sm">
                                     {t.pricing.faq.a3}
+                                </p>
+                            </div>
+                            <div className="bg-[#111] border border-[#222] rounded-xl p-6">
+                                <h3 className="text-white font-semibold mb-2">{(t.pricing.faq as any).q4 || 'What is a scan?'}</h3>
+                                <p className="text-gray-400 text-sm">
+                                    {(t.pricing.faq as any).a4 || 'A scan is consumed when you analyze a new niche. Viewing previous results does not consume scans.'}
                                 </p>
                             </div>
                         </div>

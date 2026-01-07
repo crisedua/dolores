@@ -91,7 +91,7 @@ function HomeContent() {
     }
 
     // Check if user can search (limit reached)
-    if (!usage.canSearch) {
+    if (!usage.canScan) {
       setShowUpgradeModal(true);
       return;
     }
@@ -237,8 +237,9 @@ function HomeContent() {
       <UpgradeModal
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
-        searchesUsed={usage.search_count}
-        searchLimit={usage.limit}
+        scansUsed={usage.scansUsed}
+        scanLimit={usage.scanLimit}
+        currentPlan={usage.planType}
       />
 
       {/* First Search Paywall - Blocking */}

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { MercadoPagoConfig, Payment } from 'mercadopago';
+import { PlanType } from '@/lib/plans';
 
 // Lazy initialization to avoid build-time errors with server-only env vars
 function getSupabaseAdmin() {
@@ -15,6 +16,31 @@ function getMercadoPagoPaymentApi() {
         options: { timeout: 5000 }
     });
     return new Payment(mpClient);
+}
+
+/**
+ * Parse external reference to extract userId and planType
+ * Supports both new JSON format and legacy plain userId format
+ */
+function parseExternalReference(externalRef: string | undefined): { userId: string | null; planType: PlanType } {
+    if (!externalRef) {
+        return { userId: null, planType: 'pro' };
+    }
+
+    // Try to parse as JSON first (new format)
+    try {
+        const parsed = JSON.parse(externalRef);
+        return {
+            userId: parsed.userId || null,
+            planType: (parsed.planType as PlanType) || 'pro'
+        };
+    } catch {
+        // Legacy format: external_reference is just the userId
+        return {
+            userId: externalRef,
+            planType: 'pro' // Default to pro for legacy payments
+        };
+    }
 }
 
 export async function POST(request: Request) {
@@ -45,7 +71,8 @@ export async function POST(request: Request) {
                     amount: paymentDetails.transaction_amount
                 }, null, 2));
 
-                const userId = paymentDetails.external_reference;
+                // Parse external reference to get userId and planType
+                const { userId, planType } = parseExternalReference(paymentDetails.external_reference);
                 const status = paymentDetails.status;
                 const payerEmail = paymentDetails.payer?.email;
 
@@ -54,8 +81,10 @@ export async function POST(request: Request) {
                     return Response.json({ error: 'No user reference' }, { status: 400 });
                 }
 
+                console.log(`📦 Payment for plan: ${planType}, user: ${userId}`);
+
                 if (status === 'approved') {
-                    console.log('✅ Payment APPROVED for user:', userId);
+                    console.log('✅ Payment APPROVED for user:', userId, 'plan:', planType);
 
                     // Skip subscription logic for workshop payments
                     if (userId.startsWith('workshop-')) {
@@ -64,6 +93,7 @@ export async function POST(request: Request) {
                     }
 
                     // Create or update subscription
+                    const now = new Date();
                     const endDate = new Date();
                     endDate.setMonth(endDate.getMonth() + 1); // 1 month from now
 
@@ -71,13 +101,14 @@ export async function POST(request: Request) {
                         .from('subscriptions')
                         .upsert({
                             user_id: userId,
-                            email: payerEmail, // Store email for easy identification
+                            email: payerEmail,
                             status: 'active',
-                            plan_type: 'pro',
+                            plan_type: planType, // Use the plan type from external reference
                             mercadopago_payment_id: String(paymentId),
-                            current_period_start: new Date().toISOString(),
+                            subscription_start_date: now.toISOString(),
+                            current_period_start: now.toISOString(),
                             current_period_end: endDate.toISOString(),
-                            updated_at: new Date().toISOString()
+                            updated_at: now.toISOString()
                         }, {
                             onConflict: 'user_id'
                         })
@@ -89,15 +120,34 @@ export async function POST(request: Request) {
                         console.log('✅ Subscription updated successfully:', subData);
                     }
 
+                    // Reset current cycle usage for the new billing period
+                    const { error: usageError } = await supabase
+                        .from('usage_tracking')
+                        .upsert({
+                            user_id: userId,
+                            current_cycle_scans: 0,
+                            current_cycle_start: now.toISOString(),
+                            updated_at: now.toISOString()
+                        }, {
+                            onConflict: 'user_id'
+                        });
+
+                    if (usageError) {
+                        console.error('❌ Usage reset error:', usageError);
+                    } else {
+                        console.log('✅ Usage reset for new billing cycle');
+                    }
+
                     // Record payment
                     const { error: paymentError } = await supabase.from('payments').insert({
                         user_id: userId,
-                        amount: paymentDetails.transaction_amount || 10.00,
-                        currency: paymentDetails.currency_id || 'CLP',
+                        amount: paymentDetails.transaction_amount || (planType === 'advanced' ? 29.00 : 10.00),
+                        currency: paymentDetails.currency_id || 'USD',
                         status: 'approved',
                         mercadopago_payment_id: String(paymentId),
                         payment_type: 'subscription',
-                        created_at: new Date().toISOString()
+                        plan_type: planType,
+                        created_at: now.toISOString()
                     });
 
                     if (paymentError) {
@@ -106,7 +156,12 @@ export async function POST(request: Request) {
                         console.log('✅ Payment recorded successfully');
                     }
 
-                    console.log('🎉 Subscription activated for user:', userId, 'email:', payerEmail);
+                    console.log('🎉 Subscription activated:', {
+                        userId,
+                        planType,
+                        email: payerEmail,
+                        periodEnd: endDate.toISOString()
+                    });
                 } else {
                     console.log('⏳ Payment status not approved:', status, 'for user:', userId);
                 }

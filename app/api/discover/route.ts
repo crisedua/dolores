@@ -3,6 +3,7 @@ import { NextRequest } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 // Import the granular agentic functions
 import { planResearch, extractSignals, synthesizePatterns } from '@/lib/openai';
+import { PlanType, getScanLimit, getPainPointLimit, canPerformScan, hasMonthlyReset } from '@/lib/plans';
 
 export const maxDuration = 120;
 export const dynamic = 'force-dynamic';
@@ -20,13 +21,132 @@ const PRO_USER_EMAILS = ['ed@eduardoescalante.com', 'ed@acme.com', 'sicruzat1954
 
 import { translations } from '@/lib/translations';
 
+/**
+ * Get user's plan type from database or hardcoded list
+ */
+async function getUserPlanType(
+    supabase: any,
+    userId: string | null,
+    userEmail: string | null
+): Promise<{ planType: PlanType; isActive: boolean }> {
+    // Check hardcoded pro users
+    if (userEmail && PRO_USER_EMAILS.includes(userEmail)) {
+        console.log(`[API] Pro user detected (hardcoded): ${userEmail}`);
+        return { planType: 'pro', isActive: true };
+    }
+
+    if (!userId) {
+        return { planType: 'free', isActive: true };
+    }
+
+    // Check subscription in database
+    const { data: sub } = await supabase
+        .from('subscriptions')
+        .select('plan_type, status')
+        .eq('user_id', userId)
+        .single();
+
+    const planType = (sub?.plan_type as PlanType) || 'free';
+    const isActive = sub?.status === 'active' || planType === 'free';
+
+    console.log(`[API] User ${userId} plan: ${planType}, active: ${isActive}`);
+    return { planType, isActive };
+}
+
+/**
+ * Get user's current usage
+ */
+async function getUserUsage(
+    supabase: any,
+    userId: string
+): Promise<{ totalScans: number; cycleScans: number }> {
+    const { data: usage } = await supabase
+        .from('usage_tracking')
+        .select('total_scans_ever, current_cycle_scans, search_count')
+        .eq('user_id', userId)
+        .single();
+
+    return {
+        totalScans: usage?.total_scans_ever || usage?.search_count || 0,
+        cycleScans: usage?.current_cycle_scans || 0
+    };
+}
+
+/**
+ * Increment user's scan usage
+ */
+async function incrementUsage(
+    supabase: any,
+    userId: string
+): Promise<void> {
+    const { data: existing } = await supabase
+        .from('usage_tracking')
+        .select('total_scans_ever, current_cycle_scans, search_count')
+        .eq('user_id', userId)
+        .single();
+
+    if (existing) {
+        await supabase
+            .from('usage_tracking')
+            .update({
+                total_scans_ever: (existing.total_scans_ever || 0) + 1,
+                current_cycle_scans: (existing.current_cycle_scans || 0) + 1,
+                search_count: (existing.search_count || 0) + 1,
+                updated_at: new Date().toISOString()
+            })
+            .eq('user_id', userId);
+    } else {
+        await supabase
+            .from('usage_tracking')
+            .insert({
+                user_id: userId,
+                total_scans_ever: 1,
+                current_cycle_scans: 1,
+                search_count: 1,
+                month_year: new Date().toISOString().slice(0, 7),
+                current_cycle_start: new Date().toISOString()
+            });
+    }
+    console.log(`[API] Usage incremented for user ${userId}`);
+}
+
+/**
+ * Limit pain points based on plan
+ */
+function limitPainPoints(results: any, planType: PlanType): any {
+    const limit = getPainPointLimit(planType);
+
+    if (limit === null) {
+        // No limit for paid plans
+        return results;
+    }
+
+    // For free plan, limit to 3 pain points
+    if (Array.isArray(results)) {
+        return results.slice(0, limit);
+    }
+
+    // If results is an object with a problems/painPoints array
+    if (results?.problems) {
+        return { ...results, problems: results.problems.slice(0, limit) };
+    }
+    if (results?.painPoints) {
+        return { ...results, painPoints: results.painPoints.slice(0, limit) };
+    }
+    if (results?.opportunities) {
+        return { ...results, opportunities: results.opportunities.slice(0, limit) };
+    }
+
+    return results;
+}
+
 export async function POST(req: NextRequest) {
     const supabase = getSupabaseAdmin();
     const encoder = new TextEncoder();
     const { query, lang = 'es' } = await req.json();
     const t = (translations as any)[lang] || translations.es;
 
-    // --- SERVER-SIDE USAGE ENFORCEMENT ---
+    // --- SERVER-SIDE AUTHENTICATION ---
     const authHeader = req.headers.get('authorization');
     let userId: string | null = null;
     let userEmail: string | null = null;
@@ -43,70 +163,41 @@ export async function POST(req: NextRequest) {
         }
     }
 
-    // Check if user is a Pro user (hardcoded list or DB)
-    let isProUser = false;
-    if (userEmail && PRO_USER_EMAILS.includes(userEmail)) {
-        isProUser = true;
-        console.log(`[API] Pro user detected (hardcoded): ${userEmail}`);
-    } else if (userId) {
-        // Check subscription in database
-        const { data: sub } = await supabase
-            .from('subscriptions')
-            .select('plan_type, status')
-            .eq('user_id', userId)
-            .single();
+    // --- GET USER PLAN AND USAGE ---
+    const { planType, isActive } = await getUserPlanType(supabase, userId, userEmail);
 
-        if (sub?.plan_type === 'pro' && sub?.status === 'active') {
-            isProUser = true;
-            console.log(`[API] Pro user detected (database): ${userId}`);
-        }
+    if (!isActive) {
+        console.log(`[API] ❌ User ${userId} subscription not active`);
+        return new Response(
+            JSON.stringify({ error: 'Subscription not active' }),
+            { status: 403, headers: { 'Content-Type': 'application/json' } }
+        );
     }
 
-    // Enforce limit for free users
-    if (!isProUser && userId) {
-        const currentMonth = new Date().toISOString().slice(0, 7);
-        const { data: usage } = await supabase
-            .from('usage_tracking')
-            .select('search_count')
-            .eq('user_id', userId)
-            .eq('month_year', currentMonth)
-            .single();
+    // --- CHECK USAGE LIMITS ---
+    if (userId) {
+        const { totalScans, cycleScans } = await getUserUsage(supabase, userId);
 
-        const searchCount = usage?.search_count || 0;
-        if (searchCount >= 1) { // Limit is 1 search for free users
-            console.log(`[API] ❌ User ${userId} blocked: ${searchCount}/1 searches used`);
+        if (!canPerformScan(planType, totalScans, cycleScans)) {
+            const limit = getScanLimit(planType);
+            console.log(`[API] ❌ User ${userId} blocked: limit reached (${planType}: ${totalScans}/${limit} total, ${cycleScans}/${limit} cycle)`);
+
             return new Response(
-                JSON.stringify({ error: t.upgradeModal.limitReached }),
+                JSON.stringify({
+                    error: t.upgradeModal.limitReached,
+                    scansUsed: planType === 'free' ? totalScans : cycleScans,
+                    scanLimit: limit,
+                    planType
+                }),
                 { status: 403, headers: { 'Content-Type': 'application/json' } }
             );
         }
+
+        // Increment usage BEFORE the scan
+        await incrementUsage(supabase, userId);
     }
 
-    // Increment usage for free users BEFORE the search
-    if (!isProUser && userId) {
-        const currentMonth = new Date().toISOString().slice(0, 7);
-        const { data: existing } = await supabase
-            .from('usage_tracking')
-            .select('search_count')
-            .eq('user_id', userId)
-            .eq('month_year', currentMonth)
-            .single();
-
-        if (existing) {
-            await supabase
-                .from('usage_tracking')
-                .update({ search_count: existing.search_count + 1, updated_at: new Date().toISOString() })
-                .eq('user_id', userId)
-                .eq('month_year', currentMonth);
-        } else {
-            await supabase
-                .from('usage_tracking')
-                .insert({ user_id: userId, month_year: currentMonth, search_count: 1 });
-        }
-        console.log(`[API] Usage incremented for user ${userId}`);
-    }
-    // --- END SERVER-SIDE USAGE ENFORCEMENT ---
-
+    // --- EXECUTE SCAN ---
     const stream = new ReadableStream({
         async start(controller) {
             const sendUpdate = (step: string, status: 'active' | 'completed' = 'active') => {
@@ -121,7 +212,7 @@ export async function POST(req: NextRequest) {
             };
 
             try {
-                console.log(`[API] Received query: "${query}" (lang: ${lang})`);
+                console.log(`[API] Received query: "${query}" (lang: ${lang}, plan: ${planType})`);
 
                 const hasPerplexity = !!process.env.PERPLEXITY_API_KEY;
 
@@ -139,13 +230,21 @@ export async function POST(req: NextRequest) {
                     }, 10000);
 
                     try {
-                        const result = await perplexitySearch(query);
+                        let result = await perplexitySearch(query);
                         clearInterval(heartbeat);
+
+                        // Apply pain point limit based on plan
+                        result = limitPainPoints(result, planType);
 
                         sendUpdate(researchLabel, 'completed');
                         sendUpdate(t.search.analysisComplete, 'completed');
 
-                        const finalPayload = JSON.stringify({ type: 'result', data: result });
+                        const finalPayload = JSON.stringify({
+                            type: 'result',
+                            data: result,
+                            planType,
+                            painPointLimit: getPainPointLimit(planType)
+                        });
                         controller.enqueue(encoder.encode(finalPayload + '\n'));
                         controller.close();
                         return;
@@ -164,7 +263,6 @@ export async function POST(req: NextRequest) {
                     sendUpdate(`${t.search.initializing} agentic strategy...`, 'active');
                     const researchPlan = await planResearch(query); // Returns array of queries
                     console.log("[DEBUG] Research Plan Generated:", researchPlan);
-                    // sendUpdate(`[DEBUG] Planner output: ${JSON.stringify(researchPlan)}`, 'completed');
 
                     sendUpdate(`${t.search.analyzingWeb} (reddit)...`, 'active');
 
@@ -265,12 +363,20 @@ export async function POST(req: NextRequest) {
 
                     sendUpdate(t.search.analysisComplete, 'active');
 
-                    const result = await synthesizePatterns(combinedMarkdown);
+                    let result = await synthesizePatterns(combinedMarkdown);
+
+                    // Apply pain point limit based on plan
+                    result = limitPainPoints(result, planType);
 
                     sendUpdate(t.search.analysisComplete, 'completed');
 
                     // Final Result
-                    const finalPayload = JSON.stringify({ type: 'result', data: result });
+                    const finalPayload = JSON.stringify({
+                        type: 'result',
+                        data: result,
+                        planType,
+                        painPointLimit: getPainPointLimit(planType)
+                    });
                     controller.enqueue(encoder.encode(finalPayload + '\n'));
                     controller.close();
                 }

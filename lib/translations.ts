@@ -358,6 +358,18 @@ export const translations = {
                 unlockWithPro: 'Unlock with Pro'
             }
         },
+        prototypePrompts: {
+            buttonLabel: 'Generate Prototype Prompts',
+            modalTitle: 'Prototype Prompt Generator',
+            helperText: 'Copy one of these prompts into your preferred no-code AI tool to create a simple prototype for validation.',
+            copyPrompt: 'Copy Prompt',
+            copied: 'Copied!',
+            generating: 'Generating personalized prompts...',
+            retry: 'Retry',
+            problemLabel: 'Problem',
+            targetLabel: 'Target',
+            promptFor: 'Prompt for'
+        },
     },
     es: {
         common: {
@@ -715,6 +727,18 @@ export const translations = {
                 mvpPlan: 'Plan MVP de 7 días',
                 unlockWithPro: 'Desbloquear con Pro'
             }
+        },
+        prototypePrompts: {
+            buttonLabel: 'Generar Prompts de Prototipo',
+            modalTitle: 'Generador de Prompts para Prototipos',
+            helperText: 'Copia uno de estos prompts en tu herramienta no-code con IA preferida para crear un prototipo simple de validación.',
+            copyPrompt: 'Copiar Prompt',
+            copied: '¡Copiado!',
+            generating: 'Generando prompts personalizados...',
+            retry: 'Reintentar',
+            problemLabel: 'Problema',
+            targetLabel: 'Objetivo',
+            promptFor: 'Prompt para'
         },
     },
 };

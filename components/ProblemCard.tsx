@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { ChevronDown, ArrowRight, ExternalLink, User, AlertTriangle, Wallet, Users, Lightbulb, Lock } from 'lucide-react';
 import Link from 'next/link';
+import { PrototypePromptsButton } from './PrototypePromptsButton';
 
 import { useTranslation } from '@/context/LanguageContext';
 import { analytics } from '@/lib/analytics';
@@ -232,6 +233,9 @@ export function ProblemCard({ problem, isProUser = true }: ProblemCardProps) {
                                     </p>
                                 </div>
                             )}
+
+                            {/* Prototype Prompts Button - Pro Users */}
+                            <PrototypePromptsButton problem={problem} isProUser={true} />
                         </div>
                     </div>
                 ) : (
@@ -261,6 +265,11 @@ export function ProblemCard({ problem, isProUser = true }: ProblemCardProps) {
                                 onClick={handleLockedClick}
                                 unlockText={t.paywalls?.locked?.unlockWithPro || 'Desbloquear con Pro'}
                             />
+                        </div>
+
+                        {/* Prototype Prompts Button - Free Users (Locked) */}
+                        <div className="md:col-span-2 mt-4">
+                            <PrototypePromptsButton problem={problem} isProUser={false} />
                         </div>
                     </div>
                 )}

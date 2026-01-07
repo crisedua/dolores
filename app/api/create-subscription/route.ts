@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://veta.lat';
 
-        // Create preference for $150 USD subscription
+        // Create preference for $10 USD subscription
         const preferenceData = {
             items: [
                 {
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
                     title: 'Veta Pro - Monthly Subscription',
                     description: 'Unlimited business problem searches',
                     quantity: 1,
-                    unit_price: 150,
+                    unit_price: 10,
                     currency_id: 'USD'
                 }
             ],

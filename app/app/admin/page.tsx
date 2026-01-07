@@ -278,7 +278,7 @@ export default function AdminPage() {
                     <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                 </div>
             ) : (
-                <div className="bg-[#1A1A1A] border border-[#333] rounded-xl overflow-hidden">
+                <div className="bg-[#1A1A1A] border border-[#333] rounded-xl">
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-[#333]">
@@ -328,10 +328,10 @@ export default function AdminPage() {
                                                 )}
                                             </button>
 
-                                            {/* Dropdown Menu */}
+                                            {/* Dropdown Menu - opens upward */}
                                             {openDropdown === u.id && (
                                                 <div
-                                                    className="absolute right-0 mt-1 w-36 bg-[#2A2A2A] border border-[#444] rounded-lg shadow-xl z-50 overflow-hidden"
+                                                    className="absolute right-0 bottom-full mb-1 w-36 bg-[#2A2A2A] border border-[#444] rounded-lg shadow-xl z-[100] overflow-hidden"
                                                     onClick={(e) => e.stopPropagation()}
                                                 >
                                                     <button

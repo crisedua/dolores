@@ -45,7 +45,9 @@ export function PrototypePromptModal({ isOpen, onClose, problem }: PrototypeProm
             });
 
             if (!response.ok) {
-                throw new Error('Failed to generate prompts');
+                const errData = await response.json().catch(() => ({}));
+                const msg = errData.details || errData.error || 'Failed to generate prompts';
+                throw new Error(msg);
             }
 
             const data = await response.json();
@@ -126,8 +128,8 @@ export function PrototypePromptModal({ isOpen, onClose, problem }: PrototypeProm
                             key={tool.id}
                             onClick={() => setActiveTab(tool.id)}
                             className={`px-4 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2 whitespace-nowrap ${activeTab === tool.id
-                                    ? `bg-gradient-to-r ${tool.color} text-white shadow-lg`
-                                    : 'bg-[#1A1A1A] text-gray-400 hover:text-white hover:bg-[#222]'
+                                ? `bg-gradient-to-r ${tool.color} text-white shadow-lg`
+                                : 'bg-[#1A1A1A] text-gray-400 hover:text-white hover:bg-[#222]'
                                 }`}
                         >
                             {tool.name}

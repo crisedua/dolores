@@ -76,11 +76,21 @@ Generate one prompt per tool, each tailored to that tool's strengths. All prompt
         });
 
         const content = response.choices[0].message.content;
+
+        console.log('[generate-prompts] OpenAI Response received. Length:', content?.length);
+
         if (!content) {
+            console.error('[generate-prompts] Empty response from OpenAI');
             throw new Error('No response from OpenAI');
         }
 
-        const prompts = JSON.parse(content);
+        let prompts;
+        try {
+            prompts = JSON.parse(content);
+        } catch (e) {
+            console.error('[generate-prompts] JSON Parse Error:', e, 'Content:', content);
+            throw new Error('Invalid JSON response from OpenAI');
+        }
 
         return NextResponse.json({
             success: true,
@@ -91,10 +101,17 @@ Generate one prompt per tool, each tailored to that tool's strengths. All prompt
             }
         });
 
-    } catch (error) {
-        console.error('[generate-prompts] Error:', error);
+    } catch (error: any) {
+        console.error('[generate-prompts] Critical Error:', error);
+        console.error('[generate-prompts] API Key present:', !!process.env.OPENAI_API_KEY);
+
         return NextResponse.json(
-            { error: 'Failed to generate prompts', details: error instanceof Error ? error.message : 'Unknown error' },
+            {
+                error: 'Failed to generate prompts',
+                details: error.message || 'Unknown error',
+                // Only send specific details in dev/admin context if needed
+                debug: process.env.NODE_ENV === 'development' ? error.toString() : undefined
+            },
             { status: 500 }
         );
     }

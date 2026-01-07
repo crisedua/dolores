@@ -320,7 +320,7 @@ export function ProblemCard({ problem, isProUser = true }: ProblemCardProps) {
                                 })}
                                 {!isProUser && problem.quotes && problem.quotes.length > 2 && (
                                     <Link
-                                        href="/pricing"
+                                        href="/pricing?plan=pro&action=subscribe"
                                         className="flex items-center justify-center gap-2 bg-[#111] border border-dashed border-[#333] rounded-lg p-4 text-gray-500 hover:text-white hover:border-blue-500/50 transition-all"
                                     >
                                         <Lock size={14} />
@@ -377,7 +377,7 @@ interface LockedSectionProps {
 function LockedSection({ title, icon, onClick, unlockText }: LockedSectionProps) {
     return (
         <Link
-            href="/pricing"
+            href="/pricing?plan=pro&action=subscribe"
             onClick={onClick}
             className="relative bg-[#111] rounded-xl p-6 border border-[#222] overflow-hidden group hover:border-blue-500/30 transition-all"
         >

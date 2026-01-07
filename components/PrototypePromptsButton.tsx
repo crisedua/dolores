@@ -40,7 +40,7 @@ export function PrototypePromptsButton({ problem }: PrototypePromptsButtonProps)
     if (!hasAccess) {
         return (
             <Link
-                href="/pricing?plan=advanced"
+                href="/pricing?plan=advanced&action=subscribe"
                 onClick={handleClick}
                 className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-gradient-to-r from-purple-900/20 to-pink-900/20 border border-purple-500/20 text-gray-400 hover:text-white hover:border-purple-500/40 transition-all group"
             >

@@ -123,7 +123,7 @@ export function UpgradeModal({
                             </ul>
 
                             <Link
-                                href="/pricing?plan=pro"
+                                href="/pricing?plan=pro&action=subscribe"
                                 onClick={() => handleUpgradeClick('pro')}
                                 className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
                             >
@@ -169,7 +169,7 @@ export function UpgradeModal({
                             </ul>
 
                             <Link
-                                href="/pricing?plan=advanced"
+                                href="/pricing?plan=advanced&action=subscribe"
                                 onClick={() => handleUpgradeClick('advanced')}
                                 className="w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg font-semibold transition-all flex items-center justify-center gap-2"
                             >

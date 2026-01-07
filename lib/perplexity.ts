@@ -18,7 +18,7 @@ export async function perplexitySearch(topic: string) {
 
     try {
         const requestBody = {
-            model: "sonar-pro",
+            model: "sonar",
             messages: [
                 {
                     role: "system",

@@ -109,10 +109,19 @@ export function useSubscription() {
             }
 
             // 3. Calculate usage based on plan type
-            const plan = PLANS[planType];
+            // ADMIN OVERRIDE
+            const ADMIN_EMAILS = ['ed@eduardoescalante.com'];
+            const isAdmin = user.email && ADMIN_EMAILS.includes(user.email);
+
+            let planTypeFinal = planType;
+            if (isAdmin) {
+                planTypeFinal = 'advanced';
+            }
+
+            const plan = PLANS[planTypeFinal];
             let scansUsed: number;
 
-            if (planType === 'free') {
+            if (planTypeFinal === 'free') {
                 // Free plan: use lifetime count
                 scansUsed = usageData?.total_scans_ever || usageData?.search_count || 0;
             } else {
@@ -120,23 +129,27 @@ export function useSubscription() {
                 scansUsed = usageData?.current_cycle_scans || 0;
             }
 
-            const scanLimit = getScanLimit(planType);
+            const scanLimit = getScanLimit(planTypeFinal);
             const scansRemaining = Math.max(0, scanLimit - scansUsed);
-            const canScan = scansRemaining > 0 && isActive;
-            const painPointLimit = getPainPointLimit(planType);
+
+            // Admin can ALWAYS scan
+            const canScan = isAdmin ? true : (scansRemaining > 0 && isActive);
+
+            const painPointLimit = getPainPointLimit(planTypeFinal);
 
             // Calculate next reset date for paid plans
             const subscriptionStartDate = subData?.subscription_start_date
                 ? new Date(subData.subscription_start_date)
                 : null;
-            const nextResetDate = getNextResetDate(subscriptionStartDate, planType);
+            const nextResetDate = getNextResetDate(subscriptionStartDate, planTypeFinal);
 
             // Generate usage display text
-            const usageText = formatUsageDisplay(planType, scansUsed, 'en'); // Will be localized in components
+            const usageText = formatUsageDisplay(planTypeFinal, scansUsed, 'en'); // Will be localized in components
 
             console.log('useSubscription:', {
-                planType,
+                planType: planTypeFinal,
                 isPaidUser,
+                isAdmin,
                 scansUsed,
                 scanLimit,
                 scansRemaining,
@@ -149,9 +162,9 @@ export function useSubscription() {
                 scanLimit,
                 scansRemaining,
                 canScan,
-                planType,
+                planType: planTypeFinal,
                 planName: plan.name.en,
-                isPaidUser,
+                isPaidUser: isPaidUser || (isAdmin as boolean),
                 painPointLimit,
                 nextResetDate,
                 usageText,
@@ -159,7 +172,7 @@ export function useSubscription() {
                 search_count: scansUsed,
                 limit: scanLimit,
                 canSearch: canScan,
-                isProUser: isPaidUser // True for both Pro and Advanced
+                isProUser: isPaidUser || (isAdmin as boolean) // True for both Pro and Advanced
             });
 
         } catch (error: unknown) {
@@ -220,6 +233,13 @@ export function useSubscription() {
 
         if (!user) {
             console.log('🟡 Skipping increment: No user');
+            return true;
+        }
+
+        // Skip for admins
+        const ADMIN_EMAILS = ['ed@eduardoescalante.com'];
+        if (ADMIN_EMAILS.includes(user.email || '')) {
+            console.log('🟢 Skipping increment: Admin user');
             return true;
         }
 

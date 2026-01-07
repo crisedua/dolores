@@ -19,6 +19,9 @@ function getSupabaseAdmin() {
 // Hardcoded Pro users (same as frontend for consistency)
 const PRO_USER_EMAILS = ['ed@eduardoescalante.com', 'ed@acme.com', 'sicruzat1954@gmail.com'];
 
+// Admin users - get UNLIMITED access (bypass all limits)
+const ADMIN_EMAILS = ['ed@eduardoescalante.com'];
+
 import { translations } from '@/lib/translations';
 
 /**
@@ -28,15 +31,21 @@ async function getUserPlanType(
     supabase: any,
     userId: string | null,
     userEmail: string | null
-): Promise<{ planType: PlanType; isActive: boolean }> {
+): Promise<{ planType: PlanType; isActive: boolean; isAdmin: boolean }> {
+    // Check if admin - admins get unlimited access
+    if (userEmail && ADMIN_EMAILS.includes(userEmail)) {
+        console.log(`[API] ⭐ ADMIN user detected: ${userEmail} - UNLIMITED ACCESS`);
+        return { planType: 'advanced', isActive: true, isAdmin: true };
+    }
+
     // Check hardcoded pro users
     if (userEmail && PRO_USER_EMAILS.includes(userEmail)) {
         console.log(`[API] Pro user detected (hardcoded): ${userEmail}`);
-        return { planType: 'pro', isActive: true };
+        return { planType: 'pro', isActive: true, isAdmin: false };
     }
 
     if (!userId) {
-        return { planType: 'free', isActive: true };
+        return { planType: 'free', isActive: true, isAdmin: false };
     }
 
     // Check subscription in database
@@ -50,7 +59,7 @@ async function getUserPlanType(
     const isActive = sub?.status === 'active' || planType === 'free';
 
     console.log(`[API] User ${userId} plan: ${planType}, active: ${isActive}`);
-    return { planType, isActive };
+    return { planType, isActive, isAdmin: false };
 }
 
 /**
@@ -164,7 +173,7 @@ export async function POST(req: NextRequest) {
     }
 
     // --- GET USER PLAN AND USAGE ---
-    const { planType, isActive } = await getUserPlanType(supabase, userId, userEmail);
+    const { planType, isActive, isAdmin } = await getUserPlanType(supabase, userId, userEmail);
 
     if (!isActive) {
         console.log(`[API] ❌ User ${userId} subscription not active`);
@@ -178,7 +187,8 @@ export async function POST(req: NextRequest) {
     if (userId) {
         const { totalScans, cycleScans } = await getUserUsage(supabase, userId);
 
-        if (!canPerformScan(planType, totalScans, cycleScans)) {
+        // Admins bypass usage limits
+        if (!isAdmin && !canPerformScan(planType, totalScans, cycleScans)) {
             const limit = getScanLimit(planType);
             console.log(`[API] ❌ User ${userId} blocked: limit reached (${planType}: ${totalScans}/${limit} total, ${cycleScans}/${limit} cycle)`);
 
@@ -193,8 +203,10 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Increment usage BEFORE the scan
-        await incrementUsage(supabase, userId);
+        // Increment usage BEFORE the scan (skip for admins to avoid messing up stats/limits display)
+        if (!isAdmin) {
+            await incrementUsage(supabase, userId);
+        }
     }
 
     // --- EXECUTE SCAN ---

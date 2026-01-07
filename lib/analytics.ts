@@ -29,7 +29,7 @@ export const analytics = {
         trackEvent('search_completed_free', { query, resultCount });
     },
 
-    paywallViewed: (paywallType: 'first_search' | 'comparison' | 'limit_reached' | 'locked_content' | 'prototype_prompts') => {
+    paywallViewed: (paywallType: 'first_search' | 'comparison' | 'limit_reached' | 'locked_content' | 'prototype_prompts' | 'prototype_prompts_advanced') => {
         trackEvent('paywall_viewed', { paywallType });
     },
 

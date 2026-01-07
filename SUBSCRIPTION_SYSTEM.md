@@ -32,6 +32,11 @@ The new subscription system supports three tiers with clear usage limits and bil
   - Everything in Pro
   - Priority support
 
+### 4. Admin Access (Internal)
+- **Scans**: Unlimited (Bypasses all checks)
+- **Pain Points**: Unlimited
+- **Logic**: Defined by `ADMIN_EMAILS` list in code. Autosets to 'Advanced' with overridden capabilities.
+
 ---
 
 ## Usage Rules

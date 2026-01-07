@@ -2,21 +2,24 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/lib/supabase';
-import { Users, Crown, Search, Shield, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
+import { Users, Crown, Search, Shield, RefreshCw, ChevronDown, Sparkles } from 'lucide-react';
+import { PlanType } from '@/lib/plans';
 
 interface User {
     id: string;
     email: string;
     created_at: string;
     last_sign_in_at: string;
-    plan_type: string;
+    plan_type: PlanType;
     subscription_status: string;
     search_count: number;
+    current_cycle_scans: number;
 }
 
 interface Stats {
     total_users: number;
     pro_users: number;
+    advanced_users: number;
     free_users: number;
     total_searches_this_month: number;
 }
@@ -33,6 +36,7 @@ export default function AdminPage() {
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [actionLoading, setActionLoading] = useState<string | null>(null);
+    const [openDropdown, setOpenDropdown] = useState<string | null>(null);
     const { t, language } = useTranslation();
 
     const isAdmin = user?.email && ADMIN_EMAILS.includes(user.email);
@@ -45,6 +49,13 @@ export default function AdminPage() {
             setIsLoading(false);
         }
     }, [user, isAdmin]);
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        const handleClickOutside = () => setOpenDropdown(null);
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, []);
 
     const fetchUsers = async () => {
         setIsLoading(true);
@@ -73,8 +84,10 @@ export default function AdminPage() {
         }
     };
 
-    const handleProAction = async (userId: string, email: string, action: 'grant_pro' | 'revoke_pro') => {
+    const handleSetPlan = async (userId: string, email: string, planType: PlanType) => {
         setActionLoading(userId);
+        setOpenDropdown(null);
+
         try {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session?.access_token) throw new Error('No session');
@@ -85,7 +98,12 @@ export default function AdminPage() {
                     'Authorization': `Bearer ${session.access_token}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ action, userId, email })
+                body: JSON.stringify({
+                    action: 'set_plan',
+                    userId,
+                    email,
+                    planType
+                })
             });
 
             if (!response.ok) {
@@ -115,6 +133,42 @@ export default function AdminPage() {
             hour: '2-digit',
             minute: '2-digit'
         });
+    };
+
+    const getPlanBadge = (planType: PlanType) => {
+        switch (planType) {
+            case 'advanced':
+                return (
+                    <span className="inline-flex items-center gap-1 bg-purple-500/20 text-purple-400 px-2 py-1 rounded text-xs font-medium">
+                        <Sparkles size={12} />
+                        ADVANCED
+                    </span>
+                );
+            case 'pro':
+                return (
+                    <span className="inline-flex items-center gap-1 bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-medium">
+                        <Crown size={12} />
+                        PRO
+                    </span>
+                );
+            default:
+                return (
+                    <span className="text-gray-500 text-xs">
+                        {language === 'es' ? 'Gratis' : 'Free'}
+                    </span>
+                );
+        }
+    };
+
+    const getUsageDisplay = (u: User) => {
+        if (u.plan_type === 'free') {
+            return `${u.search_count}/1`;
+        } else if (u.plan_type === 'pro') {
+            return `${u.current_cycle_scans}/5`;
+        } else if (u.plan_type === 'advanced') {
+            return `${u.current_cycle_scans}/15`;
+        }
+        return `${u.search_count}`;
     };
 
     if (!user) {
@@ -160,13 +214,20 @@ export default function AdminPage() {
 
             {/* Stats Cards */}
             {stats && (
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
                     <div className="bg-[#1A1A1A] border border-[#333] rounded-xl p-5">
                         <div className="flex items-center gap-3 mb-2">
                             <Users className="text-blue-500" size={24} />
                             <span className="text-gray-400 text-sm">{t.admin.stats.totalUsers}</span>
                         </div>
                         <p className="text-3xl font-bold text-white">{stats.total_users}</p>
+                    </div>
+                    <div className="bg-[#1A1A1A] border border-[#333] rounded-xl p-5">
+                        <div className="flex items-center gap-3 mb-2">
+                            <Sparkles className="text-purple-500" size={24} />
+                            <span className="text-gray-400 text-sm">Advanced</span>
+                        </div>
+                        <p className="text-3xl font-bold text-white">{stats.advanced_users}</p>
                     </div>
                     <div className="bg-[#1A1A1A] border border-[#333] rounded-xl p-5">
                         <div className="flex items-center gap-3 mb-2">
@@ -231,20 +292,10 @@ export default function AdminPage() {
                                         <span className="text-white font-medium">{u.email}</span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        {u.plan_type === 'pro' ? (
-                                            <span className="inline-flex items-center gap-1 bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs font-medium">
-                                                <Crown size={12} />
-                                                PRO
-                                            </span>
-                                        ) : (
-                                            <span className="text-gray-500 text-xs">{language === 'es' ? 'Gratis' : 'Free'}</span>
-                                        )}
+                                        {getPlanBadge(u.plan_type)}
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="text-white">{u.search_count}</span>
-                                        {u.plan_type !== 'pro' && (
-                                            <span className="text-gray-500">/1</span>
-                                        )}
+                                        <span className="text-white">{getUsageDisplay(u)}</span>
                                     </td>
                                     <td className="px-6 py-4 text-gray-400 text-sm">
                                         {formatDate(u.created_at)}
@@ -253,33 +304,58 @@ export default function AdminPage() {
                                         {formatDate(u.last_sign_in_at)}
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        {u.plan_type === 'pro' ? (
+                                        <div className="relative inline-block">
                                             <button
-                                                onClick={() => handleProAction(u.id, u.email, 'revoke_pro')}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setOpenDropdown(openDropdown === u.id ? null : u.id);
+                                                }}
                                                 disabled={actionLoading === u.id}
-                                                className="inline-flex items-center gap-1 bg-red-500/20 hover:bg-red-500/30 text-red-400 px-3 py-1.5 rounded text-xs font-medium transition-colors disabled:opacity-50"
+                                                className="inline-flex items-center gap-2 bg-[#333] hover:bg-[#444] text-white px-3 py-1.5 rounded text-xs font-medium transition-colors disabled:opacity-50"
                                             >
                                                 {actionLoading === u.id ? (
-                                                    <div className="w-3 h-3 border border-red-400 border-t-transparent rounded-full animate-spin" />
+                                                    <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin" />
                                                 ) : (
-                                                    <XCircle size={14} />
+                                                    <>
+                                                        {language === 'es' ? 'Cambiar Plan' : 'Change Plan'}
+                                                        <ChevronDown size={14} />
+                                                    </>
                                                 )}
-                                                {t.admin.actions.revokePro}
                                             </button>
-                                        ) : (
-                                            <button
-                                                onClick={() => handleProAction(u.id, u.email, 'grant_pro')}
-                                                disabled={actionLoading === u.id}
-                                                className="inline-flex items-center gap-1 bg-green-500/20 hover:bg-green-500/30 text-green-400 px-3 py-1.5 rounded text-xs font-medium transition-colors disabled:opacity-50"
-                                            >
-                                                {actionLoading === u.id ? (
-                                                    <div className="w-3 h-3 border border-green-400 border-t-transparent rounded-full animate-spin" />
-                                                ) : (
-                                                    <CheckCircle size={14} />
-                                                )}
-                                                {t.admin.actions.grantPro}
-                                            </button>
-                                        )}
+
+                                            {/* Dropdown Menu */}
+                                            {openDropdown === u.id && (
+                                                <div
+                                                    className="absolute right-0 mt-1 w-36 bg-[#2A2A2A] border border-[#444] rounded-lg shadow-xl z-50 overflow-hidden"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    <button
+                                                        onClick={() => handleSetPlan(u.id, u.email, 'free')}
+                                                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-[#333] transition-colors flex items-center gap-2 ${u.plan_type === 'free' ? 'text-green-400 bg-green-500/10' : 'text-gray-300'
+                                                            }`}
+                                                    >
+                                                        <span className="w-2 h-2 rounded-full bg-gray-500"></span>
+                                                        Free
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleSetPlan(u.id, u.email, 'pro')}
+                                                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-[#333] transition-colors flex items-center gap-2 ${u.plan_type === 'pro' ? 'text-yellow-400 bg-yellow-500/10' : 'text-gray-300'
+                                                            }`}
+                                                    >
+                                                        <Crown size={14} className="text-yellow-500" />
+                                                        Pro
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleSetPlan(u.id, u.email, 'advanced')}
+                                                        className={`w-full text-left px-4 py-2.5 text-sm hover:bg-[#333] transition-colors flex items-center gap-2 ${u.plan_type === 'advanced' ? 'text-purple-400 bg-purple-500/10' : 'text-gray-300'
+                                                            }`}
+                                                    >
+                                                        <Sparkles size={14} className="text-purple-500" />
+                                                        Advanced
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

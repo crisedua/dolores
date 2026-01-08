@@ -26,6 +26,7 @@ export default function ReportDetailsPage() {
     const { user } = useAuth();
     const [report, setReport] = useState<Report | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isPdfGenerating, setIsPdfGenerating] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const { t, language } = useTranslation();
 
@@ -57,7 +58,17 @@ export default function ReportDetailsPage() {
 
     const downloadReportPDF = async () => {
         if (!report) return;
-        setIsLoading(true);
+
+        // IMPORTANT: Capture the element BEFORE any state changes that trigger re-renders
+        const element = document.getElementById('problems-container');
+        if (!element) {
+            console.error('problems-container element not found');
+            alert('Failed to generate PDF: Content not found');
+            return;
+        }
+        console.log('Found problems container');
+
+        setIsPdfGenerating(true);
 
         try {
             console.log('Starting PDF generation...');
@@ -80,14 +91,6 @@ export default function ReportDetailsPage() {
                 console.error('Failed to import html2pdf.js:', importErr);
                 throw new Error('Failed to load PDF library. Please refresh and try again.');
             }
-
-            // Get the problems container element
-            const element = document.getElementById('problems-container');
-            if (!element) {
-                console.error('problems-container element not found');
-                throw new Error('Content not found');
-            }
-            console.log('Found problems container');
 
             // Create a wrapper with consistent styling for PDF
             const wrapper = document.createElement('div');
@@ -166,7 +169,7 @@ export default function ReportDetailsPage() {
             const errorMessage = err?.message || 'Unknown error occurred';
             alert(`Failed to generate PDF: ${errorMessage}\n\nPlease check the console for details.`);
         } finally {
-            setIsLoading(false);
+            setIsPdfGenerating(false);
         }
     };
 
@@ -223,10 +226,15 @@ export default function ReportDetailsPage() {
                     <h1 className="text-3xl font-bold text-white mb-2">{report.title}</h1>
                     <button
                         onClick={downloadReportPDF}
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                        disabled={isPdfGenerating}
+                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-wait text-white px-4 py-2 rounded-lg font-medium transition-colors"
                     >
-                        <Download size={18} />
-                        {t.reports.downloadPDF}
+                        {isPdfGenerating ? (
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                            <Download size={18} />
+                        )}
+                        {isPdfGenerating ? 'Generating...' : t.reports.downloadPDF}
                     </button>
                 </div>
                 <div className="flex items-center gap-4 text-sm text-gray-500">

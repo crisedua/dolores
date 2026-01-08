@@ -57,27 +57,46 @@ export default function ReportDetailsPage() {
 
     const downloadReportPDF = async () => {
         if (!report) return;
-        setIsLoading(true); // Reuse loading state to show activity
+        setIsLoading(true);
 
         try {
-            // Dynamic import with fallback for module structure
-            const module = await import('html2pdf.js');
-            const html2pdf = module.default || module;
+            console.log('Starting PDF generation...');
+
+            // Dynamic import - use bundled version with all dependencies
+            let html2pdf: any;
+            try {
+                // Use the bundled version which is more reliable in browsers
+                const module = await import('html2pdf.js/dist/html2pdf.bundle.min.js');
+                console.log('Module imported:', module);
+                // Try different export patterns
+                html2pdf = module.default || (window as any).html2pdf || module;
+
+                if (typeof html2pdf !== 'function') {
+                    console.error('html2pdf is not a function:', typeof html2pdf, html2pdf);
+                    throw new Error('html2pdf module did not load correctly');
+                }
+                console.log('html2pdf loaded successfully');
+            } catch (importErr) {
+                console.error('Failed to import html2pdf.js:', importErr);
+                throw new Error('Failed to load PDF library. Please refresh and try again.');
+            }
 
             // Get the problems container element
             const element = document.getElementById('problems-container');
             if (!element) {
+                console.error('problems-container element not found');
                 throw new Error('Content not found');
             }
+            console.log('Found problems container');
 
             // Create a wrapper with consistent styling for PDF
             const wrapper = document.createElement('div');
-            wrapper.className = 'pdf-wrapper'; // Helper class if needed
+            wrapper.className = 'pdf-wrapper';
             Object.assign(wrapper.style, {
                 backgroundColor: '#0a0a0a',
                 padding: '40px',
                 color: 'white',
-                width: '800px', // Fixed width for A4 consistency
+                width: '800px',
                 position: 'fixed',
                 left: '-9999px',
                 top: '0',
@@ -99,12 +118,10 @@ export default function ReportDetailsPage() {
 
             // Clone content
             const clone = element.cloneNode(true) as HTMLElement;
-            // Ensure clone is visible and text is white
             clone.style.display = 'block';
             clone.style.color = 'white';
 
-            // Fix text colors in clone if they rely on dark mode classes that might break
-            // (Optional: naive fix for common gray text)
+            // Fix text colors in clone
             const lightTextElements = clone.querySelectorAll('.text-gray-400, .text-gray-500');
             lightTextElements.forEach((el: any) => {
                 el.style.color = '#a0a0a0';
@@ -122,9 +139,10 @@ export default function ReportDetailsPage() {
             wrapper.appendChild(footer);
 
             document.body.appendChild(wrapper);
+            console.log('Wrapper added to DOM');
 
             const opt = {
-                margin: [10, 10] as [number, number], // top/bottom margin
+                margin: [10, 10] as [number, number],
                 filename: `veta-report-${report.id.slice(0, 8)}.pdf`,
                 image: { type: 'jpeg' as const, quality: 0.98 },
                 html2canvas: {
@@ -132,18 +150,21 @@ export default function ReportDetailsPage() {
                     logging: false,
                     useCORS: true,
                     backgroundColor: '#0a0a0a',
-                    windowWidth: 800 // Trick to force layout width
+                    windowWidth: 800
                 },
                 jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
             };
 
+            console.log('Generating PDF with options:', opt);
             await html2pdf().set(opt).from(wrapper).save();
+            console.log('PDF generated successfully');
 
             // Cleanup
             document.body.removeChild(wrapper);
-        } catch (err) {
+        } catch (err: any) {
             console.error('PDF Generation failed:', err);
-            alert('Failed to generate PDF. Please try again.');
+            const errorMessage = err?.message || 'Unknown error occurred';
+            alert(`Failed to generate PDF: ${errorMessage}\n\nPlease check the console for details.`);
         } finally {
             setIsLoading(false);
         }
@@ -223,17 +244,17 @@ export default function ReportDetailsPage() {
             </div>
 
             {/* Problems List */}
-            {report.results?.problems && report.results.problems.length > 0 ? (
-                <div id="problems-container" className="space-y-6">
-                    {report.results.problems.map((problem) => (
+            <div id="problems-container" className="space-y-6">
+                {report.results?.problems && report.results.problems.length > 0 ? (
+                    report.results.problems.map((problem) => (
                         <ProblemCard key={problem.id} problem={problem} />
-                    ))}
-                </div>
-            ) : (
-                <div className="text-center py-16 text-gray-500">
-                    <p>{t.reports.noProblems}</p>
-                </div>
-            )}
+                    ))
+                ) : (
+                    <div className="text-center py-16 text-gray-500">
+                        <p>{t.reports.noProblems}</p>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

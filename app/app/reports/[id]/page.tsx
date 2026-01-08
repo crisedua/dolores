@@ -73,24 +73,12 @@ export default function ReportDetailsPage() {
         try {
             console.log('Starting PDF generation...');
 
-            // Dynamic import - use bundled version with all dependencies
-            let html2pdf: any;
-            try {
-                // Use the bundled version which is more reliable in browsers
-                const module = await import('html2pdf.js/dist/html2pdf.bundle.min.js');
-                console.log('Module imported:', module);
-                // Try different export patterns
-                html2pdf = module.default || (window as any).html2pdf || module;
-
-                if (typeof html2pdf !== 'function') {
-                    console.error('html2pdf is not a function:', typeof html2pdf, html2pdf);
-                    throw new Error('html2pdf module did not load correctly');
-                }
-                console.log('html2pdf loaded successfully');
-            } catch (importErr) {
-                console.error('Failed to import html2pdf.js:', importErr);
-                throw new Error('Failed to load PDF library. Please refresh and try again.');
-            }
+            // Dynamic imports - use html2canvas-pro which supports oklab colors
+            const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+                import('html2canvas-pro'),
+                import('jspdf')
+            ]);
+            console.log('Libraries loaded successfully');
 
             // Create a wrapper with consistent styling for PDF
             const wrapper = document.createElement('div');
@@ -144,22 +132,50 @@ export default function ReportDetailsPage() {
             document.body.appendChild(wrapper);
             console.log('Wrapper added to DOM');
 
-            const opt = {
-                margin: [10, 10] as [number, number],
-                filename: `veta-report-${report.id.slice(0, 8)}.pdf`,
-                image: { type: 'jpeg' as const, quality: 0.98 },
-                html2canvas: {
-                    scale: 2,
-                    logging: false,
-                    useCORS: true,
-                    backgroundColor: '#0a0a0a',
-                    windowWidth: 800
-                },
-                jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
-            };
+            // Generate canvas using html2canvas-pro (supports oklab colors)
+            const canvas = await html2canvas(wrapper, {
+                scale: 2,
+                logging: false,
+                useCORS: true,
+                backgroundColor: '#0a0a0a',
+                windowWidth: 800
+            });
+            console.log('Canvas generated');
 
-            console.log('Generating PDF with options:', opt);
-            await html2pdf().set(opt).from(wrapper).save();
+            // Create PDF from canvas
+            const imgData = canvas.toDataURL('image/jpeg', 0.98);
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            const imgWidth = canvas.width;
+            const imgHeight = canvas.height;
+            const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+            const imgX = (pdfWidth - imgWidth * ratio) / 2;
+            const imgY = 10;
+
+            // Calculate if we need multiple pages
+            const scaledImgHeight = (imgHeight * pdfWidth) / imgWidth;
+            let heightLeft = scaledImgHeight;
+            let position = 0;
+
+            // Add first page
+            pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, scaledImgHeight);
+            heightLeft -= pdfHeight;
+
+            // Add additional pages if needed
+            while (heightLeft > 0) {
+                position = heightLeft - scaledImgHeight;
+                pdf.addPage();
+                pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, scaledImgHeight);
+                heightLeft -= pdfHeight;
+            }
+
+            pdf.save(`veta-report-${report.id.slice(0, 8)}.pdf`);
             console.log('PDF generated successfully');
 
             // Cleanup

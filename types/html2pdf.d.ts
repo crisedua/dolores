@@ -40,3 +40,15 @@ declare module 'html2pdf.js/dist/html2pdf.bundle.min.js' {
     import html2pdf from 'html2pdf.js';
     export default html2pdf;
 }
+
+declare module 'html2canvas-pro' {
+    interface Html2CanvasOptions {
+        scale?: number;
+        logging?: boolean;
+        useCORS?: boolean;
+        backgroundColor?: string;
+        windowWidth?: number;
+        [key: string]: any;
+    }
+    export default function html2canvas(element: HTMLElement, options?: Html2CanvasOptions): Promise<HTMLCanvasElement>;
+}

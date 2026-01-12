@@ -195,16 +195,6 @@ function LandingContent() {
                         </Link>
                     </div>
 
-                    {/* Bullets */}
-                    <div className="flex flex-col md:flex-row gap-4 justify-center items-center text-sm text-gray-500 mb-12">
-                        {t.landing.hero.bullets.map((bullet: string, idx: number) => (
-                            <div key={idx} className="flex items-center gap-2">
-                                <CheckCircle2 size={16} className="text-blue-500/50" />
-                                <span>{bullet}</span>
-                                {idx < t.landing.hero.bullets.length - 1 && <span className="hidden md:inline mx-2 opacity-20">·</span>}
-                            </div>
-                        ))}
-                    </div>
                 </div>
             </section>
 

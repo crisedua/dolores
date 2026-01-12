@@ -28,13 +28,15 @@ function LandingContent() {
     const { t, language, setLanguage } = useTranslation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    // Redirect logged-in users to the app (or specified next path)
+    // Removal of auto-redirect to allow logged-in users to choose between tools on the landing page
+    /* 
     useEffect(() => {
         if (!isLoading && user) {
             const next = searchParams.get('next') || '/app';
             router.push(next);
         }
     }, [user, isLoading, router, searchParams]);
+    */
 
 
 

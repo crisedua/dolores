@@ -1,11 +1,11 @@
-# Business Ideas Feature Walkthrough
+# Business Advisor Feature Walkthrough
 
-This guide details how to verify the new "Business Ideas" feature.
+This guide details how to verify the new "Business Advisor" feature.
 
 ## 1. Access the Feature
 1. Open the application.
 2. In the Sidebar, locate the **"Discovery"** section.
-3. Click on the new **"Business Ideas"** (or "Ideas de Negocio") link with the "New" badge.
+3. Click on the new **"Business Advisor"** (or "Asesor de Negocios") link with the "New" badge.
 
 ## 2. Onboarding Wizard ("Diseña tu Futuro")
 1. Verify the page background is **White** (Light Theme).

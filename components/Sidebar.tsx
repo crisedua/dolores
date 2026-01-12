@@ -144,7 +144,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                             <NavItem
                                 href="/app/business-ideas"
                                 icon={<Zap size={18} />}
-                                label={language === 'es' ? 'Ideas de Negocio' : 'Business Ideas'}
+                                label={t.sidebar.businessAdvisor}
                                 active={pathname === '/app/business-ideas'}
                                 badge="New"
                             />

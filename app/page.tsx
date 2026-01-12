@@ -66,6 +66,13 @@ export default function LandingPage() {
                             🎓 Workshop
                         </Link> */}
                         <Link
+                            href="/app/business-ideas"
+                            className="text-gray-400 hover:text-white transition-colors text-sm md:text-base flex items-center gap-1.5"
+                        >
+                            {t.landing.nav.businessAdvisor}
+                            <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20 font-bold tracking-wide">NEW</span>
+                        </Link>
+                        <Link
                             href="/pricing"
                             className="text-gray-400 hover:text-white transition-colors text-sm md:text-base"
                         >

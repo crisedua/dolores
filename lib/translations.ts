@@ -71,6 +71,7 @@ export const translations = {
                 pricing: 'Pricing',
                 dashboard: 'Dashboard',
                 login: 'Login',
+                businessAdvisor: 'Business Advisor',
             },
             hero: {
                 badge: 'AI Powered',
@@ -151,6 +152,7 @@ export const translations = {
             analysis: 'Analysis',
             history: 'History',
             reports: 'Reports',
+            businessAdvisor: 'Business Advisor',
             admin: 'Admin',
             adminPanel: 'Admin Panel',
             searches: 'Searches',
@@ -421,7 +423,7 @@ export const translations = {
                 },
             },
             dashboard: {
-                title: 'Business Coach AI',
+                title: 'Business Advisor',
                 offersTitle: 'Offers Dashboard',
                 emptyOffers: 'No offers generated',
                 emptyOffersDesc: 'Complete the diagnosis in the chat and click "Generate offers".',
@@ -429,7 +431,7 @@ export const translations = {
             }
         },
         coach: {
-            title: 'Veta Business Coach',
+            title: 'Veta Business Advisor',
             contextPrefix: 'Context:',
             tabs: {
                 chat: 'CHAT',
@@ -530,6 +532,7 @@ export const translations = {
                 pricing: 'Precios',
                 dashboard: 'Dashboard',
                 login: 'Ingresar',
+                businessAdvisor: 'Asesor de Negocios',
             },
             hero: {
                 badge: 'Impulsado por IA',
@@ -610,6 +613,7 @@ export const translations = {
             analysis: 'Análisis',
             history: 'Historial',
             reports: 'Reportes',
+            businessAdvisor: 'Asesor de Negocios',
             admin: 'Admin',
             adminPanel: 'Panel Admin',
             searches: 'Búsquedas',
@@ -880,7 +884,7 @@ export const translations = {
                 },
             },
             dashboard: {
-                title: 'Business Coach AI',
+                title: 'Asesor de Negocios',
                 offersTitle: 'Dashboard de Ofertas',
                 emptyOffers: 'Sin ofertas generadas',
                 emptyOffersDesc: 'Completa el diagnóstico en el chat y haz clic en "Generar ofertas".',
@@ -888,7 +892,7 @@ export const translations = {
             }
         },
         coach: {
-            title: 'Veta Business Coach',
+            title: 'Veta Asesor de Negocios',
             contextPrefix: 'Contexto:',
             tabs: {
                 chat: 'CHAT',

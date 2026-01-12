@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Loader2, ArrowRight } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslation } from '@/context/LanguageContext';
 
 export function AuthForm() {
@@ -12,7 +12,10 @@ export function AuthForm() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { t } = useTranslation();
+
+    const next = searchParams.get('next') || '/';
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,7 +29,7 @@ export function AuthForm() {
                     password,
                 });
                 if (error) throw error;
-                router.push('/');
+                router.push(next);
             } else {
                 const { data, error } = await supabase.auth.signUp({
                     email,
@@ -36,7 +39,7 @@ export function AuthForm() {
 
                 // If email confirmation is disabled, we get a session immediately
                 if (data.session) {
-                    router.push('/');
+                    router.push(next);
                 } else {
                     // Otherwise, we still need to verify
                     alert(t.auth.checkEmail);
@@ -56,7 +59,7 @@ export function AuthForm() {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: window.location.origin,
+                    redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
                 },
             });
             if (error) throw error;

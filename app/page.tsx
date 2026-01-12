@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
     Search,
     TrendingUp,
@@ -22,14 +22,16 @@ import { useTranslation } from '@/context/LanguageContext';
 export default function LandingPage() {
     const { user, isLoading } = useAuth();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { t, language, setLanguage } = useTranslation();
 
-    // Redirect logged-in users to the app
+    // Redirect logged-in users to the app (or specified next path)
     useEffect(() => {
         if (!isLoading && user) {
-            router.push('/app');
+            const next = searchParams.get('next') || '/app';
+            router.push(next);
         }
-    }, [user, isLoading, router]);
+    }, [user, isLoading, router, searchParams]);
 
 
 
@@ -85,21 +87,12 @@ export default function LandingPage() {
                         >
                             {t.landing.nav.pricing}
                         </Link>
-                        {user ? (
-                            <Link
-                                href="/app"
-                                className="bg-white text-black px-4 py-1.5 md:px-5 md:py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm md:text-base"
-                            >
-                                {t.landing.nav.dashboard}
-                            </Link>
-                        ) : (
-                            <Link
-                                href="/auth"
-                                className="bg-white text-black px-4 py-1.5 md:px-5 md:py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm md:text-base"
-                            >
-                                {t.landing.nav.login}
-                            </Link>
-                        )}
+                        <Link
+                            href={user ? "/app" : "/auth?next=/app"}
+                            className="bg-white text-black px-4 py-1.5 md:px-5 md:py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm md:text-base"
+                        >
+                            {user ? t.landing.nav.dashboard : t.landing.nav.login}
+                        </Link>
                     </div>
                 </div>
             </nav>
@@ -144,7 +137,7 @@ export default function LandingPage() {
                     {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16">
                         <Link
-                            href={user ? "/app" : "/auth"}
+                            href={user ? "/app" : "/auth?next=/app"}
                             className="group bg-white text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all flex items-center gap-3 shadow-xl shadow-white/5"
                         >
                             <Target size={20} className="text-blue-600" />
@@ -152,7 +145,7 @@ export default function LandingPage() {
                             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform opacity-50" />
                         </Link>
                         <Link
-                            href={user ? "/app/business-ideas" : "/auth"}
+                            href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
                             className="group bg-blue-600/10 border border-blue-500/30 text-blue-400 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-600/20 transition-all flex items-center gap-3 backdrop-blur-sm"
                         >
                             <Zap size={20} className="text-blue-400" />
@@ -337,7 +330,7 @@ export default function LandingPage() {
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link
-                            href={user ? "/app" : "/auth"}
+                            href={user ? "/app" : "/auth?next=/app"}
                             className="group inline-flex items-center gap-3 bg-white text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all shadow-lg shadow-white/5"
                         >
                             <Target size={20} className="text-blue-600" />
@@ -345,7 +338,7 @@ export default function LandingPage() {
                             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform opacity-50" />
                         </Link>
                         <Link
-                            href={user ? "/app/business-ideas" : "/auth"}
+                            href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
                             className="group inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg shadow-purple-500/25"
                         >
                             <Zap size={20} />

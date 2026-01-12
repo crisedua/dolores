@@ -193,14 +193,6 @@ function LandingContent() {
                             {t.landing.hero.ctaPain}
                             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform opacity-50" />
                         </Link>
-                        <Link
-                            href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
-                            className="group bg-blue-600/10 border border-blue-500/30 text-blue-400 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-600/20 transition-all flex items-center gap-3 backdrop-blur-sm"
-                        >
-                            <Zap size={20} className="text-blue-400" />
-                            {t.landing.hero.ctaAdvisor}
-                            <Sparkles size={18} className="group-hover:rotate-12 transition-transform opacity-50" />
-                        </Link>
                     </div>
 
                 </div>

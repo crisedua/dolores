@@ -187,8 +187,9 @@ function LandingContent() {
                             </ul>
                             <Link
                                 href={user ? "/app" : "/auth?next=/app"}
-                                className="w-full py-3 px-6 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white hover:text-black transition-all text-center"
+                                className="w-full py-4 px-6 rounded-xl bg-white/5 border border-white/10 text-white font-extrabold hover:bg-white hover:text-black transition-all text-center flex items-center justify-center gap-2"
                             >
+                                <Search size={18} />
                                 {t.landing.hero.ctaPain}
                             </Link>
                         </div>
@@ -217,8 +218,9 @@ function LandingContent() {
 
                             <Link
                                 href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
-                                className="w-full py-3 px-6 rounded-xl bg-purple-600 text-white font-bold hover:bg-purple-700 transition-all text-center shadow-lg shadow-purple-600/20"
+                                className="w-full py-4 px-6 rounded-xl bg-purple-600 text-white font-extrabold hover:bg-purple-700 transition-all text-center shadow-xl shadow-purple-600/30 flex items-center justify-center gap-2"
                             >
+                                <Sparkles size={18} />
                                 {t.landing.hero.ctaAdvisor}
                             </Link>
                         </div>

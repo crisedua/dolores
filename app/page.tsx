@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     Search,
@@ -19,7 +19,7 @@ import { useAuth } from '@/context/AuthContext';
 import { WhatsAppButton } from '@/components/WhatsAppButton';
 import { useTranslation } from '@/context/LanguageContext';
 
-export default function LandingPage() {
+function LandingContent() {
     const { user, isLoading } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -367,5 +367,17 @@ export default function LandingPage() {
             {/* WhatsApp Floating Button */}
             <WhatsAppButton />
         </div>
+    );
+}
+
+export default function LandingPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+            </div>
+        }>
+            <LandingContent />
+        </Suspense>
     );
 }

@@ -3,6 +3,7 @@
 import { AuthForm } from '@/components/auth/AuthForm';
 import { Gem } from 'lucide-react';
 import { useTranslation } from '@/context/LanguageContext';
+import { Suspense } from 'react';
 
 export default function AuthPage() {
     const { t } = useTranslation();
@@ -28,7 +29,13 @@ export default function AuthPage() {
                     </div>
                 </div>
 
-                <AuthForm />
+                <Suspense fallback={
+                    <div className="w-full max-w-md p-8 bg-[#0F0F0F] border border-[#222] rounded-2xl shadow-2xl h-[400px] flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                    </div>
+                }>
+                    <AuthForm />
+                </Suspense>
             </div>
         </div>
     );

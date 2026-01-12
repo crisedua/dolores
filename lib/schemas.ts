@@ -56,4 +56,6 @@ export interface UserContext {
     skills?: string;
     access?: string;
     marketPreference?: "local" | "international" | "both";
+    situation?: "no_ideas" | "too_many" | "stuck_low_ticket";
 }
+

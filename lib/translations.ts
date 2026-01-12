@@ -399,6 +399,35 @@ export const translations = {
             targetLabel: 'Target',
             promptFor: 'Prompt for'
         },
+        businessIdeas: {
+            title: 'Design Your Future',
+            subtitle: 'It will only take 2 minutes to complete your strategic profile.',
+            steps: {
+                location: 'Where are you located?',
+                situation: 'Your current situation',
+            },
+            situations: {
+                no_ideas: {
+                    title: 'I have no ideas',
+                    desc: 'I am looking for inspiration based on my skills.',
+                },
+                too_many: {
+                    title: 'I have too many ideas',
+                    desc: 'I need to prioritize and validate the best one.',
+                },
+                stuck_low_ticket: {
+                    title: 'I sell something but I am stuck',
+                    desc: 'I sell a lot of volume at a low price.',
+                },
+            },
+            dashboard: {
+                title: 'Business Coach AI',
+                offersTitle: 'Offers Dashboard',
+                emptyOffers: 'No offers generated',
+                emptyOffersDesc: 'Complete the diagnosis in the chat and click "Generate offers".',
+                generateBtn: 'Design my High-Ticket Offers',
+            }
+        },
         coach: {
             title: 'Veta Business Coach',
             contextPrefix: 'Context:',
@@ -828,6 +857,35 @@ export const translations = {
             problemLabel: 'Problema',
             targetLabel: 'Objetivo',
             promptFor: 'Prompt para'
+        },
+        businessIdeas: {
+            title: 'Diseña tu Futuro',
+            subtitle: 'Solo tomará 2 minutos completar tu perfil estratégico.',
+            steps: {
+                location: '¿Dónde te encuentras?',
+                situation: 'Tu situación actual',
+            },
+            situations: {
+                no_ideas: {
+                    title: 'No tengo ideas',
+                    desc: 'Busco inspiración basada en mis habilidades.',
+                },
+                too_many: {
+                    title: 'Tengo demasiadas ideas',
+                    desc: 'Necesito priorizar y validar la mejor.',
+                },
+                stuck_low_ticket: {
+                    title: 'Ya vendo algo pero estoy atorado',
+                    desc: 'Vendo mucho volumen a bajo precio.',
+                },
+            },
+            dashboard: {
+                title: 'Business Coach AI',
+                offersTitle: 'Dashboard de Ofertas',
+                emptyOffers: 'Sin ofertas generadas',
+                emptyOffersDesc: 'Completa el diagnóstico en el chat y haz clic en "Generar ofertas".',
+                generateBtn: 'Diseñar mis Ofertas High-Ticket',
+            }
         },
         coach: {
             title: 'Veta Business Coach',

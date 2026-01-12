@@ -141,6 +141,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                                 label={t.sidebar.explore}
                                 active={pathname === '/app'}
                             />
+                            <NavItem
+                                href="/app/business-ideas"
+                                icon={<Zap size={18} />}
+                                label={language === 'es' ? 'Ideas de Negocio' : 'Business Ideas'}
+                                active={pathname === '/app/business-ideas'}
+                                badge="New"
+                            />
                         </nav>
                     </div>
 

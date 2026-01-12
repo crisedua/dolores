@@ -156,47 +156,6 @@ function LandingContent() {
                 </div>
             </nav>
 
-            {/* Hero Section */}
-            <section className="pt-32 pb-20 px-6">
-                <div className="max-w-5xl mx-auto text-center">
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-1.5 mb-8">
-                        <Zap size={14} className="text-blue-400" />
-                        <span className="text-sm text-blue-400 font-medium">{t.landing.hero.badge}</span>
-                    </div>
-
-                    {/* Main Headline */}
-                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-                        {t.landing.hero.title1}
-                        <br />
-                        <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                            {t.landing.hero.title2}
-                        </span>
-                        <br />
-                        <span className="text-2xl md:text-3xl text-gray-200">
-                            {t.landing.hero.title3}
-                        </span>
-                    </h1>
-
-                    {/* Subheadline */}
-                    <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-8 leading-relaxed">
-                        {t.landing.hero.description}
-                    </p>
-
-                    {/* CTA Buttons */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
-                        <Link
-                            href={user ? "/app" : "/auth?next=/app"}
-                            className="group bg-white text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all flex items-center gap-3 shadow-xl shadow-white/5"
-                        >
-                            <Search size={20} className="text-blue-600" />
-                            {t.landing.hero.ctaPain}
-                            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform opacity-50" />
-                        </Link>
-                    </div>
-
-                </div>
-            </section>
 
             {/* SECTION — Dos herramientas, un solo objetivo */}
             <section className="py-24 px-6 bg-[#080808]/50 border-y border-white/5">

@@ -53,21 +53,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 const action = params.get('action');
 
                 if (returnTo) {
-                    // Preserve action parameter when redirecting
                     const redirectUrl = action ? `${returnTo}${returnTo.includes('?') ? '&' : '?'}action=${action}` : returnTo;
                     router.push(redirectUrl);
                     return;
                 }
 
-                // Default if on auth page but no redirect specified
+                // Default redirect if we just logged in on the auth page
                 if (window.location.pathname === '/auth') {
                     router.push('/app');
                 }
-
                 return;
             }
 
-            if (!session) {
+            // ONLY redirect to landing if on a protected route without a session
+            if (!session && window.location.pathname.startsWith('/app')) {
                 router.push('/');
             }
         });

@@ -193,6 +193,14 @@ function LandingContent() {
                             {t.landing.hero.ctaPain}
                             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform opacity-50" />
                         </Link>
+                        <Link
+                            href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
+                            className="group bg-blue-600/10 border border-blue-500/30 text-blue-400 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-600/20 transition-all flex items-center gap-3 backdrop-blur-sm"
+                        >
+                            <Zap size={20} className="text-blue-400" />
+                            {t.landing.hero.ctaAdvisor}
+                            <Sparkles size={18} className="group-hover:rotate-12 transition-transform opacity-50" />
+                        </Link>
                     </div>
 
                 </div>
@@ -282,26 +290,32 @@ function LandingContent() {
                         {/* Connecting Line (Desktop) */}
                         <div className="hidden md:block absolute top-[28px] left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none" />
 
-                        <div className="relative text-center group">
+                        <Link
+                            href={user ? "/app" : "/auth?next=/app"}
+                            className="relative text-center group cursor-pointer"
+                        >
                             <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:border-blue-500/50 transition-colors bg-[#0A0A0A] z-10 relative">
                                 <span className="text-xl font-bold text-white">1</span>
                             </div>
-                            <p className="text-gray-300 font-medium">{t.landing.howItWorks.step1}</p>
-                        </div>
+                            <p className="text-gray-300 font-medium group-hover:text-white transition-colors">{t.landing.howItWorks.step1}</p>
+                        </Link>
 
-                        <div className="relative text-center group">
-                            <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:border-purple-500/50 transition-colors bg-[#0A0A0A] z-10 relative">
+                        <div className="relative text-center">
+                            <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 bg-[#0A0A0A] z-10 relative">
                                 <span className="text-xl font-bold text-white">2</span>
                             </div>
                             <p className="text-gray-300 font-medium">{t.landing.howItWorks.step2}</p>
                         </div>
 
-                        <div className="relative text-center group">
-                            <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:border-pink-500/50 transition-colors bg-[#0A0A0A] z-10 relative">
+                        <Link
+                            href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
+                            className="relative text-center group cursor-pointer"
+                        >
+                            <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:border-purple-500/50 transition-colors bg-[#0A0A0A] z-10 relative">
                                 <span className="text-xl font-bold text-white">3</span>
                             </div>
-                            <p className="text-gray-300 font-medium">{t.landing.howItWorks.step3}</p>
-                        </div>
+                            <p className="text-gray-300 font-medium group-hover:text-white transition-colors">{t.landing.howItWorks.step3}</p>
+                        </Link>
                     </div>
                 </div>
             </section>

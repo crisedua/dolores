@@ -547,7 +547,7 @@ export const translations = {
                     ]
                 },
                 tool2: {
-                    title: '🧠 Asesor de Negocios',
+                    title: '🧠 Asesor de Negocio',
                     desc: 'Convierte un problema validado en un negocio claro y vendible.',
                     header: 'El Asesor de Negocios te ayuda a:',
                     points: [
@@ -581,7 +581,7 @@ export const translations = {
             analysis: 'Análisis',
             history: 'Historial',
             reports: 'Reportes',
-            businessAdvisor: 'Asesor de Negocios',
+            businessAdvisor: 'Asesor de Negocio',
             admin: 'Admin',
             adminPanel: 'Panel Admin',
             searches: 'Búsquedas',

@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useEffect, Suspense } from 'react';
+import { useEffect, Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
     Search,
@@ -13,7 +13,9 @@ import {
     Target,
     Lightbulb,
     Users,
-    Sparkles
+    Sparkles,
+    Menu,
+    X
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { WhatsAppButton } from '@/components/WhatsAppButton';
@@ -24,6 +26,7 @@ function LandingContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { t, language, setLanguage } = useTranslation();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // Redirect logged-in users to the app (or specified next path)
     useEffect(() => {
@@ -68,32 +71,92 @@ function LandingContent() {
                         >
                             🎓 Workshop
                         </Link> */}
-                        <Link
-                            href="/app"
-                            className="text-gray-400 hover:text-white transition-colors text-sm md:text-base"
+                        {/* Desktop Navigation */}
+                        <div className="hidden md:flex items-center gap-6">
+                            <Link
+                                href={user ? "/app" : "/auth?next=/app"}
+                                className="text-gray-400 hover:text-white transition-colors text-sm font-medium"
+                            >
+                                {t.landing.nav.discover}
+                            </Link>
+                            <Link
+                                href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
+                                className="text-gray-400 hover:text-white transition-colors text-sm font-medium flex items-center gap-1.5"
+                            >
+                                {t.landing.nav.businessAdvisor}
+                                <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20 font-bold tracking-wide">NEW</span>
+                            </Link>
+                            <Link
+                                href="/pricing"
+                                className="text-gray-400 hover:text-white transition-colors text-sm font-medium"
+                            >
+                                {t.landing.nav.pricing}
+                            </Link>
+                            <Link
+                                href={user ? "/app" : "/auth?next=/app"}
+                                className="bg-white text-black px-5 py-2 rounded-lg font-bold hover:bg-gray-100 transition-all text-sm shadow-lg shadow-white/5"
+                            >
+                                {user ? t.landing.nav.dashboard : t.landing.nav.login}
+                            </Link>
+                        </div>
+
+                        {/* Mobile Menu Toggle */}
+                        <button
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            className="md:hidden text-gray-400 hover:text-white p-2"
                         >
-                            {t.landing.hero.ctaPain}
-                        </Link>
-                        <Link
-                            href="/app/business-ideas"
-                            className="text-gray-400 hover:text-white transition-colors text-sm md:text-base flex items-center gap-1.5"
-                        >
-                            {t.landing.nav.businessAdvisor}
-                            <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20 font-bold tracking-wide">NEW</span>
-                        </Link>
-                        <Link
-                            href="/pricing"
-                            className="text-gray-400 hover:text-white transition-colors text-sm md:text-base"
-                        >
-                            {t.landing.nav.pricing}
-                        </Link>
-                        <Link
-                            href={user ? "/app" : "/auth?next=/app"}
-                            className="bg-white text-black px-4 py-1.5 md:px-5 md:py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm md:text-base"
-                        >
-                            {user ? t.landing.nav.dashboard : t.landing.nav.login}
-                        </Link>
+                            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        </button>
                     </div>
+
+                    {/* Mobile Navigation */}
+                    {isMenuOpen && (
+                        <div className="md:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-xl border-b border-white/10 p-6 flex flex-col gap-6 animate-in slide-in-from-top-2 duration-200">
+                            <Link
+                                href={user ? "/app" : "/auth?next=/app"}
+                                className="text-xl font-bold text-white"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                {t.landing.nav.discover}
+                            </Link>
+                            <Link
+                                href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
+                                className="text-xl font-bold text-white flex items-center gap-2"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                {t.landing.nav.businessAdvisor}
+                                <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20 font-bold tracking-wide">NEW</span>
+                            </Link>
+                            <Link
+                                href="/pricing"
+                                className="text-xl font-bold text-white"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                {t.landing.nav.pricing}
+                            </Link>
+                            <Link
+                                href={user ? "/app" : "/auth?next=/app"}
+                                className="bg-white text-black px-6 py-4 rounded-xl font-bold text-center"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                {user ? t.landing.nav.dashboard : t.landing.nav.login}
+                            </Link>
+                            <div className="flex items-center gap-2 pt-4 border-t border-white/10">
+                                <button
+                                    onClick={() => setLanguage('en')}
+                                    className={`flex-1 py-3 rounded-lg text-sm font-bold border transition-all ${language === 'en' ? 'bg-blue-600 border-blue-600 text-white' : 'border-white/10 text-gray-400'}`}
+                                >
+                                    English
+                                </button>
+                                <button
+                                    onClick={() => setLanguage('es')}
+                                    className={`flex-1 py-3 rounded-lg text-sm font-bold border transition-all ${language === 'es' ? 'bg-blue-600 border-blue-600 text-white' : 'border-white/10 text-gray-400'}`}
+                                >
+                                    Español
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </nav>
 

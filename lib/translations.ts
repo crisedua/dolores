@@ -71,6 +71,7 @@ export const translations = {
                 pricing: 'Pricing',
                 dashboard: 'Dashboard',
                 login: 'Login',
+                discover: 'Search Pain',
                 businessAdvisor: 'Business Advisor',
             },
             hero: {
@@ -85,7 +86,7 @@ export const translations = {
                     'MVP plan + first customers',
                 ],
                 cta: 'Start Analysis',
-                ctaPain: 'Find Pain Points',
+                ctaPain: 'Search Pain',
                 ctaAdvisor: 'Business Advisor',
             },
             demo: {
@@ -534,7 +535,8 @@ export const translations = {
                 pricing: 'Precios',
                 dashboard: 'Dashboard',
                 login: 'Ingresar',
-                businessAdvisor: 'Asesor de Negocios',
+                discover: 'Buscar Dolor',
+                businessAdvisor: 'Asesor de Negocio',
             },
             hero: {
                 badge: 'Impulsado por IA',
@@ -549,7 +551,7 @@ export const translations = {
                 ],
                 cta: 'Comenzar Análisis',
                 ctaPain: 'Buscar Dolor',
-                ctaAdvisor: 'Asesor de Negocios',
+                ctaAdvisor: 'Asesor de Negocio',
             },
             demo: {
                 search: 'software para abogados',

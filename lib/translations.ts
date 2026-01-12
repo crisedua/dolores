@@ -399,6 +399,37 @@ export const translations = {
             targetLabel: 'Target',
             promptFor: 'Prompt for'
         },
+        coach: {
+            title: 'Veta Business Coach',
+            contextPrefix: 'Context:',
+            tabs: {
+                chat: 'CHAT',
+                offers: 'OFFERS',
+            },
+            chat: {
+                placeholder: 'Ask about offers or next steps...',
+                initialMessage: 'Hello! I analyzed the problem "{title}". It is a real pain. Would you like to explore how to turn it into a High-Ticket service ($2k+)?',
+                error: 'Sorry, connection error. Try again.',
+                typing: 'Typing...',
+            },
+            offers: {
+                emptyState: {
+                    title: 'Generate High-Ticket Offers',
+                    description: 'AI will analyze your validated problem and create 3 service offers ($2k-$10k) ready to sell.',
+                    button: 'Generate 3-5 Offers',
+                },
+                loading: 'Designing profitable offers...',
+                strategyLabel: 'Strategy',
+                recommended: 'Recommended',
+                target: 'For:',
+                price: 'Suggested Price',
+                timeline: 'Timeline',
+                promise: 'Promise:',
+                deliverables: 'Deliverables:',
+                copyOutreach: 'Copy Outreach',
+                copyQuestions: 'Copy Questions',
+            }
+        }
     },
     es: {
         common: {
@@ -503,7 +534,7 @@ export const translations = {
                 subtitle: 'Tres pasos simples para descubrir tu próxima oportunidad de negocio',
                 step1: {
                     title: 'Ingresa tu Nicho',
-                    desc: 'Escribe el mercado o industria que quieres explorar. Ejemplos: "software para dentistas", "apps de productividad"',
+                    desc: 'Escribe el mercado o industria que quieres explorar. Ejemplos: "software para dentistas", "software para abogados"',
                 },
                 step2: {
                     title: 'IA Analiza Conversaciones',
@@ -798,6 +829,37 @@ export const translations = {
             targetLabel: 'Objetivo',
             promptFor: 'Prompt para'
         },
+        coach: {
+            title: 'Veta Business Coach',
+            contextPrefix: 'Contexto:',
+            tabs: {
+                chat: 'CHAT',
+                offers: 'OFERTAS',
+            },
+            chat: {
+                placeholder: 'Pregunta sobre ofertas o siguientes pasos...',
+                initialMessage: 'Hola! He analizado el problema "{title}". Es un dolor real. ¿Te gustaría que exploremos cómo convertirlo en un servicio High-Ticket ($2k+)?',
+                error: 'Lo siento, hubo un error de conexión. Inténtalo de nuevo.',
+                typing: 'Escribiendo...',
+            },
+            offers: {
+                emptyState: {
+                    title: 'Generar Ofertas High-Ticket',
+                    description: 'La IA analizará tu problema validado y creará 3 ofertas de servicios ($2k-$10k) listas para vender.',
+                    button: 'Generar 3-5 Ofertas',
+                },
+                loading: 'Diseñando ofertas rentables...',
+                strategyLabel: 'Estrategia',
+                recommended: 'Recomendada',
+                target: 'Para:',
+                price: 'Precio Sugerido',
+                timeline: 'Timeline',
+                promise: 'Promesa:',
+                deliverables: 'Entregables:',
+                copyOutreach: 'Copiar Outreach',
+                copyQuestions: 'Copiar Preguntas',
+            }
+        }
     },
 };
 

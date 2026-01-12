@@ -59,11 +59,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     return;
                 }
 
-                // Default redirect to dashboard
-                // Only redirect if we are on the landing or auth page to avoid interrupting deep links
-                if (window.location.pathname === '/' || window.location.pathname === '/auth') {
+                // Default if on auth page but no redirect specified
+                if (window.location.pathname === '/auth') {
                     router.push('/app');
                 }
+
                 return;
             }
 

@@ -15,7 +15,7 @@ export function AuthForm() {
     const searchParams = useSearchParams();
     const { t } = useTranslation();
 
-    const next = searchParams.get('next') || '/';
+    const next = searchParams.get('next') || '/app';
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();

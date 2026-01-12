@@ -26,7 +26,8 @@ USER CONTEXT:
 Language inputs: ${JSON.stringify(userContext || {})}
 `;
 
-        const completion = await openai.beta.chat.completions.parse({
+        const completion = await openai.chat.completions.parse({
+
             model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
             messages: [
                 { role: 'system', content: SYSTEM_PROMPT_OFFERS },

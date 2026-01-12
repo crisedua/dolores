@@ -85,6 +85,8 @@ export const translations = {
                     'MVP plan + first customers',
                 ],
                 cta: 'Start Analysis',
+                ctaPain: 'Find Pain Points',
+                ctaAdvisor: 'Business Advisor',
             },
             demo: {
                 search: 'lawyer software',
@@ -546,6 +548,8 @@ export const translations = {
                     'Plan de MVP + primeros clientes',
                 ],
                 cta: 'Comenzar Análisis',
+                ctaPain: 'Buscar Dolor',
+                ctaAdvisor: 'Asesor de Negocios',
             },
             demo: {
                 search: 'software para abogados',

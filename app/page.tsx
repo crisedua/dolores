@@ -12,7 +12,8 @@ import {
     Gem,
     Target,
     Lightbulb,
-    Users
+    Users,
+    Sparkles
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { WhatsAppButton } from '@/components/WhatsAppButton';
@@ -65,6 +66,12 @@ export default function LandingPage() {
                         >
                             🎓 Workshop
                         </Link> */}
+                        <Link
+                            href="/app"
+                            className="text-gray-400 hover:text-white transition-colors text-sm md:text-base"
+                        >
+                            {t.landing.hero.ctaPain}
+                        </Link>
                         <Link
                             href="/app/business-ideas"
                             className="text-gray-400 hover:text-white transition-colors text-sm md:text-base flex items-center gap-1.5"
@@ -135,13 +142,22 @@ export default function LandingPage() {
                     </div>
 
                     {/* CTA Buttons */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16">
                         <Link
                             href={user ? "/app" : "/auth"}
-                            className="group bg-white text-black px-6 py-3 rounded-lg font-semibold text-base hover:bg-gray-100 transition-all flex items-center gap-2"
+                            className="group bg-white text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all flex items-center gap-3 shadow-xl shadow-white/5"
                         >
-                            {t.landing.hero.cta}
-                            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                            <Target size={20} className="text-blue-600" />
+                            {t.landing.hero.ctaPain}
+                            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform opacity-50" />
+                        </Link>
+                        <Link
+                            href={user ? "/app/business-ideas" : "/auth"}
+                            className="group bg-blue-600/10 border border-blue-500/30 text-blue-400 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-600/20 transition-all flex items-center gap-3 backdrop-blur-sm"
+                        >
+                            <Zap size={20} className="text-blue-400" />
+                            {t.landing.hero.ctaAdvisor}
+                            <Sparkles size={18} className="group-hover:rotate-12 transition-transform opacity-50" />
                         </Link>
                     </div>
 
@@ -319,13 +335,24 @@ export default function LandingPage() {
                     <p className="text-gray-400 text-lg mb-10">
                         {t.landing.finalCta.description}
                     </p>
-                    <Link
-                        href={user ? "/app" : "/auth"}
-                        className="group inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-5 rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg shadow-purple-500/25"
-                    >
-                        {t.landing.finalCta.button}
-                        <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <Link
+                            href={user ? "/app" : "/auth"}
+                            className="group inline-flex items-center gap-3 bg-white text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all shadow-lg shadow-white/5"
+                        >
+                            <Target size={20} className="text-blue-600" />
+                            {t.landing.hero.ctaPain}
+                            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform opacity-50" />
+                        </Link>
+                        <Link
+                            href={user ? "/app/business-ideas" : "/auth"}
+                            className="group inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg shadow-purple-500/25"
+                        >
+                            <Zap size={20} />
+                            {t.landing.hero.ctaAdvisor}
+                            <Sparkles size={18} className="group-hover:rotate-12 transition-transform opacity-50" />
+                        </Link>
+                    </div>
                 </div>
             </section>
 

@@ -76,68 +76,49 @@ export const translations = {
             },
             hero: {
                 badge: 'AI Powered',
-                title1: 'Stop guessing startup ideas.',
-                title2: 'Find real problems',
-                title3: 'people are complaining about.',
-                description: 'Type a niche. Get a ranked report of pain points with evidence, who has them, and a 7-day no-code build plan.',
+                title1: 'Stop guessing ideas.',
+                title2: 'Find real problems.',
+                title3: 'Turn them into profitable businesses.',
+                description: 'Veta analyzes real conversations to detect problems with business potential and helps you turn them into high-value online services.',
                 bullets: [
-                    'Real complaints + sources (no hunches)',
-                    'Scored by urgency and payment',
-                    'MVP plan + first customers',
+                    'Real complaints',
+                    'Prioritized by urgency',
+                    'No made-up ideas',
                 ],
-                cta: 'Start Analysis',
-                ctaPain: 'Search Pain',
+                cta: '🔍 Explore Problems',
+                ctaPain: 'Explore Problems',
                 ctaAdvisor: 'Business Advisor',
             },
-            demo: {
-                search: 'lawyer software',
-                problem1: '⚡ Fragmented case management',
-                problem1Desc: 'Lawyers use 5+ tools to manage a single case...',
-                problem2: '💰 Manual hourly billing',
-                problem3: '📄 Unorganized documents',
-                priority: 'HIGH PRIORITY',
-            },
-            stats: {
-                threads: 'Threads analyzed per search',
-                problems: 'Problems identified',
-                time: 'Avg. analysis time',
-                verified: 'Verifiable quotes',
+            tools: {
+                title: 'Two tools, one objective',
+                footer: 'No courses. No low-ticket. No fluff.',
+                tool1: {
+                    title: '🔎 Problem Discovery',
+                    desc: 'Find real pain points from public conversations. No assumptions. No empty brainstorming.',
+                    points: [
+                        'Who has the problem',
+                        'Why it hurts',
+                        'What economic impact it has',
+                    ]
+                },
+                tool2: {
+                    title: '🧠 Business Advisor',
+                    desc: 'Turn a validated problem into a clear and sellable business.',
+                    header: 'The Business Advisor helps you:',
+                    points: [
+                        'Design online services (done-for-you)',
+                        'Define a premium price ($2k–$20k USD)',
+                        'Create a clear pitch',
+                        'Write an outreach message',
+                        'Follow a simple 7-day validation plan',
+                    ]
+                }
             },
             howItWorks: {
-                title: 'How It Works?',
-                subtitle: 'Three simple steps to discover your next business opportunity',
-                step1: {
-                    title: 'Enter your Niche',
-                    desc: 'Type the market or industry you want to explore. Examples: "dentist software", "productivity apps"',
-                },
-                step2: {
-                    title: 'AI Analyzes Conversations',
-                    desc: 'Our AI scans Reddit, forums, and communities looking for complaints, frustrations, and unmet needs.',
-                },
-                step3: {
-                    title: 'Receive Opportunities',
-                    desc: 'Get a prioritized list of real problems with direct quotes and MVP suggestions for each.',
-                },
-            },
-            features: {
-                title: 'Everything You Need',
-                subtitle: 'Tools designed to validate business ideas quickly',
-                f1: {
-                    title: 'Verifiable Quotes',
-                    desc: 'Each problem includes text quotes from real users you can verify.',
-                },
-                f2: {
-                    title: 'Signal Score',
-                    desc: 'Each problem is scored by frequency, intensity, and monetization potential.',
-                },
-                f3: {
-                    title: 'MVP Suggestions',
-                    desc: 'Receive concrete ideas for minimum viable products for each identified problem.',
-                },
-                f4: {
-                    title: 'Reddit & Forum Data',
-                    desc: 'Access authentic conversations where users express their frustrations.',
-                },
+                title: 'How it works (ultra simple)',
+                step1: 'Explore real problems',
+                step2: 'Choose the one that\'s worth it',
+                step3: 'Use the Business Advisor to turn it into a business',
             },
             finalCta: {
                 title1: 'Stop Guessing,',
@@ -540,68 +521,49 @@ export const translations = {
             },
             hero: {
                 badge: 'Impulsado por IA',
-                title1: 'Deja de adivinar ideas de startup.',
-                title2: 'Encuentra problemas reales',
-                title3: 'de los que la gente se queja.',
-                description: 'Escribe un nicho. Obtén un reporte clasificado de puntos de dolor con pruebas, quién los tiene y un plan de construcción no-code de 7 días.',
+                title1: 'Deja de adivinar ideas.',
+                title2: 'Encuentra problemas reales.',
+                title3: 'Conviértelos en negocios rentables.',
+                description: 'Veta analiza conversaciones reales para detectar problemas con potencial de negocio y te ayuda a convertirlos en servicios online de alto valor.',
                 bullets: [
-                    'Quejas reales + fuentes (no corazonadas)',
-                    'Puntuado por urgencia y pago',
-                    'Plan de MVP + primeros clientes',
+                    'Quejas reales',
+                    'Priorizadas por urgencia',
+                    'Sin ideas inventadas',
                 ],
-                cta: 'Comenzar Análisis',
-                ctaPain: 'Buscar Dolor',
+                cta: '🔍 Explorar problemas',
+                ctaPain: 'Explorar problemas',
                 ctaAdvisor: 'Asesor de Negocio',
             },
-            demo: {
-                search: 'software para abogados',
-                problem1: '⚡ Gestión de casos fragmentada',
-                problem1Desc: 'Los abogados usan 5+ herramientas para gestionar un solo caso...',
-                problem2: '💰 Facturación manual de horas',
-                problem3: '📄 Documentos sin organizar',
-                priority: 'ALTA PRIORIDAD',
-            },
-            stats: {
-                threads: 'Hilos analizados por búsqueda',
-                problems: 'Problemas identificados',
-                time: 'Tiempo promedio de análisis',
-                verified: 'Citas verificables',
+            tools: {
+                title: 'Dos herramientas, un solo objetivo',
+                footer: 'Sin cursos. Sin low-ticket. Sin humo.',
+                tool1: {
+                    title: '🔎 Descubrimiento de Problemas',
+                    desc: 'Encuentra puntos de dolor reales a partir de conversaciones públicas. Sin suposiciones. Sin brainstorming vacío.',
+                    points: [
+                        'Quién tiene el problema',
+                        'Por qué duele',
+                        'Qué impacto económico tiene',
+                    ]
+                },
+                tool2: {
+                    title: '🧠 Asesor de Negocios',
+                    desc: 'Convierte un problema validado en un negocio claro y vendible.',
+                    header: 'El Asesor de Negocios te ayuda a:',
+                    points: [
+                        'Diseñar servicios online (done-for-you)',
+                        'Definir un precio premium ($2k–$20k USD)',
+                        'Crear un pitch claro',
+                        'Escribir un mensaje de outreach',
+                        'Seguir un plan simple de validación en 7 días',
+                    ]
+                }
             },
             howItWorks: {
-                title: '¿Cómo Funciona?',
-                subtitle: 'Tres pasos simples para descubrir tu próxima oportunidad de negocio',
-                step1: {
-                    title: 'Ingresa tu Nicho',
-                    desc: 'Escribe el mercado o industria que quieres explorar. Ejemplos: "software para dentistas", "software para abogados"',
-                },
-                step2: {
-                    title: 'IA Analiza Conversaciones',
-                    desc: 'Nuestra IA escanea Reddit, foros y comunidades buscando quejas, frustraciones y necesidades no resueltas.',
-                },
-                step3: {
-                    title: 'Recibe Oportunidades',
-                    desc: 'Obtén una lista priorizada de problemas reales con citas directas y sugerencias de MVP para cada uno.',
-                },
-            },
-            features: {
-                title: 'Todo lo que Necesitas',
-                subtitle: 'Herramientas diseñadas para validar ideas de negocio rápidamente',
-                f1: {
-                    title: 'Citas Verificables',
-                    desc: 'Cada problema incluye citas textuales de usuarios reales que puedes verificar.',
-                },
-                f2: {
-                    title: 'Puntuación de Señal',
-                    desc: 'Cada problema se puntúa por frecuencia, intensidad y potencial de monetización.',
-                },
-                f3: {
-                    title: 'Sugerencias de MVP',
-                    desc: 'Recibe ideas concretas de productos mínimos viables para cada problema identificado.',
-                },
-                f4: {
-                    title: 'Datos de Reddit y Foros',
-                    desc: 'Accede a conversaciones auténticas donde usuarios expresan sus frustraciones.',
-                },
+                title: 'Cómo funciona (ultra simple)',
+                step1: 'Explora problemas reales',
+                step2: 'Elige el que vale la pena',
+                step3: 'Usa el Asesor de Negocios para convertirlo en negocio',
             },
             finalCta: {
                 title1: 'Deja de Adivinar,',

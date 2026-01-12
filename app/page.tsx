@@ -67,12 +67,6 @@ function LandingContent() {
                                 Español
                             </button>
                         </div>
-                        {/*                         <Link
-                            href="/workshop"
-                            className="text-amber-400 hover:text-amber-300 transition-colors text-sm md:text-base font-medium"
-                        >
-                            🎓 Workshop
-                        </Link> */}
                         {/* Desktop Navigation */}
                         <div className="hidden md:flex items-center gap-6">
                             <Link
@@ -185,237 +179,145 @@ function LandingContent() {
                     </h1>
 
                     {/* Subheadline */}
-                    <p className="text-lg text-gray-400 max-w-3xl mx-auto mb-8 leading-relaxed">
+                    <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-8 leading-relaxed">
                         {t.landing.hero.description}
                     </p>
 
-                    {/* Bullets */}
-                    <div className="flex flex-col md:flex-row gap-4 justify-center items-center text-sm text-gray-300 mb-12">
-                        {t.landing.hero.bullets.map((bullet: string, idx: number) => (
-                            <div key={idx} className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
-                                <CheckCircle2 size={16} className="text-green-500" />
-                                <span>{bullet}</span>
-                            </div>
-                        ))}
-                    </div>
-
                     {/* CTA Buttons */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
                         <Link
                             href={user ? "/app" : "/auth?next=/app"}
                             className="group bg-white text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all flex items-center gap-3 shadow-xl shadow-white/5"
                         >
-                            <Target size={20} className="text-blue-600" />
+                            <Search size={20} className="text-blue-600" />
                             {t.landing.hero.ctaPain}
                             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform opacity-50" />
                         </Link>
-                        <Link
-                            href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
-                            className="group bg-blue-600/10 border border-blue-500/30 text-blue-400 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-600/20 transition-all flex items-center gap-3 backdrop-blur-sm"
-                        >
-                            <Zap size={20} className="text-blue-400" />
-                            {t.landing.hero.ctaAdvisor}
-                            <Sparkles size={18} className="group-hover:rotate-12 transition-transform opacity-50" />
-                        </Link>
                     </div>
 
-                    {/* Demo Preview */}
-                    <div className="relative max-w-4xl mx-auto">
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-pink-500/20 blur-3xl" />
-                        <div className="relative bg-[#111] border border-[#333] rounded-2xl p-6 shadow-2xl">
-                            <div className="flex items-center gap-2 mb-4">
-                                <div className="w-3 h-3 rounded-full bg-red-500" />
-                                <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                                <div className="w-3 h-3 rounded-full bg-green-500" />
+                    {/* Bullets */}
+                    <div className="flex flex-col md:flex-row gap-4 justify-center items-center text-sm text-gray-500 mb-12">
+                        {t.landing.hero.bullets.map((bullet: string, idx: number) => (
+                            <div key={idx} className="flex items-center gap-2">
+                                <CheckCircle2 size={16} className="text-blue-500/50" />
+                                <span>{bullet}</span>
+                                {idx < t.landing.hero.bullets.length - 1 && <span className="hidden md:inline mx-2 opacity-20">·</span>}
                             </div>
-                            <div className="bg-[#0A0A0A] rounded-xl p-4 border border-[#222]">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <Search size={18} className="text-gray-500" />
-                                    <span className="text-gray-400 font-medium">{t.landing.demo.search}</span>
-                                </div>
-                                <div className="space-y-3">
-                                    <div className="bg-[#1A1A1A] rounded-lg p-4 border-l-4 border-blue-500 text-left">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <span className="text-white font-medium">{t.landing.demo.problem1}</span>
-                                            <span className="text-[10px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-bold">{t.landing.demo.priority}</span>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* SECTION — Dos herramientas, un solo objetivo */}
+            <section className="py-24 px-6 bg-[#080808]/50 border-y border-white/5">
+                <div className="max-w-5xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                            {t.landing.tools.title}
+                        </h2>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8 items-stretch">
+                        {/* Tool 1 */}
+                        <div className="bg-[#111] border border-[#222] rounded-2xl p-8 flex flex-col hover:border-blue-500/30 transition-colors group">
+                            <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                                {t.landing.tools.tool1.title}
+                            </h3>
+                            <p className="text-gray-400 mb-8 flex-grow">
+                                {t.landing.tools.tool1.desc}
+                            </p>
+                            <ul className="space-y-4 mb-8">
+                                {t.landing.tools.tool1.points.map((point: string, idx: number) => (
+                                    <li key={idx} className="flex items-start gap-3 text-gray-300">
+                                        <div className="w-5 h-5 bg-blue-500/10 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
                                         </div>
-                                        <p className="text-sm text-gray-400">{t.landing.demo.problem1Desc}</p>
-                                    </div>
-                                    <div className="bg-[#1A1A1A] rounded-lg p-4 border-l-4 border-blue-400 text-left">
-                                        <span className="text-white font-medium">{t.landing.demo.problem2}</span>
-                                    </div>
-                                    <div className="bg-[#1A1A1A] rounded-lg p-4 border-l-4 border-blue-300 text-left">
-                                        <span className="text-white font-medium">{t.landing.demo.problem3}</span>
-                                    </div>
-                                </div>
-                            </div>
+                                        <span>{point}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                            <Link
+                                href={user ? "/app" : "/auth?next=/app"}
+                                className="w-full py-3 px-6 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white hover:text-black transition-all text-center"
+                            >
+                                {t.landing.hero.ctaPain}
+                            </Link>
                         </div>
-                    </div>
-                </div>
-            </section>
 
-            {/* Stats Section */}
-            <section className="py-16 border-y border-white/5">
-                <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                    <div>
-                        <div className="text-4xl font-bold text-white mb-2">10K+</div>
-                        <div className="text-gray-500 text-sm">{t.landing.stats.threads}</div>
-                    </div>
-                    <div>
-                        <div className="text-4xl font-bold text-white mb-2">15+</div>
-                        <div className="text-gray-500 text-sm">{t.landing.stats.problems}</div>
-                    </div>
-                    <div>
-                        <div className="text-4xl font-bold text-white mb-2">30s</div>
-                        <div className="text-gray-500 text-sm">{t.landing.stats.time}</div>
-                    </div>
-                    <div>
-                        <div className="text-4xl font-bold text-white mb-2">100%</div>
-                        <div className="text-gray-500 text-sm">{t.landing.stats.verified}</div>
-                    </div>
-                </div>
-            </section>
-
-            {/* How It Works */}
-            <section id="como-funciona" className="py-24 px-6">
-                <div className="max-w-5xl mx-auto">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t.landing.howItWorks.title}</h2>
-                        <p className="text-gray-400 max-w-2xl mx-auto">
-                            {t.landing.howItWorks.subtitle}
-                        </p>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {/* Step 1 */}
-                        <div className="bg-[#111] border border-[#222] rounded-2xl p-8 relative group hover:border-blue-500/50 transition-colors">
-                            <div className="absolute -top-4 -left-4 w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold text-white">1</div>
-                            <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
-                                <Search size={28} className="text-blue-400" />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-3">{t.landing.howItWorks.step1.title}</h3>
-                            <p className="text-gray-400">
-                                {t.landing.howItWorks.step1.desc}
+                        {/* Tool 2 */}
+                        <div className="bg-[#111] border border-[#222] rounded-2xl p-8 flex flex-col hover:border-purple-500/30 transition-colors group relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-600/10 blur-[60px] pointer-events-none" />
+                            <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                                {t.landing.tools.tool2.title}
+                            </h3>
+                            <p className="text-gray-400 mb-6">
+                                {t.landing.tools.tool2.desc}
                             </p>
-                        </div>
 
-                        {/* Step 2 */}
-                        <div className="bg-[#111] border border-[#222] rounded-2xl p-8 relative group hover:border-purple-500/50 transition-colors">
-                            <div className="absolute -top-4 -left-4 w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center font-bold text-white">2</div>
-                            <div className="w-14 h-14 bg-purple-500/10 rounded-xl flex items-center justify-center mb-6">
-                                <MessageSquare size={28} className="text-purple-400" />
+                            <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6">
+                                <p className="text-sm font-semibold text-purple-400 mb-4">{t.landing.tools.tool2.header}</p>
+                                <ul className="space-y-3">
+                                    {t.landing.tools.tool2.points.map((point: string, idx: number) => (
+                                        <li key={idx} className="flex items-start gap-3 text-gray-400 text-sm">
+                                            <CheckCircle2 size={14} className="text-purple-500 shrink-0 mt-0.5" />
+                                            <span>{point}</span>
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
-                            <h3 className="text-xl font-bold text-white mb-3">{t.landing.howItWorks.step2.title}</h3>
-                            <p className="text-gray-400">
-                                {t.landing.howItWorks.step2.desc}
-                            </p>
-                        </div>
 
-                        {/* Step 3 */}
-                        <div className="bg-[#111] border border-[#222] rounded-2xl p-8 relative group hover:border-pink-500/50 transition-colors">
-                            <div className="absolute -top-4 -left-4 w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center font-bold text-white">3</div>
-                            <div className="w-14 h-14 bg-pink-500/10 rounded-xl flex items-center justify-center mb-6">
-                                <TrendingUp size={28} className="text-pink-400" />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-3">{t.landing.howItWorks.step3.title}</h3>
-                            <p className="text-gray-400">
-                                {t.landing.howItWorks.step3.desc}
-                            </p>
+                            <Link
+                                href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
+                                className="w-full py-3 px-6 rounded-xl bg-purple-600 text-white font-bold hover:bg-purple-700 transition-all text-center shadow-lg shadow-purple-600/20"
+                            >
+                                {t.landing.hero.ctaAdvisor}
+                            </Link>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            {/* Features Grid */}
-            <section className="py-24 px-6 bg-[#080808]">
-                <div className="max-w-5xl mx-auto">
-                    <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">{t.landing.features.title}</h2>
-                        <p className="text-gray-400 max-w-2xl mx-auto">
-                            {t.landing.features.subtitle}
-                        </p>
-                    </div>
-
-                    <div className="grid md:grid-cols-2 gap-6">
-                        <div className="bg-[#111] border border-[#222] rounded-xl p-6 flex gap-4">
-                            <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center shrink-0">
-                                <CheckCircle2 size={24} className="text-green-400" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-white mb-2">{t.landing.features.f1.title}</h3>
-                                <p className="text-gray-400 text-sm">{t.landing.features.f1.desc}</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-[#111] border border-[#222] rounded-xl p-6 flex gap-4">
-                            <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center shrink-0">
-                                <Target size={24} className="text-blue-400" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-white mb-2">{t.landing.features.f2.title}</h3>
-                                <p className="text-gray-400 text-sm">{t.landing.features.f2.desc}</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-[#111] border border-[#222] rounded-xl p-6 flex gap-4">
-                            <div className="w-12 h-12 bg-yellow-500/10 rounded-lg flex items-center justify-center shrink-0">
-                                <Lightbulb size={24} className="text-yellow-400" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-white mb-2">{t.landing.features.f3.title}</h3>
-                                <p className="text-gray-400 text-sm">{t.landing.features.f3.desc}</p>
-                            </div>
-                        </div>
-
-                        <div className="bg-[#111] border border-[#222] rounded-xl p-6 flex gap-4">
-                            <div className="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center shrink-0">
-                                <Users size={24} className="text-purple-400" />
-                            </div>
-                            <div>
-                                <h3 className="text-lg font-semibold text-white mb-2">{t.landing.features.f4.title}</h3>
-                                <p className="text-gray-400 text-sm">{t.landing.features.f4.desc}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* CTA Section */}
-            <section className="py-24 px-6">
-                <div className="max-w-3xl mx-auto text-center">
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                        {t.landing.finalCta.title1}
-                        <br />
-                        <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                            {t.landing.finalCta.title2}
-                        </span>
-                    </h2>
-                    <p className="text-gray-400 text-lg mb-10">
-                        {t.landing.finalCta.description}
+                    <p className="text-center text-gray-600 text-sm mt-12 italic">
+                        {t.landing.tools.footer}
                     </p>
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                        <Link
-                            href={user ? "/app" : "/auth?next=/app"}
-                            className="group inline-flex items-center gap-3 bg-white text-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-all shadow-lg shadow-white/5"
-                        >
-                            <Target size={20} className="text-blue-600" />
-                            {t.landing.hero.ctaPain}
-                            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform opacity-50" />
-                        </Link>
-                        <Link
-                            href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
-                            className="group inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg shadow-purple-500/25"
-                        >
-                            <Zap size={20} />
-                            {t.landing.hero.ctaAdvisor}
-                            <Sparkles size={18} className="group-hover:rotate-12 transition-transform opacity-50" />
-                        </Link>
+                </div>
+            </section>
+
+            {/* SECTION — Cómo funciona (ultra simple) */}
+            <section className="py-24 px-6">
+                <div className="max-w-4xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-bold text-white">{t.landing.howItWorks.title}</h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+                        {/* Connecting Line (Desktop) */}
+                        <div className="hidden md:block absolute top-[28px] left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none" />
+
+                        <div className="relative text-center group">
+                            <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:border-blue-500/50 transition-colors bg-[#0A0A0A] z-10 relative">
+                                <span className="text-xl font-bold text-white">1</span>
+                            </div>
+                            <p className="text-gray-300 font-medium">{t.landing.howItWorks.step1}</p>
+                        </div>
+
+                        <div className="relative text-center group">
+                            <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:border-purple-500/50 transition-colors bg-[#0A0A0A] z-10 relative">
+                                <span className="text-xl font-bold text-white">2</span>
+                            </div>
+                            <p className="text-gray-300 font-medium">{t.landing.howItWorks.step2}</p>
+                        </div>
+
+                        <div className="relative text-center group">
+                            <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:border-pink-500/50 transition-colors bg-[#0A0A0A] z-10 relative">
+                                <span className="text-xl font-bold text-white">3</span>
+                            </div>
+                            <p className="text-gray-300 font-medium">{t.landing.howItWorks.step3}</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
             {/* Footer */}
-            <footer className="py-8 px-6 border-t border-white/5">
+            <footer className="py-8 px-6 border-t border-white/5 mt-20">
                 <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                         <div className="w-6 h-6 bg-blue-600 text-white font-bold flex items-center justify-center rounded text-xs">

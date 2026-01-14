@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ChevronDown, ArrowRight, ExternalLink, User, AlertTriangle, Wallet, Users, Lightbulb, Lock, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { PrototypePromptsButton } from './PrototypePromptsButton';
-import { CoachDrawer } from './CoachDrawer';
+
 
 import { useTranslation } from '@/context/LanguageContext';
 import { analytics } from '@/lib/analytics';
@@ -252,14 +252,6 @@ export function ProblemCard({ problem, isProUser = true }: ProblemCardProps) {
                             {/* ACTIONS ROW - MODIFIED HERE */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <PrototypePromptsButton problem={problem} isProUser={true} />
-
-                                <button
-                                    onClick={() => setIsCoachOpen(true)}
-                                    className="flex items-center justify-center gap-2 px-4 py-3 bg-[#111] hover:bg-[#1A1A1A] border border-blue-500/20 hover:border-blue-500/50 text-blue-400 hover:text-blue-300 rounded-xl transition-all font-bold text-sm group"
-                                >
-                                    <Sparkles size={16} className="text-blue-500 group-hover:scale-110 transition-transform" />
-                                    Convertir en negocio
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -357,14 +349,6 @@ export function ProblemCard({ problem, isProUser = true }: ProblemCardProps) {
                     )}
                 </div>
             )}
-
-            {/* Coach Drawer Integration */}
-            <CoachDrawer
-                isOpen={isCoachOpen}
-                onClose={() => setIsCoachOpen(false)}
-                problem={selectedProblem}
-                userContext={{ language: 'es', marketPreference: 'local' }}
-            />
         </div>
     );
 }

@@ -75,13 +75,7 @@ function LandingContent() {
                             >
                                 {t.landing.nav.discover}
                             </Link>
-                            <Link
-                                href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
-                                className="text-gray-400 hover:text-white transition-colors text-sm font-medium flex items-center gap-1.5"
-                            >
-                                {t.landing.nav.businessAdvisor}
-                                <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20 font-bold tracking-wide">NEW</span>
-                            </Link>
+
                             <Link
                                 href="/pricing"
                                 className="text-gray-400 hover:text-white transition-colors text-sm font-medium"
@@ -115,14 +109,7 @@ function LandingContent() {
                             >
                                 {t.landing.nav.discover}
                             </Link>
-                            <Link
-                                href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
-                                className="text-xl font-bold text-white flex items-center gap-2"
-                                onClick={() => setIsMenuOpen(false)}
-                            >
-                                {t.landing.nav.businessAdvisor}
-                                <span className="text-[10px] bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded border border-blue-500/20 font-bold tracking-wide">NEW</span>
-                            </Link>
+
                             <Link
                                 href="/pricing"
                                 className="text-xl font-bold text-white"
@@ -194,36 +181,7 @@ function LandingContent() {
                             </Link>
                         </div>
 
-                        {/* Tool 2 */}
-                        <div className="bg-[#111] border border-[#222] rounded-2xl p-8 flex flex-col hover:border-purple-500/30 transition-colors group relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-600/10 blur-[60px] pointer-events-none" />
-                            <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
-                                {t.landing.tools.tool2.title}
-                            </h3>
-                            <p className="text-gray-400 mb-6">
-                                {t.landing.tools.tool2.desc}
-                            </p>
 
-                            <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6">
-                                <p className="text-sm font-semibold text-purple-400 mb-4">{t.landing.tools.tool2.header}</p>
-                                <ul className="space-y-3">
-                                    {t.landing.tools.tool2.points.map((point: string, idx: number) => (
-                                        <li key={idx} className="flex items-start gap-3 text-gray-400 text-sm">
-                                            <CheckCircle2 size={14} className="text-purple-500 shrink-0 mt-0.5" />
-                                            <span>{point}</span>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            <Link
-                                href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
-                                className="w-full py-4 px-6 rounded-xl bg-purple-600 text-white font-extrabold hover:bg-purple-700 transition-all text-center shadow-xl shadow-purple-600/30 flex items-center justify-center gap-2"
-                            >
-                                <Sparkles size={18} />
-                                {t.landing.hero.ctaAdvisor}
-                            </Link>
-                        </div>
                     </div>
 
                     <p className="text-center text-gray-600 text-sm mt-12 italic">
@@ -261,13 +219,13 @@ function LandingContent() {
                         </div>
 
                         <Link
-                            href={user ? "/app/business-ideas" : "/auth?next=/app/business-ideas"}
+                            href={user ? "/app" : "/auth?next=/app"}
                             className="relative text-center group cursor-pointer"
                         >
-                            <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:border-purple-500/50 transition-colors bg-[#0A0A0A] z-10 relative">
+                            <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:border-blue-500/50 transition-colors bg-[#0A0A0A] z-10 relative">
                                 <span className="text-xl font-bold text-white">3</span>
                             </div>
-                            <p className="text-gray-300 font-medium group-hover:text-white transition-colors">{t.landing.howItWorks.step3}</p>
+                            <p className="text-gray-300 font-medium group-hover:text-white transition-colors">{t.landing.hero.ctaPain}</p>
                         </Link>
                     </div>
                 </div>

@@ -10,7 +10,8 @@ import {
     Zap,
     FileText,
     Shield,
-    Calendar
+    Calendar,
+    Trophy
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useSubscription } from '@/hooks/useSubscription';
@@ -159,6 +160,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                                 icon={<FileText size={18} />}
                                 label={t.sidebar.reports}
                                 active={pathname?.startsWith('/app/reports')}
+                            />
+                            <NavItem
+                                href="/casos-exito"
+                                icon={<Trophy size={18} />}
+                                label={t.sidebar.successStories}
+                                active={pathname?.startsWith('/casos-exito')}
                             />
                         </nav>
                     </div>

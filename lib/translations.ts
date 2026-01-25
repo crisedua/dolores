@@ -73,6 +73,7 @@ export const translations = {
                 login: 'Login',
                 discover: 'Search Pain',
                 businessAdvisor: 'Business Advisor',
+                successStories: 'Success Stories',
             },
             hero: {
                 badge: 'AI Powered',
@@ -111,6 +112,15 @@ export const translations = {
                         'Create a clear pitch',
                         'Write an outreach message',
                         'Follow a simple 7-day validation plan',
+                    ]
+                },
+                tool3: {
+                    title: '🏆 Success Stories',
+                    desc: 'See how others have turned problems into profitable businesses.',
+                    points: [
+                        'Real examples',
+                        'Step-by-step strategies',
+                        'Monetization details',
                     ]
                 }
             },
@@ -519,6 +529,7 @@ export const translations = {
                 login: 'Ingresar',
                 discover: 'Buscar Dolor',
                 businessAdvisor: 'Asesor de Negocio',
+                successStories: 'Casos de Éxito',
             },
             hero: {
                 badge: 'Impulsado por IA',
@@ -557,6 +568,15 @@ export const translations = {
                         'Crear un pitch claro',
                         'Escribir un mensaje de outreach',
                         'Seguir un plan simple de validación en 7 días',
+                    ]
+                },
+                tool3: {
+                    title: '🏆 Casos de Éxito',
+                    desc: 'Mira cómo otros han convertido problemas en negocios rentables.',
+                    points: [
+                        'Ejemplos reales',
+                        'Estrategias paso a paso',
+                        'Detalles de monetización',
                     ]
                 }
             },

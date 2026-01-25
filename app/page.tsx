@@ -75,6 +75,12 @@ function LandingContent() {
                             >
                                 {t.landing.nav.discover}
                             </Link>
+                            <Link
+                                href="/casos-exito"
+                                className="text-gray-400 hover:text-white transition-colors text-sm font-medium"
+                            >
+                                {t.landing.nav.successStories}
+                            </Link>
 
                             <Link
                                 href="/pricing"
@@ -108,6 +114,14 @@ function LandingContent() {
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 {t.landing.nav.discover}
+                            </Link>
+
+                            <Link
+                                href="/casos-exito"
+                                className="text-xl font-bold text-white"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                {t.landing.nav.successStories}
                             </Link>
 
                             <Link
@@ -181,7 +195,32 @@ function LandingContent() {
                             </Link>
                         </div>
 
-
+                        {/* Tool 3: Success Stories */}
+                        <div className="bg-[#111] border border-[#222] rounded-2xl p-8 flex flex-col hover:border-green-500/30 transition-colors group">
+                            <h3 className="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                                {t.landing.tools.tool3.title}
+                            </h3>
+                            <p className="text-gray-400 mb-8 flex-grow">
+                                {t.landing.tools.tool3.desc}
+                            </p>
+                            <ul className="space-y-4 mb-8">
+                                {t.landing.tools.tool3.points.map((point: string, idx: number) => (
+                                    <li key={idx} className="flex items-start gap-3 text-gray-300">
+                                        <div className="w-5 h-5 bg-green-500/10 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                                        </div>
+                                        <span>{point}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                            <Link
+                                href="/casos-exito"
+                                className="w-full py-4 px-6 rounded-xl bg-white/5 border border-white/10 text-white font-extrabold hover:bg-white hover:text-black transition-all text-center flex items-center justify-center gap-2"
+                            >
+                                <TrendingUp size={18} />
+                                {t.landing.nav.successStories}
+                            </Link>
+                        </div>
                     </div>
 
                     <p className="text-center text-gray-600 text-sm mt-12 italic">

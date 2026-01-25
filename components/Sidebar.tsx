@@ -181,6 +181,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                                     label={t.sidebar.adminPanel}
                                     active={pathname === '/app/admin'}
                                 />
+                                <NavItem
+                                    href="/admin/casos-exito"
+                                    icon={<Trophy size={18} />}
+                                    label="Add Success Story"
+                                    active={pathname === '/admin/casos-exito'}
+                                />
                             </nav>
                         </div>
                     )}

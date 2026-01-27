@@ -29,7 +29,7 @@ export function Navbar() {
                         </Link>
 
                         <Link
-                            href="/"
+                            href="/app"
                             className={`text-sm font-medium transition flex items-center gap-2 text-gray-400 hover:text-white`}
                         >
                             <BarChart2 size={16} />

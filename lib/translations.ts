@@ -527,7 +527,7 @@ export const translations = {
                 pricing: 'Precios',
                 dashboard: 'Dashboard',
                 login: 'Ingresar',
-                discover: 'Buscar Dolores',
+                discover: 'Busca Dolores',
                 businessAdvisor: 'Asesor de Negocio',
                 successStories: 'Casos de Éxito',
             },
@@ -550,7 +550,7 @@ export const translations = {
                 title: 'Dos herramientas, un solo objetivo',
                 footer: 'Sin cursos. Sin low-ticket. Sin humo.',
                 tool1: {
-                    title: '🔎 Buscar Dolores',
+                    title: '🔎 Busca Dolores',
                     desc: 'Encuentra puntos de dolor reales a partir de conversaciones públicas. Sin suposiciones. Sin brainstorming vacío.',
                     points: [
                         'Quién tiene el problema',
@@ -597,7 +597,7 @@ export const translations = {
             }
         },
         sidebar: {
-            discovery: 'Buscar Dolores',
+            discovery: 'Busca Dolores',
             explore: 'Explorar',
             analysis: 'Análisis',
             history: 'Historial',

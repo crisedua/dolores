@@ -5,6 +5,8 @@ import { supabase } from '@/lib/supabase';
 import { ExternalLink, DollarSign, ArrowLeft, CheckCircle2, Globe } from 'lucide-react';
 import Link from 'next/link';
 import { notFound, useParams } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function StoryDetailPage() {
     const params = useParams();
@@ -133,10 +135,16 @@ export default function StoryDetailPage() {
                 </div>
 
                 {/* Full Content */}
-                <div className="prose prose-invert max-w-none">
+                <div className="max-w-none">
                     <h2 className="text-2xl font-bold text-white mb-6 border-b border-gray-800 pb-4">Historia y Detalles Completos</h2>
-                    <div className="text-gray-400 leading-relaxed whitespace-pre-wrap text-lg">
-                        {story.article_content || "No hay detalles adicionales disponibles."}
+                    <div className="text-gray-400 leading-relaxed text-lg prose prose-invert prose-blue max-w-none">
+                        {story.article_content ? (
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {story.article_content}
+                            </ReactMarkdown>
+                        ) : (
+                            "No hay detalles adicionales disponibles."
+                        )}
                     </div>
                 </div>
             </div>

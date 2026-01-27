@@ -63,13 +63,18 @@ export async function POST(request: NextRequest) {
       1. Use this FIRST LINE as the basis for the "title", but TRANSLATE IT TO SPANISH. Example: "How My App Makes $40k" -> "Cómo mi App genera $40k".
       2. Extract the "revenue" (e.g. "$40k/Month", "$1M ARR") specifically from this title if present. If not in the title, look for it in the first paragraph.
       
-      Please extract:
+      Please extract and rewrite:
       1. Title: The first line translated to SPANISH.
       2. Revenue: Short string indicating how much they make (e.g. "$5k/mo", "$1M/year"). If unknown, use "N/A".
       3. Startup Costs: Approximate cost to start the business (e.g. "$100", "$2k"). If not found, use "N/A".
       4. Website: The URL of the business or application mentioned in the text (e.g. "https://saas.com"). If not found, use "N/A".
       5. Summary: A concise summary IN SPANISH (2-3 sentences max) of the business and how they achieved success.
       6. Steps: A list of "Key Takeaways" or "Growth Tactics" IN SPANISH (array of strings, max 5 items).
+      7. Full Story Spanish: A complete rewrite of the input article IN SPANISH. 
+         - Use professional, engaging language. 
+         - Format with Markdown (use ## headers, bullet points, and bold text).
+         - Fix any formatting issues from the raw text.
+         - Ensure it flows logically like a blog post.
       
       Input Text:
       "${articleText.substring(0, 15000)}"
@@ -81,7 +86,8 @@ export async function POST(request: NextRequest) {
         "startup_costs": "...",
         "website": "...",
         "summary": "...",
-        "steps": ["Paso 1...", "Paso 2..."]
+        "steps": ["Paso 1...", "Paso 2..."],
+        "full_story_spanish": "..."
       }
     `;
 
@@ -131,7 +137,7 @@ export async function POST(request: NextRequest) {
                     startup_costs: data.startup_costs || null,
                     summary: data.summary,
                     steps: data.steps,
-                    article_content: articleText,
+                    article_content: data.full_story_spanish,
                     website_url: websiteUrl || (data.website !== 'N/A' ? data.website : null)
                 }
             ])

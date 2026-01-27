@@ -3,6 +3,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { supabase } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: NextRequest) {
     // Debug object to collect info
@@ -100,8 +101,19 @@ export async function POST(request: NextRequest) {
         const data = JSON.parse(content);
 
         debug.step = 'saving_to_supabase';
-        // Save to Supabase
-        const { data: insertData, error } = await supabase
+
+        // Use Service Role Key to bypass RLS policies
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+        const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+        if (!supabaseServiceKey) {
+            throw new Error("SUPABASE_SERVICE_ROLE_KEY is missing. Please add it to your environment variables to bypass RLS.");
+        }
+
+        const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
+        // Save to Supabase using admin client
+        const { data: insertData, error } = await supabaseAdmin
             .from('success_stories')
             .insert([
                 {

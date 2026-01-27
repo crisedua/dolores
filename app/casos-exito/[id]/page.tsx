@@ -1,23 +1,62 @@
+'use client';
 
+import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ExternalLink, DollarSign, ArrowLeft, CheckCircle2, Globe } from 'lucide-react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 
-export const dynamic = 'force-dynamic';
+export default function StoryDetailPage() {
+    const params = useParams();
+    const id = params.id as string;
 
-export default async function StoryDetailPage({ params }: { params: { id: string } }) {
-    const { id } = params;
+    const [story, setStory] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<any>(null);
 
-    const { data: story, error } = await supabase
-        .from('success_stories')
-        .select('*')
-        .eq('id', id)
-        .single();
+    useEffect(() => {
+        if (!id) return;
+
+        async function fetchStory() {
+            try {
+                const { data, error } = await supabase
+                    .from('success_stories')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+
+                if (error) throw error;
+                if (!data) throw new Error("No data found");
+
+                setStory(data);
+            } catch (err) {
+                console.error("Error fetching story:", err);
+                setError(err);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchStory();
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-black text-white flex items-center justify-center">
+                <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+        );
+    }
 
     if (error || !story) {
-        console.error("Error fetching story:", error);
-        return notFound();
+        return (
+            <div className="min-h-screen bg-black text-white p-6 flex flex-col items-center justify-center">
+                <h1 className="text-2xl font-bold mb-4">Historia no encontrada</h1>
+                <Link href="/casos-exito" className="text-blue-400 hover:underline">
+                    Volver a la lista
+                </Link>
+            </div>
+        );
     }
 
     return (

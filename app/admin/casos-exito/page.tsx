@@ -7,6 +7,7 @@ type Story = {
     id: string;
     title: string;
     revenue?: string;
+    startup_costs?: string;
     summary: string;
     steps: string[];
     website_url: string;
@@ -33,6 +34,7 @@ export default function AdminCasosExitoPage() {
     // Manual overrides for edit
     const [title, setTitle] = useState('');
     const [revenue, setRevenue] = useState('');
+    const [startupCosts, setStartupCosts] = useState('');
     const [summary, setSummary] = useState('');
     const [steps, setSteps] = useState<string[]>([]);
 
@@ -65,6 +67,7 @@ export default function AdminCasosExitoPage() {
         setArticleContent(story.article_content || '');
         setTitle(story.title);
         setRevenue(story.revenue || '');
+        setStartupCosts(story.startup_costs || '');
         setSummary(story.summary);
         setSteps(story.steps || []);
         setMessage(null);
@@ -121,6 +124,7 @@ export default function AdminCasosExitoPage() {
                         id: editingId,
                         title,
                         revenue,
+                        startup_costs: startupCosts,
                         summary,
                         steps,
                         website_url: websiteUrl,
@@ -371,6 +375,16 @@ export default function AdminCasosExitoPage() {
                                             onChange={(e) => setRevenue(e.target.value)}
                                             className="w-full p-3 rounded bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none text-white font-mono text-green-400"
                                             placeholder="$0/mo"
+                                        />
+                                    </div>
+                                    <div className="col-span-2 md:col-span-1">
+                                        <label className="block text-sm font-medium mb-2 text-gray-300">Costos de Inicio (e.g. $100)</label>
+                                        <input
+                                            type="text"
+                                            value={startupCosts}
+                                            onChange={(e) => setStartupCosts(e.target.value)}
+                                            className="w-full p-3 rounded bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none text-white font-mono text-blue-400"
+                                            placeholder="$0"
                                         />
                                     </div>
                                 </div>

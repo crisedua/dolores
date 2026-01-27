@@ -2,13 +2,14 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, ChevronDown, CheckCircle2, DollarSign, ArrowRight } from 'lucide-react';
+import { ChevronDown, CheckCircle2, DollarSign, ArrowRight, User } from 'lucide-react';
 import Link from 'next/link';
 
 interface SuccessStory {
     id: string;
     title: string;
     revenue?: string;
+    startup_costs?: string;
     summary: string;
     steps: string[];
     website_url?: string;
@@ -17,52 +18,70 @@ interface SuccessStory {
 export function SuccessStoryCard({ story }: { story: SuccessStory }) {
     const [isExpanded, setIsExpanded] = useState(false);
 
+    // Mock reader count based on ID to make it feel "real"
+    const readersCount = (parseInt(story.id.substring(0, 2), 16) || 10) * 115 + 450;
+    const formattedReaders = readersCount.toLocaleString();
+
     return (
-        <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl overflow-hidden hover:border-gray-700 transition-colors flex flex-col h-full">
-            <div className="p-6 flex-1 flex flex-col">
-                <div className="flex justify-between items-start mb-2 gap-2">
-                    <h3 className="text-xl font-bold text-white line-clamp-2">{story.title}</h3>
-                    {story.revenue && (
-                        <span className="shrink-0 bg-green-900/30 text-green-400 text-xs font-mono px-2 py-1 rounded border border-green-800/50 flex items-center gap-1">
-                            <DollarSign size={12} />
-                            {story.revenue}
-                        </span>
-                    )}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col h-full font-sans">
+            <div className="p-6">
+                {/* Header with Avatar and Title */}
+                <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 shadow-sm overflow-hidden shrink-0">
+                            {/* Placeholder for business icon or founder face */}
+                            <User size={20} className="text-gray-400" />
+                        </div>
+                        <h3 className="text-lg font-extrabold text-[#111] leading-snug line-clamp-2">
+                            {story.title}
+                        </h3>
+                    </div>
+                    <button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                    >
+                        <ChevronDown className={`w-5 h-5 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    </button>
                 </div>
 
-                <p className="text-gray-400 leading-relaxed mb-4 flex-1">
-                    {story.summary}
+                {/* Summary in quotes */}
+                <p className="text-[#333] text-[15px] leading-relaxed mb-6 italic">
+                    "{story.summary}"
                 </p>
 
-                <div className="flex flex-col gap-3 mt-auto">
-                    <div className="flex items-center justify-between">
-                        <button
-                            onClick={() => setIsExpanded(!isExpanded)}
-                            className="flex items-center text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
-                        >
-                            <span>{isExpanded ? 'Ocultar Estrategia' : 'Ver Estrategia'}</span>
-                            <ChevronDown className={`w-4 h-4 ml-1 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
-                        </button>
+                {/* Metrics Row */}
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-6">
+                    <div className="flex items-center gap-1.5">
+                        <span className="font-bold text-[#111] text-sm">{story.revenue || 'N/A'}</span>
+                        <span className="text-[#888] text-sm">Monthly Revenue</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <span className="font-bold text-[#111] text-sm">{story.startup_costs || 'N/A'}</span>
+                        <span className="text-[#888] text-sm">Startup Costs</span>
+                    </div>
+                </div>
 
-                        {story.website_url && (
-                            <a
-                                href={story.website_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center text-sm text-gray-500 hover:text-white transition-colors"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <span>Sitio Web</span>
-                                <ExternalLink className="w-3 h-3 ml-1" />
-                            </a>
-                        )}
+                {/* Footer with readers and link */}
+                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <div className="flex items-center gap-2">
+                        {/* Avatar stack mock */}
+                        <div className="flex -space-x-2">
+                            {[1, 2, 3, 4].map((i) => (
+                                <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-gray-200 overflow-hidden">
+                                    <div className={`w-full h-full bg-gradient-to-br ${['from-blue-400 to-blue-600', 'from-purple-400 to-purple-600', 'from-green-400 to-green-600', 'from-gray-400 to-gray-600'][i - 1]}`} />
+                                </div>
+                            ))}
+                        </div>
+                        <span className="text-xs font-semibold text-[#111]">
+                            Read by <span className="font-bold">{formattedReaders}</span> founders
+                        </span>
                     </div>
 
                     <Link
                         href={`/casos-exito/${story.id}`}
-                        className="w-full py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition"
+                        className="text-xs font-bold text-[#111] flex items-center gap-1 hover:underline"
                     >
-                        Ver Artículo Completo <ArrowRight size={14} />
+                        Read article <ArrowRight size={12} />
                     </Link>
                 </div>
             </div>
@@ -73,16 +92,20 @@ export function SuccessStoryCard({ story }: { story: SuccessStory }) {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="bg-gray-800/30 border-t border-gray-800"
+                        transition={{ duration: 0.2 }}
+                        className="bg-gray-50 border-t border-gray-100"
                     >
-                        <div className="p-6 pt-2">
-                            <h4 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Pasos Clave al Éxito</h4>
+                        <div className="p-6">
+                            <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.1em] mb-4">
+                                Tactics & Growth Steps
+                            </h4>
                             <ul className="space-y-3">
                                 {story.steps.map((step, idx) => (
-                                    <li key={idx} className="flex items-start">
-                                        <CheckCircle2 className="w-5 h-5 text-green-500 mr-3 shrink-0 mt-0.5" />
-                                        <span className="text-gray-300 text-sm">{step}</span>
+                                    <li key={idx} className="flex items-start gap-3">
+                                        <div className="mt-1 w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center shrink-0">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                                        </div>
+                                        <span className="text-gray-700 text-sm leading-snug">{step}</span>
                                     </li>
                                 ))}
                             </ul>

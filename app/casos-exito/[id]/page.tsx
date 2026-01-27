@@ -48,6 +48,13 @@ export default async function StoryDetailPage({ params }: { params: { id: string
                                     </div>
                                 )}
 
+                                {story.startup_costs && (
+                                    <div className="flex items-center gap-2 bg-gray-800 text-gray-300 px-4 py-2 rounded-full border border-gray-700 font-mono font-bold">
+                                        <span className="text-sm uppercase text-gray-500">Startup Costs:</span>
+                                        <span>{story.startup_costs}</span>
+                                    </div>
+                                )}
+
                                 {story.website_url && (
                                     <a
                                         href={story.website_url}

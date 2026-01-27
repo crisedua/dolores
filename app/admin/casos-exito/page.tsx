@@ -326,26 +326,15 @@ export default function AdminCasosExitoPage() {
 
                     {/* Basic Fields */}
                     <div className="grid grid-cols-1 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium mb-2 text-gray-300">URL del Sitio Web</label>
-                            <input
-                                type="url"
-                                value={websiteUrl}
-                                onChange={(e) => setWebsiteUrl(e.target.value)}
-                                className="w-full p-3 rounded bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none text-white"
-                                placeholder="https://ejemplo.com"
-                            />
-                        </div>
-
                         {view === 'create' && (
                             <div>
                                 <label className="block text-sm font-medium mb-2 text-gray-300">Texto del Artículo (Para generar con IA)</label>
-                                <div className="text-xs text-gray-500 mb-2">Nota: La primera línea será usada como el TÍTULO exacto.</div>
+                                <div className="text-xs text-gray-500 mb-2">Nota: La primera línea será usada como el TÍTULO exacto con Ingresos. El sistema detectará la URL automáticamente.</div>
                                 <textarea
                                     value={articleContent}
                                     onChange={(e) => setArticleContent(e.target.value)}
                                     className="w-full h-48 p-3 rounded bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none text-white font-mono text-sm"
-                                    placeholder="Pegue el texto completo aquí.&#10;La primera línea será el título..."
+                                    placeholder="Pegue el texto completo aquí.&#10;Línea 1: Título | $Ingresos"
                                     required={view === 'create'}
                                 />
                             </div>
@@ -362,6 +351,16 @@ export default function AdminCasosExitoPage() {
                                             value={title}
                                             onChange={(e) => setTitle(e.target.value)}
                                             className="w-full p-3 rounded bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none text-white font-bold"
+                                        />
+                                    </div>
+                                    <div className="col-span-2 md:col-span-1">
+                                        <label className="block text-sm font-medium mb-2 text-gray-300">URL del Sitio Web</label>
+                                        <input
+                                            type="url"
+                                            value={websiteUrl}
+                                            onChange={(e) => setWebsiteUrl(e.target.value)}
+                                            className="w-full p-3 rounded bg-gray-800 border border-gray-700 focus:border-blue-500 focus:outline-none text-white"
+                                            placeholder="https://ejemplo.com"
                                         />
                                     </div>
                                     <div className="col-span-2 md:col-span-1">

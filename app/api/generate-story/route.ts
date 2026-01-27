@@ -66,8 +66,9 @@ export async function POST(request: NextRequest) {
       Please extract:
       1. Title: The exact first line of the text.
       2. Revenue: Short string indicating how much they make (e.g. "$5k/mo", "$1M/year"). If unknown, use "N/A".
-      3. Summary: A concise summary IN SPANISH (2-3 sentences max) of the business and how they achieved success.
-      4. Steps: A list of "Key Takeaways" or "Growth Tactics" IN SPANISH (array of strings, max 5 items).
+      3. Website: The URL of the business or application mentioned in the text (e.g. "https://saas.com"). If not found, use "N/A".
+      4. Summary: A concise summary IN SPANISH (2-3 sentences max) of the business and how they achieved success.
+      5. Steps: A list of "Key Takeaways" or "Growth Tactics" IN SPANISH (array of strings, max 5 items).
       
       Input Text:
       "${articleText.substring(0, 15000)}"
@@ -76,6 +77,7 @@ export async function POST(request: NextRequest) {
       {
         "title": "...",
         "revenue": "...",
+        "website": "...",
         "summary": "...",
         "steps": ["Paso 1...", "Paso 2..."]
       }
@@ -127,7 +129,7 @@ export async function POST(request: NextRequest) {
                     summary: data.summary,
                     steps: data.steps,
                     article_content: articleText,
-                    website_url: websiteUrl
+                    website_url: websiteUrl || (data.website !== 'N/A' ? data.website : null)
                 }
             ])
             .select();

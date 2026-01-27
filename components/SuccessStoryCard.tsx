@@ -50,30 +50,22 @@ export function SuccessStoryCard({ story }: { story: SuccessStory }) {
                 </p>
 
                 {/* Metrics Row */}
-                <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-6">
+                <div className="flex flex-wrap items-center gap-x-8 gap-y-3 mb-6">
                     <div className="flex items-center gap-1.5">
                         <span className="font-bold text-[#111] text-sm">{story.revenue || 'N/A'}</span>
-                        <span className="text-[#888] text-sm">Monthly Revenue</span>
+                        <span className="text-[#888] text-sm">Ingresos Mensuales</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                         <span className="font-bold text-[#111] text-sm">{story.startup_costs || 'N/A'}</span>
-                        <span className="text-[#888] text-sm">Startup Costs</span>
+                        <span className="text-[#888] text-sm">Costos de Inicio</span>
                     </div>
                 </div>
 
                 {/* Footer with readers and link */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                     <div className="flex items-center gap-2">
-                        {/* Avatar stack mock */}
-                        <div className="flex -space-x-2">
-                            {[1, 2, 3, 4].map((i) => (
-                                <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-gray-200 overflow-hidden">
-                                    <div className={`w-full h-full bg-gradient-to-br ${['from-blue-400 to-blue-600', 'from-purple-400 to-purple-600', 'from-green-400 to-green-600', 'from-gray-400 to-gray-600'][i - 1]}`} />
-                                </div>
-                            ))}
-                        </div>
-                        <span className="text-xs font-semibold text-[#111]">
-                            Read by <span className="font-bold">{formattedReaders}</span> founders
+                        <span className="text-xs font-semibold text-[#666]">
+                            Leído por <span className="font-bold text-[#111]">{formattedReaders}</span> fundadores
                         </span>
                     </div>
 
@@ -81,7 +73,7 @@ export function SuccessStoryCard({ story }: { story: SuccessStory }) {
                         href={`/casos-exito/${story.id}`}
                         className="text-xs font-bold text-[#111] flex items-center gap-1 hover:underline"
                     >
-                        Read article <ArrowRight size={12} />
+                        Leer artículo <ArrowRight size={12} />
                     </Link>
                 </div>
             </div>
@@ -96,16 +88,16 @@ export function SuccessStoryCard({ story }: { story: SuccessStory }) {
                         className="bg-gray-50 border-t border-gray-100"
                     >
                         <div className="p-6">
-                            <h4 className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.1em] mb-4">
-                                Tactics & Growth Steps
+                            <h4 className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.1em] mb-4">
+                                Tácticas y Pasos de Crecimiento
                             </h4>
                             <ul className="space-y-3">
                                 {story.steps.map((step, idx) => (
                                     <li key={idx} className="flex items-start gap-3">
-                                        <div className="mt-1 w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center shrink-0">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+                                        <div className="mt-1 w-4 h-4 rounded-full border border-gray-200 flex items-center justify-center shrink-0">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
                                         </div>
-                                        <span className="text-gray-700 text-sm leading-snug">{step}</span>
+                                        <span className="text-gray-600 text-sm leading-snug">{step}</span>
                                     </li>
                                 ))}
                             </ul>

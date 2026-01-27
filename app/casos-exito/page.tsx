@@ -28,13 +28,13 @@ export default async function CasosExitoPage() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="max-w-4xl mx-auto space-y-6">
                 {stories?.map((story) => (
                     <SuccessStoryCard key={story.id} story={story} />
                 ))}
 
                 {(!stories || stories.length === 0) && (
-                    <div className="col-span-full text-center py-20 text-gray-500 bg-gray-900/30 rounded-xl border border-gray-800 border-dashed">
+                    <div className="text-center py-20 text-gray-500 bg-gray-900/30 rounded-xl border border-gray-800 border-dashed">
                         <p>Aún no hay historias de éxito agregadas.</p>
                     </div>
                 )}

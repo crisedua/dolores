@@ -61,14 +61,8 @@ export function SuccessStoryCard({ story }: { story: SuccessStory }) {
                     </div>
                 </div>
 
-                {/* Footer with readers and link */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-semibold text-[#666]">
-                            Leído por <span className="font-bold text-[#111]">{formattedReaders}</span> fundadores
-                        </span>
-                    </div>
-
+                {/* Footer with link */}
+                <div className="flex items-center justify-end pt-4 border-t border-gray-100">
                     <Link
                         href={`/casos-exito/${story.id}`}
                         className="text-xs font-bold text-[#111] flex items-center gap-1 hover:underline"

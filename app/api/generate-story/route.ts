@@ -60,11 +60,11 @@ export async function POST(request: NextRequest) {
       You are an expert editor. You have been given the raw text of a business success story.
       
       CRITICAL INSTRUCTION: The FIRST LINE of the input text is the LICENSE/TITLE of the article. 
-      1. Use this EXACT first line as the "title". Do not change it.
+      1. Use this FIRST LINE as the basis for the "title", but TRANSLATE IT TO SPANISH. Example: "How My App Makes $40k" -> "Cómo mi App genera $40k".
       2. Extract the "revenue" (e.g. "$40k/Month", "$1M ARR") specifically from this title if present. If not in the title, look for it in the first paragraph.
       
       Please extract:
-      1. Title: The exact first line of the text.
+      1. Title: The first line translated to SPANISH.
       2. Revenue: Short string indicating how much they make (e.g. "$5k/mo", "$1M/year"). If unknown, use "N/A".
       3. Startup Costs: Approximate cost to start the business (e.g. "$100", "$2k"). If not found, use "N/A".
       4. Website: The URL of the business or application mentioned in the text (e.g. "https://saas.com"). If not found, use "N/A".

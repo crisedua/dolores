@@ -542,8 +542,8 @@ export const translations = {
                     'Priorizadas por urgencia',
                     'Sin ideas inventadas',
                 ],
-                cta: '🔍 Explorar problemas',
-                ctaPain: 'Explorar problemas',
+                cta: '🔍 Buscar Dolores',
+                ctaPain: 'Buscar Dolores',
                 ctaAdvisor: 'Asesor de Negocio',
             },
             tools: {

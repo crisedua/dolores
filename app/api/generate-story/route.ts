@@ -57,13 +57,17 @@ export async function POST(request: NextRequest) {
         });
 
         const prompt = `
-      You are an expert editor. You have been given the raw text of a business success story or article.
-      Your goal is to extract structured information from it for a "Success Story" card.
-
+      You are an expert editor. You have been given the raw text of a business success story.
+      
+      CRITICAL INSTRUCTION: The FIRST LINE of the input text is the LICENSE/TITLE of the article. 
+      1. Use this EXACT first line as the "title". Do not change it.
+      2. Extract the "revenue" (e.g. "$40k/Month", "$1M ARR") specifically from this title if present. If not in the title, look for it in the first paragraph.
+      
       Please extract:
-      1. A catchy Title (if not explicitly clear, generate one based on the content).
-      2. A concise Summary (2-3 sentences max).
-      3. A list of "Steps" or "Key Takeways" (an array of strings, max 5 items).
+      1. Title: The exact first line of the text.
+      2. Revenue: Short string indicating how much they make (e.g. "$5k/mo", "$1M/year"). If unknown, use "N/A".
+      3. Summary: A concise summary (2-3 sentences max) of the business and how they achieved success.
+      4. Steps: A list of "Key Takeaways" or "Growth Tactics" (array of strings, max 5 items).
       
       Input Text:
       "${articleText.substring(0, 15000)}"
@@ -71,6 +75,7 @@ export async function POST(request: NextRequest) {
       Return JSON format:
       {
         "title": "...",
+        "revenue": "...",
         "summary": "...",
         "steps": ["Step 1...", "Step 2..."]
       }
@@ -118,6 +123,7 @@ export async function POST(request: NextRequest) {
             .insert([
                 {
                     title: data.title,
+                    revenue: data.revenue || null,
                     summary: data.summary,
                     steps: data.steps,
                     article_content: articleText,

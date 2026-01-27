@@ -527,7 +527,7 @@ export const translations = {
                 pricing: 'Precios',
                 dashboard: 'Dashboard',
                 login: 'Ingresar',
-                discover: 'Buscar Dolor',
+                discover: 'Buscar Dolores',
                 businessAdvisor: 'Asesor de Negocio',
                 successStories: 'Casos de Éxito',
             },
@@ -550,7 +550,7 @@ export const translations = {
                 title: 'Dos herramientas, un solo objetivo',
                 footer: 'Sin cursos. Sin low-ticket. Sin humo.',
                 tool1: {
-                    title: '🔎 Descubrimiento de Problemas',
+                    title: '🔎 Buscar Dolores',
                     desc: 'Encuentra puntos de dolor reales a partir de conversaciones públicas. Sin suposiciones. Sin brainstorming vacío.',
                     points: [
                         'Quién tiene el problema',
@@ -597,7 +597,7 @@ export const translations = {
             }
         },
         sidebar: {
-            discovery: 'Descubrimiento',
+            discovery: 'Buscar Dolores',
             explore: 'Explorar',
             analysis: 'Análisis',
             history: 'Historial',
@@ -615,14 +615,14 @@ export const translations = {
         },
         dashboard: {
             welcome: 'Bienvenido de nuevo',
-            description: 'Aquí está tu panel de descubrimiento de problemas.',
+            description: 'Aquí está tu panel de búsqueda de dolores.',
             validatedOpportunities: 'Oportunidades Validadas',
             orderedBy: 'Ordenadas por Fuerza de Señal y Potencial Comercial',
             problemsFound: 'PROBLEMAS ENCONTRADOS',
             newSearch: 'NUEVA BÚSQUEDA',
             saveReport: 'Guardar Reporte',
             saved: '¡Guardado!',
-            discoveryInProgress: 'Descubrimiento en Progreso',
+            discoveryInProgress: 'Buscando Dolores...',
             cancelReset: 'Cancelar / Reiniciar',
         },
         problemCard: {

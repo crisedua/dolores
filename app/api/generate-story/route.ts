@@ -135,9 +135,11 @@ export async function POST(request: NextRequest) {
 
         // Return the full error message from OpenAI with debug info
         const errorMessage = error?.error?.message || error?.message || "Unknown error";
+        const keyInfo = debug?.apiKeySuffix ? ` (Key ends with: ${debug.apiKeySuffix})` : '';
+
         return NextResponse.json({
             success: false,
-            error: errorMessage,
+            error: `${errorMessage}${keyInfo}`,
             debug
         }, { status: 500 });
     }

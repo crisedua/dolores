@@ -22,9 +22,11 @@ export async function POST(request: NextRequest) {
         }
 
         debug.step = 'checking_api_key';
-        const apiKey = process.env.OPENAI_API_KEY;
+        // Try the new variable first to bypass caching issues
+        const apiKey = process.env.MY_OPENAI_KEY || process.env.OPENAI_API_KEY;
 
         // Debug: Collect key info (only first/last few chars for security)
+        debug.usingNewVar = !!process.env.MY_OPENAI_KEY;
         debug.apiKeyExists = !!apiKey;
         debug.apiKeyLength = apiKey?.length || 0;
         debug.apiKeyPrefix = apiKey?.substring(0, 8) || 'none';

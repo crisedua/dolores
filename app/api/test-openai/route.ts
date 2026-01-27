@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
 export async function GET() {
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = process.env.MY_OPENAI_KEY || process.env.OPENAI_API_KEY;
 
     const diagnostics = {
         keyExists: !!apiKey,

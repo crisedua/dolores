@@ -84,9 +84,10 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ success: true, data: insertData[0] });
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Generate Story API Error:", error);
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        // Return the full error message from OpenAI
+        const errorMessage = error?.error?.message || error?.message || "Unknown error";
         return NextResponse.json({ success: false, error: errorMessage }, { status: 500 });
     }
 }

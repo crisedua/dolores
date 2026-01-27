@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { generateAndSaveStory } from '@/app/actions/generate-story';
 
 export default function AdminCasosExitoPage() {
     const [articleContent, setArticleContent] = useState('');
@@ -15,7 +14,12 @@ export default function AdminCasosExitoPage() {
         setMessage(null);
 
         try {
-            const result = await generateAndSaveStory(articleContent, websiteUrl);
+            const response = await fetch('/api/generate-story', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ articleText: articleContent, websiteUrl })
+            });
+            const result = await response.json();
 
             if (result.success) {
                 setMessage({ type: 'success', text: 'Success! Story generated and saved.' });

@@ -9,7 +9,6 @@ interface SuccessStory {
     id: string;
     title: string;
     revenue?: string;
-    startup_costs?: string;
     summary: string;
     steps: string[];
     website_url?: string;
@@ -54,10 +53,6 @@ export function SuccessStoryCard({ story }: { story: SuccessStory }) {
                     <div className="flex items-center gap-1.5">
                         <span className="font-bold text-[#111] text-sm">{story.revenue || 'N/A'}</span>
                         <span className="text-[#888] text-sm">Ingresos Mensuales</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-[#111] text-sm">{story.startup_costs || 'N/A'}</span>
-                        <span className="text-[#888] text-sm">Costos de Inicio</span>
                     </div>
                 </div>
 

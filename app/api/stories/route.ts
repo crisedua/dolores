@@ -34,7 +34,7 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
     try {
         const body = await request.json();
-        const { id, title, revenue, startup_costs, summary, steps, website_url, article_content } = body;
+        const { id, title, revenue, summary, steps, website_url, article_content } = body;
 
         if (!id) {
             return NextResponse.json({ success: false, error: 'ID is required' }, { status: 400 });
@@ -47,7 +47,6 @@ export async function PUT(request: NextRequest) {
             .update({
                 title,
                 revenue,
-                startup_costs,
                 summary,
                 steps,
                 website_url,

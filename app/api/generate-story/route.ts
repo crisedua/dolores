@@ -66,8 +66,8 @@ export async function POST(request: NextRequest) {
       Please extract:
       1. Title: The exact first line of the text.
       2. Revenue: Short string indicating how much they make (e.g. "$5k/mo", "$1M/year"). If unknown, use "N/A".
-      3. Summary: A concise summary (2-3 sentences max) of the business and how they achieved success.
-      4. Steps: A list of "Key Takeaways" or "Growth Tactics" (array of strings, max 5 items).
+      3. Summary: A concise summary IN SPANISH (2-3 sentences max) of the business and how they achieved success.
+      4. Steps: A list of "Key Takeaways" or "Growth Tactics" IN SPANISH (array of strings, max 5 items).
       
       Input Text:
       "${articleText.substring(0, 15000)}"
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
         "title": "...",
         "revenue": "...",
         "summary": "...",
-        "steps": ["Step 1...", "Step 2..."]
+        "steps": ["Paso 1...", "Paso 2..."]
       }
     `;
 
